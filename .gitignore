@@ -1,0 +1,287 @@
+# ============================================
+# FAMILIA FINANZAS - .gitignore
+# ============================================
+
+# ============================================
+# 🔒 ARCHIVOS CRÍTICOS DE SEGURIDAD
+# ============================================
+# NUNCA subir estos archivos - contienen información sensible
+
+# Variables de entorno
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env*.local
+*.env
+
+# Credenciales de Firebase
+firebase-admin-sdk.json
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
+
+# Archivos de secretos
+secrets.json
+secrets.js
+*secret*
+*password*
+*credentials*
+
+# ============================================
+# 📦 Node.js
+# ============================================
+
+# Dependencias
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Archivos de paquetes
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================
+# 🔨 Build y Dist
+# ============================================
+
+# Vite
+dist/
+dist-ssr/
+*.local
+
+# Build outputs
+build/
+out/
+.output/
+
+# Cache
+.vite/
+.cache/
+.parcel-cache/
+
+# ============================================
+# 💻 IDEs y Editores
+# ============================================
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.vscode/settings.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+
+# WebStorm
+.webstorm/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+nbproject/
+
+# ============================================
+# 🖥️ Sistemas Operativos
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# 📱 Testing
+# ============================================
+
+# Cobertura de tests
+coverage/
+*.lcov
+.nyc_output/
+
+# Resultados de tests
+test-results/
+*.log
+
+# ============================================
+# 🚀 Deployment
+# ============================================
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+
+# Vercel
+.vercel
+
+# Netlify
+.netlify/
+
+# ============================================
+# 📊 Logs y Temporales
+# ============================================
+
+# Logs generales
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ============================================
+# 🎨 Assets Temporales
+# ============================================
+
+# Imágenes temporales
+*.psd
+*.ai
+*.sketch
+
+# ============================================
+# 📱 PWA y Service Workers
+# ============================================
+
+# Service Worker cache
+sw.js.map
+workbox-*.js
+workbox-*.js.map
+
+# ============================================
+# 🔧 Configuración Local
+# ============================================
+
+# Configuraciones personales
+.local/
+local/
+*.local.js
+*.local.json
+
+# ============================================
+# 📦 Backups
+# ============================================
+
+# Archivos de backup
+*.bak
+*.backup
+*.old
+backup/
+backups/
+
+# ============================================
+# 🗄️ Bases de Datos Locales
+# ============================================
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# IndexedDB (offline storage)
+# No ignorar si necesitas debug offline
+# indexeddb/
+
+# ============================================
+# 📄 Documentación Generada
+# ============================================
+
+# JSDoc
+jsdoc/
+docs/api/
+
+# TypeScript
+*.tsbuildinfo
+
+# ============================================
+# 🧪 Testing y QA
+# ============================================
+
+# Playwright
+playwright-report/
+playwright/.cache/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# Jest
+jest_html_reporters.html
+
+# ============================================
+# 📊 Analytics y Monitoring
+# ============================================
+
+# Sentry
+.sentryclirc
+
+# ============================================
+# 🔐 Certificados SSL (Development)
+# ============================================
+
+# Certificados locales
+*.pem
+*.key
+*.crt
+*.csr
+ssl/
+
+# ============================================
+# NOTAS IMPORTANTES
+# ============================================
+
+# Si necesitas compartir configuraciones de ejemplo:
+# 1. Crea archivos .env.example (SIN valores reales)
+# 2. Documenta qué variables se necesitan
+# 3. NO incluyas valores reales de producción
+
+# Archivos que SÍ debes versionar:
+# ✅ .env.example (plantilla sin valores)
+# ✅ firebase.json (configuración pública)
+# ✅ .firebaserc (configuración pública)
+# ✅ package.json
+# ✅ README.md
+# ✅ LICENSE
+# ✅ Todo el código fuente en /src

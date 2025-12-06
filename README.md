@@ -141,10 +141,6 @@ npm run build
 firebase deploy
 ```
 
-Tu app estará disponible en: `https://tu-proyecto.web.app`
-
----
-
 ## 👥 Usuarios y Roles
 
 ### Tipos de Usuarios
@@ -198,7 +194,6 @@ familia-finanzas/
 │   ├── styles/               # Estilos globales
 │   ├── App.jsx               # Componente principal
 │   └── main.jsx              # Punto de entrada
-├── .env.local                # Variables de entorno (NO subir a Git)
 ├── .gitignore                # Archivos ignorados por Git
 ├── firebase.json             # Configuración Firebase
 ├── package.json              # Dependencias del proyecto
@@ -248,37 +243,6 @@ La app permite crear solicitudes sin conexión a internet:
 - ❌ No se pueden aprobar/rechazar solicitudes (solo administradores)
 - ❌ No se actualizan datos en tiempo real
 - ✅ Se puede consultar historial previamente cargado
-
----
-
-## 🎯 Roadmap
-
-### ✅ Fase 1: MVP (Completada)
-- [x] Sistema de autenticación
-- [x] Solicitudes de dinero
-- [x] Aprobación/rechazo
-- [x] Categorización de gastos
-- [x] Historial básico
-
-### 🔄 Fase 2: Funcionalidades Avanzadas (En desarrollo)
-- [ ] Gastos recurrentes automáticos
-- [ ] Sistema de cola offline
-- [ ] Reportes con gráficos
-- [ ] Filtros avanzados
-- [ ] Notificaciones internas
-
-### 📅 Fase 3: Optimización (Próximamente)
-- [ ] Notificaciones push del navegador
-- [ ] Exportar CSV
-- [ ] Comparativas mensuales
-- [ ] Insights automáticos
-- [ ] Dark mode
-
-### 🚀 Fase 4: Futuro
-- [ ] Presupuestos por categoría
-- [ ] ML para detectar gastos inusuales
-- [ ] Storage para fotos de recibos
-- [ ] Multi-idioma
 
 ---
 

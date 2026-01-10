@@ -37,18 +37,30 @@ export const formatDate = (value) => {
   }).format(new Date(value));
 };
 
-export const getRelativeTime = (date) => {
-  const now = new Date();
-  const past = new Date(date);
-  const diffInSeconds = Math.floor((now - past) / 1000);
+export const getRelativeTime = (timestamp) => {
+  const now = Date.now();
+  const past = new Date(timestamp).getTime();
+  const diff = now - past;
 
-  if (diffInSeconds < 60) return 'Hace unos segundos';
-  if (diffInSeconds < 3600) return `Hace ${Math.floor(diffInSeconds / 60)} min`;
-  if (diffInSeconds < 86400) return `Hace ${Math.floor(diffInSeconds / 3600)} horas`;
-  if (diffInSeconds < 604800) return `Hace ${Math.floor(diffInSeconds / 86400)} dias`;
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
 
-  return past.toLocaleDateString('es-MX', {
+  if (seconds < 60) return 'Hace unos segundos';
+  if (minutes < 60)
+    return `Hace ${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
+  if (hours < 24) return `Hace ${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+  if (days < 7) return `Hace ${days} ${days === 1 ? 'dia' : 'dias'}`;
+  if (weeks < 4) return `Hace ${weeks} ${weeks === 1 ? 'semana' : 'semanas'}`;
+  if (months < 12) return `Hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
+
+  const date = new Date(timestamp);
+  return date.toLocaleDateString('es-MX', {
     day: 'numeric',
     month: 'short',
+    year: 'numeric',
   });
 };

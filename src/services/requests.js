@@ -1,4 +1,4 @@
-import { ref, set } from 'firebase/database';
+import { equalTo, get, orderByChild, query, ref, set } from 'firebase/database';
 import { db } from './firebase';
 
 const buildRequestPayload = (requestId, requestData, timestamp) => ({
@@ -41,6 +41,23 @@ const createAdminNotification = async (request, timestamp) => {
   }
 };
 
+const getCreateRequestErrorMessage = (error) => {
+  if (!error) {
+    return 'No se pudo crear la solicitud. Por favor intenta de nuevo.';
+  }
+
+  const code = error.code || '';
+  if (code === 'PERMISSION_DENIED') {
+    return 'No tienes permisos para crear solicitudes. Revisa las reglas de Firebase.';
+  }
+
+  if (code === 'NETWORK_ERROR') {
+    return 'No se pudo conectar. Verifica tu conexion e intenta nuevamente.';
+  }
+
+  return 'No se pudo crear la solicitud. Por favor intenta de nuevo.';
+};
+
 export const createRequest = async (requestData) => {
   try {
     const timestamp = Date.now();
@@ -54,13 +71,31 @@ export const createRequest = async (requestData) => {
     return requestId;
   } catch (error) {
     console.error('Error creating request:', error);
-    throw new Error(
-      'No se pudo crear la solicitud. Por favor intenta de nuevo.'
-    );
+    throw new Error(getCreateRequestErrorMessage(error));
   }
 };
 
 export const getUserRequests = async (userId) => {
   if (!userId) return [];
-  return [];
+
+  try {
+    const requestsRef = ref(db, 'familia_finanzas/solicitudes');
+    const userQuery = query(requestsRef, orderByChild('usuario'), equalTo(userId));
+    const snapshot = await get(userQuery);
+
+    if (!snapshot.exists()) {
+      return [];
+    }
+
+    const requests = Object.values(snapshot.val());
+    return requests.sort((a, b) => (b.fechaSolicitud || 0) - (a.fechaSolicitud || 0));
+  } catch (error) {
+    console.error('Error fetching user requests:', error);
+    throw new Error('No se pudieron cargar las solicitudes');
+  }
+};
+
+export const getUserRequestsByStatus = async (userId, status) => {
+  const allRequests = await getUserRequests(userId);
+  return allRequests.filter((request) => request.estado === status);
 };

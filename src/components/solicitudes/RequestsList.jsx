@@ -1,76 +1,131 @@
-import React from 'react';
-import StatusBadge from '../common/StatusBadge';
-import { formatCurrency, formatDate } from '../../utils/helpers';
+import React, { useMemo, useState } from 'react';
+import { EmptyState, Select } from '../common';
+import { FileText } from 'lucide-react';
+import RequestCard from './RequestCard';
 
-const getCategoryLabel = (categories, categoryId) =>
-  categories.find((item) => item.id === categoryId)?.label || categoryId;
+const FILTER_OPTIONS = [
+  { value: 'all', label: 'Todas' },
+  { value: 'pendiente', label: 'Pendientes' },
+  { value: 'aprobada', label: 'Aprobadas' },
+  { value: 'rechazada', label: 'Rechazadas' },
+];
 
-const RequestsList = ({
-  requests,
-  categories,
-  onApprove,
-  onReject,
-  emptyLabel = 'No hay solicitudes registradas',
-  showActions = false,
-}) => {
-  if (!requests?.length) {
+function RequestsList({ requests, loading, error }) {
+  const [filter, setFilter] = useState('all');
+
+  const filteredRequests = useMemo(() => {
+    if (!requests) return [];
+    if (filter === 'all') return requests;
+    return requests.filter((request) => request.estado === filter);
+  }, [requests, filter]);
+
+  const groupedRequests = useMemo(() => {
+    return {
+      pendiente: filteredRequests.filter((request) => request.estado === 'pendiente'),
+      aprobada: filteredRequests.filter((request) => request.estado === 'aprobada'),
+      rechazada: filteredRequests.filter((request) => request.estado === 'rechazada'),
+    };
+  }, [filteredRequests]);
+
+  if (loading) {
     return (
-      <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-4 text-sm text-slate-400">
-        {emptyLabel}
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={`request-skeleton-${index}`}
+            className="h-32 rounded-xl bg-slate-800/80 animate-pulse"
+          />
+        ))}
       </div>
     );
   }
 
-  return (
-    <div className="space-y-3">
-      {requests.map((request) => (
-        <div
-          key={request.id}
-          className="rounded-xl border border-slate-800 bg-slate-950/50 p-4 shadow"
-        >
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-[0.12em] text-slate-400">
-                {request.requesterName || 'Solicitante'}
-              </p>
-              <h4 className="text-base font-semibold text-white">{request.reason}</h4>
-              <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-400">
-                <span className="rounded-md bg-slate-800 px-2 py-1">
-                  {getCategoryLabel(categories, request.category)}
-                </span>
-                <span className="rounded-md bg-slate-800 px-2 py-1">
-                  {formatDate(request.createdAt)}
-                </span>
-                <span className="rounded-md bg-slate-800 px-2 py-1">
-                  {formatCurrency(request.amount)}
-                </span>
-              </div>
-            </div>
-            <StatusBadge status={request.status} />
-          </div>
+  if (error) {
+    return (
+      <div className="rounded-xl border border-rose-500/30 bg-rose-950/10 p-6">
+        <p className="text-center text-rose-400">{error}</p>
+      </div>
+    );
+  }
 
-          {showActions && request.status === 'pending' ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => onApprove?.(request)}
-                className="rounded-lg border border-emerald-500/50 bg-emerald-500/15 px-3 py-1.5 text-sm font-semibold text-emerald-100 transition hover:border-emerald-400 hover:bg-emerald-500/25"
-              >
-                Aprobar
-              </button>
-              <button
-                type="button"
-                onClick={() => onReject?.(request)}
-                className="rounded-lg border border-rose-500/50 bg-rose-500/15 px-3 py-1.5 text-sm font-semibold text-rose-100 transition hover:border-rose-400 hover:bg-rose-500/25"
-              >
-                Rechazar
-              </button>
-            </div>
-          ) : null}
+  if (!requests || requests.length === 0) {
+    return (
+      <EmptyState
+        icon={<FileText className="h-12 w-12" />}
+        title="No tienes solicitudes"
+        description="Cuando crees solicitudes de dinero, apareceran aqui."
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="text-lg font-semibold text-slate-200">
+          Mis Solicitudes
+          <span className="ml-2 text-sm font-normal text-slate-400">
+            ({filteredRequests.length})
+          </span>
+        </h3>
+        <div className="w-full sm:w-48">
+          <Select
+            options={FILTER_OPTIONS}
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+            placeholder="Filtrar..."
+          />
         </div>
-      ))}
+      </div>
+
+      {filteredRequests.length === 0 ? (
+        <p className="py-8 text-center text-slate-400">
+          No hay solicitudes con este filtro.
+        </p>
+      ) : null}
+
+      {(filter === 'all' || filter === 'pendiente') &&
+      groupedRequests.pendiente.length > 0 ? (
+        <div>
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-amber-400">
+            PENDIENTES ({groupedRequests.pendiente.length})
+          </h4>
+          <div className="space-y-3">
+            {groupedRequests.pendiente.map((request) => (
+              <RequestCard key={request.id} request={request} />
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {(filter === 'all' || filter === 'aprobada') &&
+      groupedRequests.aprobada.length > 0 ? (
+        <div>
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-400">
+            APROBADAS ({groupedRequests.aprobada.length})
+          </h4>
+          <div className="space-y-3">
+            {groupedRequests.aprobada.map((request) => (
+              <RequestCard key={request.id} request={request} />
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {(filter === 'all' || filter === 'rechazada') &&
+      groupedRequests.rechazada.length > 0 ? (
+        <div>
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-rose-400">
+            RECHAZADAS ({groupedRequests.rechazada.length})
+          </h4>
+          <div className="space-y-3">
+            {groupedRequests.rechazada.map((request) => (
+              <RequestCard key={request.id} request={request} />
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
-};
+}
 
 export default RequestsList;

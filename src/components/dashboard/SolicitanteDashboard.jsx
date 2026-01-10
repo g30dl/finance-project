@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useBalance } from '../../hooks/useBalance';
+import { useUserRequests } from '../../hooks/useUserRequests';
 import { useAuthContext } from '../../contexts/AuthContext';
 import BalanceCard from '../common/BalanceCard';
+import Card from '../common/Card';
 import ComingSoon from '../common/ComingSoon';
 import MonthlySummary from './MonthlySummary';
 import QuickActions from './QuickActions';
 import RequestModal from '../solicitudes/RequestModal';
+import RequestsList from '../solicitudes/RequestsList';
 
 function SolicitanteDashboard() {
   const { user, logout, loading } = useAuthContext();
@@ -21,6 +24,12 @@ function SolicitanteDashboard() {
     useBalance('personal', userId);
   const { balance: casaBalance, loading: loadingCasa, error: casaError } =
     useBalance('casa');
+  const {
+    requests,
+    loading: loadingRequests,
+    error: errorRequests,
+    counts,
+  } = useUserRequests(userId);
 
   const hasAccess =
     !loading && user && user.role === 'solicitante' && user.userId === userId;
@@ -112,6 +121,27 @@ function SolicitanteDashboard() {
             onRequestCasa={handleRequestCasa}
             personalBalance={personalBalance}
           />
+        </section>
+
+        <section>
+          {counts.pending > 0 ? (
+            <div className="rounded-xl border border-amber-500/30 bg-amber-950/10 px-4 py-3 text-sm text-amber-200">
+              <span className="font-semibold">
+                {counts.pending} solicitud{counts.pending > 1 ? 'es' : ''}
+              </span>{' '}
+              pendiente{counts.pending > 1 ? 's' : ''} de aprobacion.
+            </div>
+          ) : null}
+        </section>
+
+        <section>
+          <Card>
+            <RequestsList
+              requests={requests}
+              loading={loadingRequests}
+              error={errorRequests}
+            />
+          </Card>
         </section>
 
         <section>

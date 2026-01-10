@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useBalance } from '../../hooks/useBalance';
@@ -7,6 +7,7 @@ import BalanceCard from '../common/BalanceCard';
 import ComingSoon from '../common/ComingSoon';
 import MonthlySummary from './MonthlySummary';
 import QuickActions from './QuickActions';
+import RequestModal from '../solicitudes/RequestModal';
 
 function SolicitanteDashboard() {
   const { user, logout, loading } = useAuthContext();
@@ -14,6 +15,7 @@ function SolicitanteDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const notice = location.state?.message;
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
 
   const { balance: personalBalance, loading: loadingPersonal, error: personalError } =
     useBalance('personal', userId);
@@ -43,7 +45,11 @@ function SolicitanteDashboard() {
   };
 
   const handleRequestCasa = () => {
-    navigate('/solicitar-dinero');
+    setRequestModalOpen(true);
+  };
+
+  const handleCloseRequestModal = () => {
+    setRequestModalOpen(false);
   };
 
   return (
@@ -122,6 +128,8 @@ function SolicitanteDashboard() {
             ]}
           />
         </section>
+
+        <RequestModal isOpen={requestModalOpen} onClose={handleCloseRequestModal} />
       </main>
     </div>
   );

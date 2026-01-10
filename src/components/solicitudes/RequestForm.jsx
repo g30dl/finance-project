@@ -1,90 +1,183 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { DollarSign } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { useCreateRequest } from '../../hooks/useCreateRequest';
+import { Alert, Button, Input, Select, Textarea } from '../common';
+import { CATEGORIES, REQUEST_LIMITS } from '../../utils/constants';
+import { formatCurrency } from '../../utils/helpers';
 
-const RequestForm = ({ categories, onSubmit }) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      amount: '',
-      category: categories[0]?.id || '',
-      reason: '',
-    },
+const buildCategoryOptions = () =>
+  CATEGORIES.map((category) => ({
+    value: category.id,
+    label: category.label,
+  }));
+
+const validateAmount = (amountValue) => {
+  if (!amountValue || Number.isNaN(amountValue) || amountValue <= 0) {
+    return 'Ingresa un monto valido mayor a 0';
+  }
+
+  if (amountValue > REQUEST_LIMITS.MAX_AMOUNT) {
+    return `El monto no puede exceder $${REQUEST_LIMITS.MAX_AMOUNT}`;
+  }
+
+  return '';
+};
+
+const validateCategory = (category) => {
+  if (!category) {
+    return 'Selecciona una categoria';
+  }
+  return '';
+};
+
+const validateConcept = (concept) => {
+  if (!concept.trim()) {
+    return 'Describe el motivo de tu solicitud';
+  }
+  if (concept.trim().length < REQUEST_LIMITS.MIN_CONCEPT_LENGTH) {
+    return `El concepto debe tener al menos ${REQUEST_LIMITS.MIN_CONCEPT_LENGTH} caracteres`;
+  }
+  return '';
+};
+
+function RequestForm({ onSuccess, onCancel }) {
+  const { user } = useAuth();
+  const { submitRequest, loading, error, success } = useCreateRequest();
+  const [formData, setFormData] = useState({
+    amount: '',
+    category: '',
+    concept: '',
   });
+  const [errors, setErrors] = useState({});
+  const timeoutRef = useRef(null);
+  const categoryOptions = useMemo(buildCategoryOptions, []);
+  const amountValue = Number(formData.amount);
 
-  const submit = async (values) => {
-    await onSubmit({
-      ...values,
-      amount: Number(values.amount),
-    });
-    reset({ amount: '', category: values.category, reason: '' });
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    const amountError = validateAmount(amountValue);
+    const categoryError = validateCategory(formData.category);
+    const conceptError = validateConcept(formData.concept);
+
+    if (amountError) newErrors.amount = amountError;
+    if (categoryError) newErrors.category = categoryError;
+    if (conceptError) newErrors.concept = conceptError;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateForm() || !user) return;
+
+    const requestData = {
+      userId: user.userId,
+      userName: user.userName,
+      amount: Number(formData.amount),
+      category: formData.category,
+      concept: formData.concept.trim(),
+    };
+
+    const result = await submitRequest(requestData);
+    if (result.success) {
+      timeoutRef.current = setTimeout(() => {
+        onSuccess?.();
+      }, 1500);
+    }
+  };
+
+  const helperText =
+    formData.amount && !errors.amount
+      ? `Solicitaras: ${formatCurrency(formData.amount)}`
+      : undefined;
+
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(submit)}>
-      <div className="space-y-2">
-        <label className="text-sm text-slate-300">Monto</label>
-        <input
-          type="number"
-          step="0.01"
-          min="0"
-          className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-          placeholder="Ej. 1200"
-          {...register('amount', {
-            required: 'Monto requerido',
-            min: { value: 1, message: 'Debe ser mayor a 0' },
-          })}
-        />
-        {errors.amount ? (
-          <p className="text-xs text-rose-300">{errors.amount.message}</p>
-        ) : null}
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {success ? (
+        <Alert variant="success" title="Solicitud enviada">
+          Tu solicitud fue enviada correctamente. Los administradores la revisaran pronto.
+        </Alert>
+      ) : null}
 
-      <div className="space-y-2">
-        <label className="text-sm text-slate-300">Categoria</label>
-        <select
-          className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-          {...register('category', { required: 'Categoria requerida' })}
+      {error ? (
+        <Alert variant="danger" title="Error">
+          {error}
+        </Alert>
+      ) : null}
+
+      <Input
+        label="Monto a solicitar"
+        type="number"
+        step="0.01"
+        min={REQUEST_LIMITS.MIN_AMOUNT}
+        max={REQUEST_LIMITS.MAX_AMOUNT}
+        placeholder="0.00"
+        value={formData.amount}
+        onChange={(event) => handleChange('amount', event.target.value)}
+        icon={<DollarSign className="h-4 w-4" />}
+        error={errors.amount}
+        helperText={helperText}
+        fullWidth
+        disabled={loading || success}
+        autoFocus
+      />
+
+      <Select
+        label="Categoria del gasto"
+        options={categoryOptions}
+        value={formData.category}
+        onChange={(event) => handleChange('category', event.target.value)}
+        error={errors.category}
+        placeholder="Selecciona una categoria..."
+        fullWidth
+        disabled={loading || success}
+      />
+
+      <Textarea
+        label="Concepto / Motivo"
+        placeholder="Describe para que necesitas el dinero..."
+        value={formData.concept}
+        onChange={(event) => handleChange('concept', event.target.value)}
+        error={errors.concept}
+        maxLength={REQUEST_LIMITS.MAX_CONCEPT_LENGTH}
+        showCount
+        rows={4}
+        fullWidth
+        disabled={loading || success}
+      />
+
+      <div className="flex justify-end gap-3">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onCancel}
+          disabled={loading || success}
         >
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.label}
-            </option>
-          ))}
-        </select>
-        {errors.category ? (
-          <p className="text-xs text-rose-300">{errors.category.message}</p>
-        ) : null}
+          Cancelar
+        </Button>
+        <Button type="submit" variant="primary" loading={loading} disabled={success}>
+          Enviar Solicitud
+        </Button>
       </div>
-
-      <div className="space-y-2">
-        <label className="text-sm text-slate-300">Motivo</label>
-        <textarea
-          rows={3}
-          className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-          placeholder="Ej. Compra semanal del mercado"
-          {...register('reason', {
-            required: 'Motivo requerido',
-            minLength: { value: 4, message: 'Describe un poco mas' },
-          })}
-        />
-        {errors.reason ? (
-          <p className="text-xs text-rose-300">{errors.reason.message}</p>
-        ) : null}
-      </div>
-
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 focus:ring-2 focus:ring-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {isSubmitting ? 'Enviando...' : 'Crear solicitud'}
-      </button>
     </form>
   );
-};
+}
 
 export default RequestForm;

@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "familia-finanzas",
   "private": true,
   "version": "0.1.0",
@@ -10,11 +10,12 @@
   },
   "dependencies": {
     "date-fns": "^3.6.0",
-    "firebase": "^11.0.2",
+    "firebase": "^11.10.0",
     "lucide-react": "^0.452.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.53.0",
+    "react-router-dom": "^6.30.3",
     "recharts": "^2.8.0"
   },
   "devDependencies": {
@@ -22,6 +23,6 @@
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
-    "vite": "^5.2.0"
+    "vite": "^7.3.1"
   }
 }

@@ -1,6 +1,10 @@
-﻿import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
+﻿// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration (loaded from Vite env vars)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -11,13 +15,11 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const isConfigReady = Object.values(firebaseConfig).every(Boolean);
-
-export const app = isConfigReady ? initializeApp(firebaseConfig) : null;
-export const db = app ? getDatabase(app) : null;
-
-if (!isConfigReady) {
-  console.warn('Firebase config missing; app will not be initialized until env vars are set.');
+if (!firebaseConfig.apiKey) {
+  throw new Error('Missing Firebase config in environment variables. Create a `.env.local` with the VITE_FIREBASE_* keys (see README).');
 }
 
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+export const db = getDatabase(app);
 export default app;

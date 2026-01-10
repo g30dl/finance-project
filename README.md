@@ -74,7 +74,7 @@ npm install
 
 3. Copia tus credenciales de Firebase
 
-4. Crea un archivo `.env.local` en la raíz del proyecto:
+4. Crea un archivo `.env.local` en la raíz del proyecto (puedes copiar `.env.example` y rellenar los valores):
 
 ```env
 VITE_FIREBASE_API_KEY=tu_api_key_aqui

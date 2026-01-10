@@ -1,12 +1,17 @@
 import React, { useMemo } from 'react';
-import { LogOut } from 'lucide-react';
+import { Bell, LogOut } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBalance } from '../../hooks/useBalance';
 import { useFirebaseData } from '../../hooks/useFirebaseData';
-import { formatCurrency } from '../../utils/helpers';
 import { useAuthContext } from '../../contexts/AuthContext';
+import { usePersonalAccountsTotal } from '../../hooks/usePersonalAccountsTotal';
+import { useSystemAlerts } from '../../hooks/useSystemAlerts';
+import AlertBanner from '../common/AlertBanner';
 import BalanceCard from '../common/BalanceCard';
+import ComingSoon from '../common/ComingSoon';
 import AccountsGrid from './AccountsGrid';
+import AdminQuickActions from './AdminQuickActions';
+import SystemSummary from './SystemSummary';
 
 function AdminDashboard() {
   const { user, logout } = useAuthContext();
@@ -14,112 +19,149 @@ function AdminDashboard() {
   const location = useLocation();
   const notice = location.state?.message;
 
-  const { balance: casaBalance, loading: loadingCasa, error: casaError } =
-    useBalance('casa');
+  const { balance: casaBalance, loading: loadingCasa } = useBalance('casa');
   const {
-    data: accountsData,
+    data: personalAccounts,
     loading: loadingAccounts,
     error: accountsError,
   } = useFirebaseData('familia_finanzas/cuentas/personales');
+  const { data: solicitudesData } = useFirebaseData('familia_finanzas/solicitudes');
 
-  const accounts = useMemo(() => {
-    if (!accountsData) return [];
-    return Object.entries(accountsData)
-      .map(([userId, account]) => ({ userId, ...account }))
-      .filter((account) => account.activa !== false)
-      .sort((a, b) =>
-        (a.nombreUsuario || '').localeCompare(b.nombreUsuario || '', 'es', {
-          sensitivity: 'base',
-        })
-      );
-  }, [accountsData]);
+  const pendingRequests = useMemo(() => {
+    if (!solicitudesData) return 0;
+    return Object.values(solicitudesData).filter(
+      (request) => request?.estado === 'pendiente' || request?.status === 'pending'
+    ).length;
+  }, [solicitudesData]);
 
-  const totalPersonal = useMemo(
-    () => accounts.reduce((sum, account) => sum + (Number(account.saldo) || 0), 0),
-    [accounts]
-  );
-
-  const totalBalance = useMemo(() => {
-    const casaValue = Number(casaBalance) || 0;
-    return casaValue + totalPersonal;
-  }, [casaBalance, totalPersonal]);
-
-  const totalLoading = loadingCasa || loadingAccounts;
-  const totalError = casaError || accountsError;
+  const personalTotal = usePersonalAccountsTotal(personalAccounts);
+  const alerts = useSystemAlerts({
+    personalAccounts,
+    casaBalance,
+    pendingRequests,
+    onViewRequests: () => navigate('/aprobar-solicitudes'),
+  });
 
   const handleLogout = () => {
     logout();
     navigate('/', { replace: true });
   };
 
+  const handleAccountClick = (accountId) => {
+    navigate(`/cuenta-detalle/${accountId}`);
+  };
+
+  const handleDeposit = () => navigate('/depositar');
+  const handleTransfer = () => navigate('/transferir');
+  const handleApproveRequests = () => navigate('/aprobar-solicitudes');
+  const handleDirectExpense = () => navigate('/gasto-directo');
+  const handleRecurringExpenses = () => navigate('/gastos-recurrentes');
+  const handleReports = () => navigate('/reportes');
+
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-400">
-            Familia Finanzas
-          </p>
-          <h1 className="text-3xl font-semibold">Dashboard Administrador</h1>
-          <p className="text-sm text-slate-400">
-            Bienvenido,{' '}
-            <span className="text-cyan-300">{user?.userName || 'Admin'}</span>
-          </p>
+    <div className="min-h-screen bg-slate-950 pb-20">
+      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4">
+          <div className="space-y-1">
+            <p className="text-sm text-slate-400">Panel de Control</p>
+            <h1 className="text-2xl font-semibold text-slate-50">Administrador</h1>
+            <p className="text-sm text-slate-500">{user?.userName || 'Admin'}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              aria-label="Notificaciones"
+              className="relative rounded-lg bg-slate-800 p-2 transition-colors hover:bg-slate-700"
+            >
+              <Bell className="h-5 w-5 text-slate-300" />
+              {pendingRequests > 0 ? (
+                <span className="absolute -right-1 -top-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-xs font-bold text-white">
+                  {pendingRequests}
+                </span>
+              ) : null}
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              aria-label="Cerrar sesion"
+              className="rounded-lg bg-slate-800 p-2 transition-colors hover:bg-slate-700"
+            >
+              <LogOut className="h-5 w-5 text-slate-300" />
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-cyan-400/70 hover:text-cyan-300"
-        >
-          <LogOut className="h-4 w-4" />
-          Cerrar sesion
-        </button>
       </header>
 
-      {notice && (
-        <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
-          {notice}
-        </div>
-      )}
-
-      <section>
-        <BalanceCard
-          title="Dinero Casa"
-          balance={casaBalance}
-          loading={loadingCasa}
-          error={casaError}
-          color="blue"
-          large={true}
-        />
-      </section>
-
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Cuentas Personales</h2>
-          <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Activas</span>
-        </div>
-        <AccountsGrid
-          accounts={accounts}
-          loading={loadingAccounts}
-          error={accountsError}
-        />
-      </section>
-
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-          Total en el sistema
-        </p>
-        {totalLoading ? (
-          <div className="mt-3 h-10 w-40 rounded-lg bg-slate-800/80 animate-pulse" />
-        ) : (
-          <p className="mt-3 text-3xl font-semibold text-cyan-300">
-            {formatCurrency(totalBalance)}
-          </p>
+      <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6">
+        {notice && (
+          <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
+            {notice}
+          </div>
         )}
-        {totalError && (
-          <p className="mt-2 text-xs text-rose-400">Error al cargar saldos.</p>
-        )}
-      </section>
-    </main>
+
+        {alerts.length > 0 ? (
+          <section>
+            <AlertBanner alerts={alerts} />
+          </section>
+        ) : null}
+
+        <section>
+          <BalanceCard
+            title="Dinero Casa - Cuenta Compartida"
+            balance={casaBalance}
+            loading={loadingCasa}
+            type="casa"
+            showIndicator={true}
+            threshold={100}
+            large={true}
+          />
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-xl font-semibold text-slate-200">
+            Cuentas Personales
+          </h2>
+          <AccountsGrid
+            accounts={personalAccounts}
+            loading={loadingAccounts}
+            error={accountsError}
+            onAccountClick={handleAccountClick}
+          />
+        </section>
+
+        <section>
+          <SystemSummary
+            casaBalance={casaBalance}
+            personalAccountsTotal={personalTotal}
+            loading={loadingCasa || loadingAccounts}
+          />
+        </section>
+
+        <section>
+          <AdminQuickActions
+            pendingRequests={pendingRequests}
+            onDeposit={handleDeposit}
+            onTransfer={handleTransfer}
+            onApproveRequests={handleApproveRequests}
+            onDirectExpense={handleDirectExpense}
+            onRecurringExpenses={handleRecurringExpenses}
+            onReports={handleReports}
+          />
+        </section>
+
+        <section>
+          <ComingSoon
+            features={[
+              'Vista detallada de cada cuenta personal',
+              'Historial completo de transacciones',
+              'Reportes y analisis por periodo',
+              'Graficos de tendencias',
+              'Exportar datos a Excel/CSV',
+            ]}
+          />
+        </section>
+      </main>
+    </div>
   );
 }
 

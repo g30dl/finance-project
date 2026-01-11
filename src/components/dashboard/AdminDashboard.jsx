@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 import { Bell, LogOut } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBalance } from '../../hooks/useBalance';
 import { useFirebaseData } from '../../hooks/useFirebaseData';
+import { usePendingRequests } from '../../hooks/usePendingRequests';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { usePersonalAccountsTotal } from '../../hooks/usePersonalAccountsTotal';
 import { useSystemAlerts } from '../../hooks/useSystemAlerts';
@@ -12,12 +13,14 @@ import ComingSoon from '../common/ComingSoon';
 import AccountsGrid from './AccountsGrid';
 import AdminQuickActions from './AdminQuickActions';
 import SystemSummary from './SystemSummary';
+import ApproveRequestsModal from '../solicitudes/ApproveRequestsModal';
 
 function AdminDashboard() {
   const { user, logout } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
   const notice = location.state?.message;
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
 
   const { balance: casaBalance, loading: loadingCasa } = useBalance('casa');
   const {
@@ -25,21 +28,19 @@ function AdminDashboard() {
     loading: loadingAccounts,
     error: accountsError,
   } = useFirebaseData('familia_finanzas/cuentas/personales');
-  const { data: solicitudesData } = useFirebaseData('familia_finanzas/solicitudes');
-
-  const pendingRequests = useMemo(() => {
-    if (!solicitudesData) return 0;
-    return Object.values(solicitudesData).filter(
-      (request) => request?.estado === 'pendiente' || request?.status === 'pending'
-    ).length;
-  }, [solicitudesData]);
+  const {
+    requests: pendingRequestsData,
+    count: pendingRequests,
+    loading: loadingPendingRequests,
+    error: pendingRequestsError,
+  } = usePendingRequests();
 
   const personalTotal = usePersonalAccountsTotal(personalAccounts);
   const alerts = useSystemAlerts({
     personalAccounts,
     casaBalance,
     pendingRequests,
-    onViewRequests: () => navigate('/aprobar-solicitudes'),
+    onViewRequests: () => setApproveModalOpen(true),
   });
 
   const handleLogout = () => {
@@ -53,7 +54,7 @@ function AdminDashboard() {
 
   const handleDeposit = () => navigate('/depositar');
   const handleTransfer = () => navigate('/transferir');
-  const handleApproveRequests = () => navigate('/aprobar-solicitudes');
+  const handleApproveRequests = () => setApproveModalOpen(true);
   const handleDirectExpense = () => navigate('/gasto-directo');
   const handleRecurringExpenses = () => navigate('/gastos-recurrentes');
   const handleReports = () => navigate('/reportes');
@@ -161,6 +162,14 @@ function AdminDashboard() {
           />
         </section>
       </main>
+
+      <ApproveRequestsModal
+        isOpen={approveModalOpen}
+        onClose={() => setApproveModalOpen(false)}
+        requests={pendingRequestsData}
+        loading={loadingPendingRequests}
+        error={pendingRequestsError}
+      />
     </div>
   );
 }

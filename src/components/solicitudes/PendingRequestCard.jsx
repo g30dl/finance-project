@@ -1,0 +1,133 @@
+import React, { useState } from 'react';
+import { Calendar, Check, MessageSquare, User, X } from 'lucide-react';
+import { Button, Textarea } from '../common';
+import { formatCurrency, getRelativeTime } from '../../utils/helpers';
+import { getCategoryIcon } from '../../utils/categories';
+
+function PendingRequestCard({ request, onApprove, onReject, loading }) {
+  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [error, setError] = useState('');
+
+  const handleApprove = () => {
+    onApprove?.(request.id);
+  };
+
+  const handleRejectConfirm = () => {
+    if (!rejectReason.trim() || rejectReason.trim().length < 5) {
+      setError('El motivo debe tener al menos 5 caracteres');
+      return;
+    }
+    onReject?.(request.id, rejectReason.trim());
+    setShowRejectForm(false);
+    setRejectReason('');
+    setError('');
+  };
+
+  const handleRejectChange = (event) => {
+    setRejectReason(event.target.value);
+    if (error) setError('');
+  };
+
+  const handleRejectCancel = () => {
+    setShowRejectForm(false);
+    setRejectReason('');
+    setError('');
+  };
+
+  return (
+    <div className="rounded-xl border-2 border-amber-500/30 bg-amber-950/10 p-5">
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">{getCategoryIcon(request.categoria)}</span>
+          <div>
+            <p className="font-semibold text-slate-100">
+              {(request.categoria || 'categoria').replace('_', ' ')}
+            </p>
+            <div className="mt-1 flex items-center gap-2 text-sm text-slate-400">
+              <User className="h-4 w-4" />
+              <span>{request.nombreUsuario}</span>
+            </div>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold text-amber-400">
+            {formatCurrency(request.cantidad)}
+          </p>
+          <div className="mt-1 flex items-center gap-1 text-xs text-slate-400">
+            <Calendar className="h-3 w-3" />
+            <span>{getRelativeTime(request.fechaSolicitud)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-4 rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+        <div className="flex items-start gap-2">
+          <MessageSquare className="mt-0.5 h-4 w-4 text-slate-400" />
+          <p className="text-sm text-slate-200">{request.concepto}</p>
+        </div>
+      </div>
+
+      {showRejectForm ? (
+        <div className="space-y-3">
+          <Textarea
+            label="Motivo del rechazo"
+            placeholder="Explica por que rechazas esta solicitud..."
+            value={rejectReason}
+            onChange={handleRejectChange}
+            error={error}
+            maxLength={200}
+            showCount
+            rows={3}
+            fullWidth
+            disabled={loading}
+          />
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRejectCancel}
+              disabled={loading}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={handleRejectConfirm}
+              loading={loading}
+              icon={<X className="h-4 w-4" />}
+            >
+              Confirmar Rechazo
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex gap-3">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleApprove}
+            loading={loading}
+            icon={<Check className="h-4 w-4" />}
+            fullWidth
+          >
+            Aprobar
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => setShowRejectForm(true)}
+            disabled={loading}
+            icon={<X className="h-4 w-4" />}
+            fullWidth
+          >
+            Rechazar
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default PendingRequestCard;

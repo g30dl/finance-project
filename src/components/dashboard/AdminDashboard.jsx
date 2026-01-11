@@ -14,6 +14,8 @@ import AccountsGrid from './AccountsGrid';
 import AdminQuickActions from './AdminQuickActions';
 import SystemSummary from './SystemSummary';
 import ApproveRequestsModal from '../solicitudes/ApproveRequestsModal';
+import TransferModal from '../admin/TransferModal';
+import DepositModal from '../admin/DepositModal';
 
 function AdminDashboard() {
   const { user, logout } = useAuthContext();
@@ -21,6 +23,8 @@ function AdminDashboard() {
   const location = useLocation();
   const notice = location.state?.message;
   const [approveModalOpen, setApproveModalOpen] = useState(false);
+  const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const [depositModalOpen, setDepositModalOpen] = useState(false);
 
   const { balance: casaBalance, loading: loadingCasa } = useBalance('casa');
   const {
@@ -52,8 +56,8 @@ function AdminDashboard() {
     navigate(`/cuenta-detalle/${accountId}`);
   };
 
-  const handleDeposit = () => navigate('/depositar');
-  const handleTransfer = () => navigate('/transferir');
+  const handleDeposit = () => setDepositModalOpen(true);
+  const handleTransfer = () => setTransferModalOpen(true);
   const handleApproveRequests = () => setApproveModalOpen(true);
   const handleDirectExpense = () => navigate('/gasto-directo');
   const handleRecurringExpenses = () => navigate('/gastos-recurrentes');
@@ -169,6 +173,16 @@ function AdminDashboard() {
         requests={pendingRequestsData}
         loading={loadingPendingRequests}
         error={pendingRequestsError}
+      />
+
+      <TransferModal
+        isOpen={transferModalOpen}
+        onClose={() => setTransferModalOpen(false)}
+      />
+
+      <DepositModal
+        isOpen={depositModalOpen}
+        onClose={() => setDepositModalOpen(false)}
       />
     </div>
   );

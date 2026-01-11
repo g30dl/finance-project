@@ -9,6 +9,7 @@ import Card from '../common/Card';
 import ComingSoon from '../common/ComingSoon';
 import MonthlySummary from './MonthlySummary';
 import QuickActions from './QuickActions';
+import PersonalHistory from '../personal/PersonalHistory';
 import RequestModal from '../solicitudes/RequestModal';
 import RequestsList from '../solicitudes/RequestsList';
 
@@ -141,6 +142,12 @@ function SolicitanteDashboard() {
               loading={loadingRequests}
               error={errorRequests}
             />
+          </Card>
+        </section>
+
+        <section>
+          <Card title="Mi Historial Personal">
+            <PersonalHistory userId={userId} />
           </Card>
         </section>
 

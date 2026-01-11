@@ -6,6 +6,7 @@ import LoginScreen from './components/auth/LoginScreen';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminDashboard from './components/dashboard/AdminDashboard';
 import SolicitanteDashboard from './components/dashboard/SolicitanteDashboard';
+import PersonalExpenseForm from './components/personal/PersonalExpenseForm';
 
 function App() {
   return (
@@ -28,6 +29,15 @@ function App() {
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/gasto-personal"
+                element={
+                  <ProtectedRoute>
+                    <PersonalExpenseForm />
                   </ProtectedRoute>
                 }
               />

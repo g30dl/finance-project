@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
@@ -7,6 +7,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminDashboard from './components/dashboard/AdminDashboard';
 import SolicitanteDashboard from './components/dashboard/SolicitanteDashboard';
 import PersonalExpenseForm from './components/personal/PersonalExpenseForm';
+import ReportsPage from './pages/ReportsPage';
 
 function App() {
   return (
@@ -32,12 +33,19 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/gasto-personal"
                 element={
                   <ProtectedRoute>
                     <PersonalExpenseForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/reportes"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <ReportsPage />
                   </ProtectedRoute>
                 }
               />

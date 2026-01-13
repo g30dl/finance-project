@@ -1,4 +1,4 @@
-export const isUserIncome = (transaction, userId) => {
+﻿export const isUserIncome = (transaction, userId) => {
   if (!transaction || !userId) return false;
 
   const { tipo, cuentaOrigen, cuentaDestino } = transaction;
@@ -11,9 +11,11 @@ export const isUserIncome = (transaction, userId) => {
     case 'transferencia_casa_personal':
       return cuentaDestino === userId;
     case 'transferencia_personal_casa':
-      return cuentaDestino === userId;
+      return false;
     case 'transferencia_personal_personal':
       return cuentaDestino === userId;
+    case 'solicitud_aprobada':
+      return transaction.usuario === userId;
     default:
       return false;
   }
@@ -36,6 +38,8 @@ export const getTransactionLabel = (transaction, userId) => {
       return 'Transferencia a Casa';
     case 'transferencia_personal_personal':
       return isIncome ? 'Transferencia recibida' : 'Transferencia enviada';
+    case 'solicitud_aprobada':
+      return 'Solicitud aprobada';
     default:
       return 'Movimiento personal';
   }

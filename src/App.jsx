@@ -8,6 +8,7 @@ import AdminDashboard from './components/dashboard/AdminDashboard';
 import SolicitanteDashboard from './components/dashboard/SolicitanteDashboard';
 import PersonalExpenseForm from './components/personal/PersonalExpenseForm';
 import ReportsPage from './pages/ReportsPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <ReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/notificaciones"
+                element={
+                  <ProtectedRoute>
+                    <NotificationsPage />
                   </ProtectedRoute>
                 }
               />

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Bell, LogOut } from 'lucide-react';
+﻿import React, { useState } from 'react';
+import { LogOut } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBalance } from '../../hooks/useBalance';
 import { useFirebaseData } from '../../hooks/useFirebaseData';
@@ -16,6 +16,7 @@ import SystemSummary from './SystemSummary';
 import ApproveRequestsModal from '../solicitudes/ApproveRequestsModal';
 import TransferModal from '../admin/TransferModal';
 import DepositModal from '../admin/DepositModal';
+import NotificationCenter from '../notifications/NotificationCenter';
 
 function AdminDashboard() {
   const { user, logout } = useAuthContext();
@@ -73,18 +74,7 @@ function AdminDashboard() {
             <p className="text-sm text-slate-500">{user?.userName || 'Admin'}</p>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              aria-label="Notificaciones"
-              className="relative rounded-lg bg-slate-800 p-2 transition-colors hover:bg-slate-700"
-            >
-              <Bell className="h-5 w-5 text-slate-300" />
-              {pendingRequests > 0 ? (
-                <span className="absolute -right-1 -top-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-xs font-bold text-white">
-                  {pendingRequests}
-                </span>
-              ) : null}
-            </button>
+            <NotificationCenter />
             <button
               type="button"
               onClick={handleLogout}

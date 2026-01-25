@@ -6,8 +6,11 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../services/firebase';
 import {
-  getCurrentUser,
+  ensureAuthSession,
+  getUserFromDatabase,
   loginAsAdmin,
   loginAsUser,
   logout as logoutService,
@@ -18,33 +21,53 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
 
-  const checkAuth = useCallback(() => {
-    setLoading(true);
-    let expired = false;
-
-    if (typeof localStorage !== 'undefined') {
-      const expiry = Number(localStorage.getItem('sessionExpiry') || 0);
-      if (expiry && expiry < Date.now()) {
-        expired = true;
-      }
+  const resolveUser = useCallback(async (firebaseUser) => {
+    if (!firebaseUser) return null;
+    try {
+      return await getUserFromDatabase(firebaseUser);
+    } catch (error) {
+      console.error('Error resolviendo usuario desde database:', error);
+      return null;
     }
-
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-
-    if (!currentUser && expired) {
-      setStatusMessage('Sesion expirada. Por favor inicia sesion nuevamente.');
-    }
-
-    setLoading(false);
-    return currentUser;
   }, []);
 
+  const checkAuth = useCallback(async () => {
+    setLoading(true);
+    const resolvedUser = await resolveUser(auth.currentUser);
+    setUser(resolvedUser);
+    setLoading(false);
+    return resolvedUser;
+  }, [resolveUser]);
+
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    let mounted = true;
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!mounted) return;
+
+      setLoading(true);
+      const resolvedUser = await resolveUser(firebaseUser);
+
+      if (mounted) {
+        setUser(resolvedUser);
+        setLoading(false);
+        setAuthReady(true);
+      }
+    });
+
+    // Garantiza que exista una sesion de Firebase para leer datos publicos/autenticados.
+    ensureAuthSession().catch((error) => {
+      console.error('No se pudo iniciar sesion anonima:', error);
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, [resolveUser]);
 
   const login = useCallback(async (credentials) => {
     setStatusMessage('');
@@ -53,25 +76,29 @@ export const AuthProvider = ({ children }) => {
     try {
       const result =
         type === 'admin'
-          ? await loginAsAdmin(credentials?.pin)
-          : loginAsUser(credentials?.userId, credentials?.userName);
+          ? await loginAsAdmin(credentials)
+          : await loginAsUser(credentials?.userId, credentials?.userName);
 
       if (result?.success) {
         setUser(result.user);
+      } else if (result?.error) {
+        setStatusMessage(result.error);
       }
 
       return result;
     } catch (error) {
       console.error('Error al iniciar sesion:', error);
-      return { success: false, error: 'No se pudo iniciar sesion.' };
+      const message = 'No se pudo iniciar sesion.';
+      setStatusMessage(message);
+      return { success: false, error: message };
     }
   }, []);
 
-  const logout = useCallback(() => {
-    logoutService();
+  const logout = useCallback(async () => {
+    const result = await logoutService();
     setUser(null);
     setStatusMessage('');
-    return { success: true };
+    return result;
   }, []);
 
   const value = useMemo(
@@ -85,6 +112,10 @@ export const AuthProvider = ({ children }) => {
     }),
     [user, loading, login, logout, checkAuth, statusMessage]
   );
+
+  if (!authReady) {
+    return null;
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

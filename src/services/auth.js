@@ -2,11 +2,6 @@ import { getUserById } from './database';
 
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
-const ADMIN_PINS = {
-  '123456': { userId: 'FHrhrkmvwDMJayCTezwii2PwAW82', userName: 'Geovanny' },
-  '654321': { userId: 'NpDdD9f6XWXheWakJ31Pnp2vJBC3', userName: 'Eliana' },
-};
-
 const STORAGE_KEYS = {
   userId: 'userId',
   userName: 'userName',

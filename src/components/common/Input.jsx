@@ -23,17 +23,14 @@ const Input = forwardRef(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label ? (
-          <label
-            htmlFor={inputId}
-            className="mb-2 block text-sm font-medium text-slate-300"
-          >
+          <label htmlFor={inputId} className="mb-2 block text-sm font-medium text-muted-foreground">
             {label}
           </label>
         ) : null}
 
         <div className="relative">
           {icon ? (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               {icon}
             </div>
           ) : null}
@@ -41,29 +38,27 @@ const Input = forwardRef(
           <input
             ref={ref}
             id={inputId}
-            className={`w-full rounded-lg border-2 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder-slate-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`w-full rounded-md border bg-card px-4 py-2.5 text-foreground placeholder:text-muted-foreground/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 ${
               hasError
-                ? 'border-rose-500 focus:ring-rose-500'
-                : 'border-slate-700 hover:border-slate-600'
-            } ${icon ? 'pl-10' : ''} ${
-              iconRight || hasError ? 'pr-10' : ''
-            } ${className}`}
+                ? 'border-destructive focus:ring-destructive'
+                : 'border-border hover:border-primary/40'
+            } ${icon ? 'pl-10' : ''} ${iconRight || hasError ? 'pr-10' : ''} ${className}`}
             {...props}
           />
 
           {iconRight || hasError ? (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
               {hasError ? (
-                <AlertCircle className="h-5 w-5 text-rose-500" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
               ) : (
-                <div className="text-slate-400">{iconRight}</div>
+                <div className="text-muted-foreground">{iconRight}</div>
               )}
             </div>
           ) : null}
         </div>
 
         {helperText || error ? (
-          <p className={`mt-2 text-sm ${hasError ? 'text-rose-400' : 'text-slate-500'}`}>
+          <p className={`mt-2 text-sm ${hasError ? 'text-destructive' : 'text-muted-foreground'}`}>
             {error || helperText}
           </p>
         ) : null}
@@ -75,3 +70,4 @@ const Input = forwardRef(
 Input.displayName = 'Input';
 
 export default Input;
+

@@ -1,55 +1,41 @@
-﻿import React from 'react';
+import React from 'react';
 import { TrendingDown, TrendingUp, Wallet } from 'lucide-react';
 import { Card } from '../common';
 import { formatCurrency } from '../../utils/helpers';
 
 function PersonalStatsCard({ stats }) {
-  const {
-    received = 0,
-    spent = 0,
-    balance = 0,
-    transactionCount = 0,
-  } = stats || {};
+  const { received = 0, spent = 0, balance = 0, transactionCount = 0 } = stats || {};
+
+  const balanceTone =
+    balance >= 0
+      ? { surface: 'border-primary/35 bg-primary/10', text: 'text-primary' }
+      : { surface: 'border-warning/35 bg-warning/10', text: 'text-warning' };
 
   return (
     <Card title="Dinero Personal" subtitle={`${transactionCount} movimientos`}>
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-4">
+        <div className="rounded-md border border-success/35 bg-success/10 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-emerald-400" />
-            <span className="text-sm text-emerald-300">Total Recibido</span>
+            <TrendingUp className="h-4 w-4 text-success" />
+            <span className="text-sm text-success">Total Recibido</span>
           </div>
-          <p className="text-2xl font-bold text-emerald-400">
-            {formatCurrency(received)}
-          </p>
+          <p className="font-heading text-2xl text-success">{formatCurrency(received)}</p>
         </div>
 
-        <div className="rounded-lg border border-rose-500/30 bg-rose-950/20 p-4">
+        <div className="rounded-md border border-destructive/35 bg-destructive/10 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <TrendingDown className="h-4 w-4 text-rose-400" />
-            <span className="text-sm text-rose-300">Total Gastado</span>
+            <TrendingDown className="h-4 w-4 text-destructive" />
+            <span className="text-sm text-destructive">Total Gastado</span>
           </div>
-          <p className="text-2xl font-bold text-rose-400">
-            {formatCurrency(spent)}
-          </p>
+          <p className="font-heading text-2xl text-destructive">{formatCurrency(spent)}</p>
         </div>
 
-        <div
-          className={`rounded-lg border p-4 ${
-            balance >= 0
-              ? 'border-cyan-500/30 bg-cyan-950/20'
-              : 'border-amber-500/30 bg-amber-950/20'
-          }`}
-        >
+        <div className={`rounded-md border p-4 ${balanceTone.surface}`}>
           <div className="mb-2 flex items-center gap-2">
-            <Wallet className="h-4 w-4 text-slate-300" />
-            <span className="text-sm text-slate-300">Balance</span>
+            <Wallet className={`h-4 w-4 ${balanceTone.text}`} />
+            <span className={`text-sm ${balanceTone.text}`}>Balance</span>
           </div>
-          <p
-            className={`text-2xl font-bold ${
-              balance >= 0 ? 'text-cyan-400' : 'text-amber-400'
-            }`}
-          >
+          <p className={`font-heading text-2xl ${balanceTone.text}`}>
             {balance >= 0 ? '+' : ''}
             {formatCurrency(balance)}
           </p>
@@ -60,3 +46,4 @@ function PersonalStatsCard({ stats }) {
 }
 
 export default PersonalStatsCard;
+

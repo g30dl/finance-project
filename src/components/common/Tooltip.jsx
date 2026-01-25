@@ -24,13 +24,13 @@ function Tooltip({ content, children, position = 'top', className = '' }) {
       {isVisible && content ? (
         <div
           role="tooltip"
-          className={`pointer-events-none absolute z-50 whitespace-nowrap rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 shadow-lg ${
+          className={`pointer-events-none absolute z-50 whitespace-nowrap rounded-sm border border-border bg-card px-3 py-2 text-sm text-foreground shadow-card ${
             positions[position]
           } ${className}`}
         >
           {content}
           <div
-            className={`absolute h-2 w-2 rotate-45 border-slate-700 bg-slate-800 ${
+            className={`absolute h-2 w-2 rotate-45 border-border bg-card ${
               position === 'top'
                 ? 'bottom-[-5px] left-1/2 -translate-x-1/2 border-b border-r'
                 : ''
@@ -55,3 +55,4 @@ function Tooltip({ content, children, position = 'top', className = '' }) {
 }
 
 export default Tooltip;
+

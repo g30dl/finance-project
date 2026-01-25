@@ -31,7 +31,7 @@ function PersonalHistory({ userId }) {
 
   if (!userId) {
     return (
-      <div className="rounded-xl border border-rose-500/30 bg-rose-950/10 p-4 text-sm text-rose-300">
+      <div className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
         Falta userId para cargar el historial.
       </div>
     );
@@ -41,7 +41,7 @@ function PersonalHistory({ userId }) {
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((item) => (
-          <Skeleton key={`history-skeleton-${item}`} height="h-24" className="rounded-xl" />
+          <Skeleton key={`history-skeleton-${item}`} height="h-24" className="rounded-md" />
         ))}
       </div>
     );
@@ -67,7 +67,7 @@ function PersonalHistory({ userId }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-lg font-semibold text-slate-200">Mi Historial Personal</h3>
+        <h3 className="font-heading text-lg text-foreground">Mi Historial Personal</h3>
         <div className="w-full sm:w-48">
           <Select
             options={FILTER_OPTIONS}
@@ -79,22 +79,18 @@ function PersonalHistory({ userId }) {
       </div>
 
       {filteredGroups.length === 0 ? (
-        <p className="py-6 text-center text-sm text-slate-400">
+        <p className="py-6 text-center text-sm text-muted-foreground">
           No hay movimientos para este filtro.
         </p>
       ) : (
         filteredGroups.map((group) => (
           <div key={group.label} className="space-y-3">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               {group.label}
             </h4>
             <div className="space-y-3">
               {group.items.map((transaction) => (
-                <TransactionItem
-                  key={transaction.id}
-                  transaction={transaction}
-                  userId={userId}
-                />
+                <TransactionItem key={transaction.id} transaction={transaction} userId={userId} />
               ))}
             </div>
           </div>
@@ -105,3 +101,4 @@ function PersonalHistory({ userId }) {
 }
 
 export default PersonalHistory;
+

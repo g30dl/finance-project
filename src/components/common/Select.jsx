@@ -24,7 +24,7 @@ const Select = forwardRef(
         {label ? (
           <label
             htmlFor={selectId}
-            className="mb-2 block text-sm font-medium text-slate-300"
+            className="mb-2 block text-sm font-medium text-muted-foreground"
           >
             {label}
           </label>
@@ -34,10 +34,10 @@ const Select = forwardRef(
           <select
             ref={ref}
             id={selectId}
-            className={`w-full cursor-pointer appearance-none rounded-lg border-2 bg-slate-900 px-4 py-2.5 pr-10 text-slate-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`w-full cursor-pointer appearance-none rounded-md border bg-card px-4 py-2.5 pr-10 text-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 ${
               hasError
-                ? 'border-rose-500 focus:ring-rose-500'
-                : 'border-slate-700 hover:border-slate-600'
+                ? 'border-destructive focus:ring-destructive'
+                : 'border-border hover:border-primary/40'
             } ${className}`}
             {...props}
           >
@@ -52,11 +52,11 @@ const Select = forwardRef(
           </select>
 
           <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-            <ChevronDown className="h-5 w-5 text-slate-400" />
+            <ChevronDown className="h-5 w-5 text-muted-foreground" />
           </div>
         </div>
 
-        {error ? <p className="mt-2 text-sm text-rose-400">{error}</p> : null}
+        {error ? <p className="mt-2 text-sm text-destructive">{error}</p> : null}
       </div>
     );
   }
@@ -65,3 +65,4 @@ const Select = forwardRef(
 Select.displayName = 'Select';
 
 export default Select;
+

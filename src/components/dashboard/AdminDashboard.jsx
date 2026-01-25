@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBalance } from '../../hooks/useBalance';
@@ -65,13 +65,13 @@ function AdminDashboard() {
   const handleReports = () => navigate('/reportes');
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-20">
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+    <div className="min-h-screen bg-background pb-20 text-foreground">
+      <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4">
           <div className="space-y-1">
-            <p className="text-sm text-slate-400">Panel de Control</p>
-            <h1 className="text-2xl font-semibold text-slate-50">Administrador</h1>
-            <p className="text-sm text-slate-500">{user?.userName || 'Admin'}</p>
+            <p className="text-sm text-muted-foreground">Panel de Control</p>
+            <h1 className="font-heading text-2xl text-foreground">Administrador</h1>
+            <p className="text-sm text-muted-foreground">{user?.userName || 'Admin'}</p>
           </div>
           <div className="flex items-center gap-3">
             <NotificationCenter />
@@ -79,20 +79,20 @@ function AdminDashboard() {
               type="button"
               onClick={handleLogout}
               aria-label="Cerrar sesion"
-              className="rounded-lg bg-slate-800 p-2 transition-colors hover:bg-slate-700"
+              className="inline-flex items-center justify-center rounded-sm border border-border bg-secondary p-2 text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-primary"
             >
-              <LogOut className="h-5 w-5 text-slate-300" />
+              <LogOut className="h-5 w-5" />
             </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6">
-        {notice && (
-          <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
+      <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 slide-up">
+        {notice ? (
+          <div className="rounded-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
             {notice}
           </div>
-        )}
+        ) : null}
 
         {alerts.length > 0 ? (
           <section>
@@ -113,9 +113,7 @@ function AdminDashboard() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-slate-200">
-            Cuentas Personales
-          </h2>
+          <h2 className="mb-4 font-heading text-xl text-foreground">Cuentas Personales</h2>
           <AccountsGrid
             accounts={personalAccounts}
             loading={loadingAccounts}
@@ -165,17 +163,12 @@ function AdminDashboard() {
         error={pendingRequestsError}
       />
 
-      <TransferModal
-        isOpen={transferModalOpen}
-        onClose={() => setTransferModalOpen(false)}
-      />
+      <TransferModal isOpen={transferModalOpen} onClose={() => setTransferModalOpen(false)} />
 
-      <DepositModal
-        isOpen={depositModalOpen}
-        onClose={() => setDepositModalOpen(false)}
-      />
+      <DepositModal isOpen={depositModalOpen} onClose={() => setDepositModalOpen(false)} />
     </div>
   );
 }
 
 export default AdminDashboard;
+

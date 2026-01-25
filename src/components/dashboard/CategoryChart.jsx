@@ -5,16 +5,16 @@ import { formatCurrency } from '../../utils/helpers';
 import { getCategoryLabel } from '../../utils/transactionHelpers';
 
 const CATEGORY_COLORS = {
-  comida: '#10b981',
-  servicios: '#f59e0b',
-  transporte: '#3b82f6',
-  salud: '#ef4444',
-  educacion: '#8b5cf6',
-  hogar: '#f97316',
-  ropa: '#ec4899',
-  entretenimiento: '#06b6d4',
-  tecnologia: '#6366f1',
-  otros: '#64748b',
+  comida: 'hsl(var(--sage))',
+  servicios: 'hsl(var(--mustard))',
+  transporte: 'hsl(var(--navy))',
+  salud: 'hsl(var(--burgundy))',
+  educacion: 'hsl(var(--accent))',
+  hogar: 'hsl(var(--rust))',
+  ropa: 'hsl(var(--terracotta))',
+  entretenimiento: 'hsl(var(--gold))',
+  tecnologia: 'hsl(var(--slate))',
+  otros: 'hsl(var(--primary))',
 };
 
 function CategoryChart({ categoryBreakdown }) {
@@ -32,7 +32,7 @@ function CategoryChart({ categoryBreakdown }) {
 
   if (data.length === 0) {
     return (
-      <div className="py-6 text-center text-sm text-slate-400">
+      <div className="py-6 text-center text-sm text-muted-foreground">
         Sin gastos categorizados este mes
       </div>
     );
@@ -64,7 +64,7 @@ function CategoryChart({ categoryBreakdown }) {
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {data.map((item) => (
-          <div key={item.name} className="flex items-center gap-2 text-xs text-slate-300">
+          <div key={item.name} className="flex items-center gap-2 text-xs text-foreground/80">
             <span className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
             <span>{getCategoryIcon(item.name)} {item.label}</span>
           </div>

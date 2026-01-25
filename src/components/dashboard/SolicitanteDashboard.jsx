@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useBalance } from '../../hooks/useBalance';
@@ -22,19 +22,14 @@ function SolicitanteDashboard() {
   const notice = location.state?.message;
   const [requestModalOpen, setRequestModalOpen] = useState(false);
 
-  const { balance: personalBalance, loading: loadingPersonal, error: personalError } =
-    useBalance('personal', userId);
-  const { balance: casaBalance, loading: loadingCasa, error: casaError } =
-    useBalance('casa');
-  const {
-    requests,
-    loading: loadingRequests,
-    error: errorRequests,
-    counts,
-  } = useUserRequests(userId);
+  const { balance: personalBalance, loading: loadingPersonal, error: personalError } = useBalance(
+    'personal',
+    userId
+  );
+  const { balance: casaBalance, loading: loadingCasa, error: casaError } = useBalance('casa');
+  const { requests, loading: loadingRequests, error: errorRequests, counts } = useUserRequests(userId);
 
-  const hasAccess =
-    !loading && user && user.role === 'solicitante' && user.userId === userId;
+  const hasAccess = !loading && user && user.role === 'solicitante' && user.userId === userId;
 
   if (!loading && !hasAccess) {
     return (
@@ -64,17 +59,15 @@ function SolicitanteDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-20">
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+    <div className="min-h-screen bg-background pb-20 text-foreground">
+      <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-4">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
               Familia Finanzas
             </p>
-            <h1 className="text-2xl font-semibold text-slate-50">
-              Hola, {user?.userName || userId}
-            </h1>
-            <p className="text-sm text-slate-400">Dashboard Solicitante</p>
+            <h1 className="font-heading text-2xl text-foreground">Hola, {user?.userName || userId}</h1>
+            <p className="text-sm text-muted-foreground">Dashboard Solicitante</p>
           </div>
           <div className="flex items-center gap-3">
             <NotificationCenter />
@@ -82,7 +75,7 @@ function SolicitanteDashboard() {
               type="button"
               onClick={handleLogout}
               aria-label="Cerrar sesion"
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-700"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-sm border border-border bg-secondary px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/70 hover:text-primary"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">Cerrar sesion</span>
@@ -91,12 +84,12 @@ function SolicitanteDashboard() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-6">
-        {notice && (
-          <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
+      <main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-6 slide-up">
+        {notice ? (
+          <div className="rounded-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
             {notice}
           </div>
-        )}
+        ) : null}
 
         <section className="grid gap-4 md:grid-cols-2">
           <BalanceCard
@@ -130,7 +123,7 @@ function SolicitanteDashboard() {
 
         <section>
           {counts.pending > 0 ? (
-            <div className="rounded-xl border border-amber-500/30 bg-amber-950/10 px-4 py-3 text-sm text-amber-200">
+            <div className="rounded-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
               <span className="font-semibold">
                 {counts.pending} solicitud{counts.pending > 1 ? 'es' : ''}
               </span>{' '}
@@ -141,11 +134,7 @@ function SolicitanteDashboard() {
 
         <section>
           <Card>
-            <RequestsList
-              requests={requests}
-              loading={loadingRequests}
-              error={errorRequests}
-            />
+            <RequestsList requests={requests} loading={loadingRequests} error={errorRequests} />
           </Card>
         </section>
 

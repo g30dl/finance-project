@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { EmptyState, Select } from '../common';
 import { FileText } from 'lucide-react';
+import { EmptyState, Select } from '../common';
 import RequestCard from './RequestCard';
 
 const FILTER_OPTIONS = [
@@ -31,10 +31,7 @@ function RequestsList({ requests, loading, error }) {
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div
-            key={`request-skeleton-${index}`}
-            className="h-32 rounded-xl bg-slate-800/80 animate-pulse"
-          />
+          <div key={`request-skeleton-${index}`} className="h-32 animate-pulse rounded-md bg-secondary/80" />
         ))}
       </div>
     );
@@ -42,8 +39,8 @@ function RequestsList({ requests, loading, error }) {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-rose-500/30 bg-rose-950/10 p-6">
-        <p className="text-center text-rose-400">{error}</p>
+      <div className="rounded-md border border-destructive/30 bg-destructive/10 p-6">
+        <p className="text-center text-destructive">{error}</p>
       </div>
     );
   }
@@ -61,11 +58,9 @@ function RequestsList({ requests, loading, error }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="font-heading text-lg text-foreground">
           Mis Solicitudes
-          <span className="ml-2 text-sm font-normal text-slate-400">
-            ({filteredRequests.length})
-          </span>
+          <span className="ml-2 text-sm font-normal text-muted-foreground">({filteredRequests.length})</span>
         </h3>
         <div className="w-full sm:w-48">
           <Select
@@ -78,16 +73,13 @@ function RequestsList({ requests, loading, error }) {
       </div>
 
       {filteredRequests.length === 0 ? (
-        <p className="py-8 text-center text-slate-400">
-          No hay solicitudes con este filtro.
-        </p>
+        <p className="py-8 text-center text-sm text-muted-foreground">No hay solicitudes con este filtro.</p>
       ) : null}
 
-      {(filter === 'all' || filter === 'pendiente') &&
-      groupedRequests.pendiente.length > 0 ? (
-        <div>
-          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-amber-400">
-            PENDIENTES ({groupedRequests.pendiente.length})
+      {(filter === 'all' || filter === 'pendiente') && groupedRequests.pendiente.length > 0 ? (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-warning">
+            Pendientes ({groupedRequests.pendiente.length})
           </h4>
           <div className="space-y-3">
             {groupedRequests.pendiente.map((request) => (
@@ -97,11 +89,10 @@ function RequestsList({ requests, loading, error }) {
         </div>
       ) : null}
 
-      {(filter === 'all' || filter === 'aprobada') &&
-      groupedRequests.aprobada.length > 0 ? (
-        <div>
-          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-400">
-            APROBADAS ({groupedRequests.aprobada.length})
+      {(filter === 'all' || filter === 'aprobada') && groupedRequests.aprobada.length > 0 ? (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-success">
+            Aprobadas ({groupedRequests.aprobada.length})
           </h4>
           <div className="space-y-3">
             {groupedRequests.aprobada.map((request) => (
@@ -111,11 +102,10 @@ function RequestsList({ requests, loading, error }) {
         </div>
       ) : null}
 
-      {(filter === 'all' || filter === 'rechazada') &&
-      groupedRequests.rechazada.length > 0 ? (
-        <div>
-          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-rose-400">
-            RECHAZADAS ({groupedRequests.rechazada.length})
+      {(filter === 'all' || filter === 'rechazada') && groupedRequests.rechazada.length > 0 ? (
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold text-destructive">
+            Rechazadas ({groupedRequests.rechazada.length})
           </h4>
           <div className="space-y-3">
             {groupedRequests.rechazada.map((request) => (
@@ -129,3 +119,4 @@ function RequestsList({ requests, loading, error }) {
 }
 
 export default RequestsList;
+

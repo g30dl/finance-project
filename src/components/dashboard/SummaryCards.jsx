@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import { formatCurrency } from '../../utils/helpers';
 
 const StatCard = ({ label, value, hint, accentClass }) => (
-  <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 shadow-sm">
-    <p className="text-sm text-slate-400">{label}</p>
-    <p className={`mt-1 text-2xl font-bold ${accentClass}`}>{value}</p>
-    {hint ? <p className="mt-1 text-xs text-slate-500">{hint}</p> : null}
+  <div className="vintage-card rounded-md border p-4 shadow-card">
+    <p className="text-sm text-muted-foreground">{label}</p>
+    <p className={`mt-1 font-heading text-2xl ${accentClass}`}>{value}</p>
+    {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
   </div>
 );
 
@@ -25,28 +25,29 @@ const SummaryCards = ({ requests }) => {
         label="Pendientes"
         value={pending}
         hint="Listas para aprobar o rechazar"
-        accentClass="text-amber-200"
+        accentClass="text-warning"
       />
       <StatCard
         label="Aprobadas"
         value={approved}
         hint="Solicitudes liberadas"
-        accentClass="text-emerald-200"
+        accentClass="text-success"
       />
       <StatCard
         label="Rechazadas"
         value={rejected}
         hint="Solicitudes detenidas"
-        accentClass="text-rose-200"
+        accentClass="text-destructive"
       />
       <StatCard
         label="Total solicitado"
         value={formatCurrency(total)}
         hint="Importe acumulado"
-        accentClass="text-cyan-200"
+        accentClass="text-primary"
       />
     </div>
   );
 };
 
 export default SummaryCards;
+

@@ -1,8 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Shield, User, X } from 'lucide-react';
+import { ChevronRight, Shield, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useUsers } from '../../hooks/useUsers';
+import { Alert, Button, Input, Modal } from '../common';
+
+const getInitials = (name = '') =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
 function LoginScreen() {
   const { user, login, loading, statusMessage } = useAuthContext();
@@ -24,8 +34,7 @@ function LoginScreen() {
 
   useEffect(() => {
     if (!loading && user) {
-      const target =
-        user.role === 'admin' ? '/dashboard/admin' : `/dashboard/solicitante/${user.userId}`;
+      const target = user.role === 'admin' ? '/dashboard/admin' : `/dashboard/solicitante/${user.userId}`;
 
       navigate(target, {
         replace: true,
@@ -116,188 +125,188 @@ function LoginScreen() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-4 py-10">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-4 py-12 text-foreground">
       <header className="space-y-3 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.4em] text-cyan-400">
-          Familia Finanzas
-        </p>
-        <h1 className="text-3xl font-semibold text-slate-50">Selecciona tu usuario</h1>
-        <p className="text-sm text-slate-400">Acceso rapido para solicitantes y administradores.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary">Familia Finanzas</p>
+        <h1 className="font-heading text-4xl text-foreground">Selecciona tu usuario</h1>
+        <p className="text-sm text-muted-foreground">Acceso rapido para solicitantes y administradores.</p>
       </header>
 
-      {notice && !user && (
-        <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
+      {notice && !user ? (
+        <div className="rounded-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
           {notice}
         </div>
-      )}
+      ) : null}
 
-      {usersError && (
-        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-          Error al cargar usuarios.
-        </div>
-      )}
+      {usersError ? (
+        <Alert variant="danger" title="Error al cargar usuarios">
+          {usersError}
+        </Alert>
+      ) : null}
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Selecciona tu usuario</h2>
-          <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Solicitantes</span>
+          <h2 className="font-heading text-lg text-foreground">Solicitantes</h2>
+          <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Acceso rapido</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {usersLoading
             ? Array.from({ length: 3 }).map((_, index) => (
-                <div
-                  key={`skeleton-${index}`}
-                  className="min-h-[56px] animate-pulse rounded-2xl bg-slate-800/80"
-                />
+                <div key={`skeleton-${index}`} className="min-h-[72px] animate-pulse rounded-md bg-secondary/80" />
               ))
-            : solicitantes.map((requester) => (
-                <button
-                  key={requester.userId}
-                  type="button"
-                  disabled={disableUsers}
-                  onClick={() => handleUserLogin(requester)}
-                  className="flex min-h-[56px] flex-col items-start gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-left text-white transition-all duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <User className="h-5 w-5 text-blue-100" />
-                  <span className="text-base font-semibold">{requester.nombre}</span>
-                  <span className="text-xs text-blue-100/80">Solicitante</span>
-                </button>
-              ))}
+            : solicitantes.map((requester) => {
+                const initials = getInitials(requester.nombre);
+                return (
+                  <button
+                    key={requester.userId}
+                    type="button"
+                    disabled={disableUsers}
+                    onClick={() => handleUserLogin(requester)}
+                    className="vintage-card-hover flex min-h-[72px] items-center gap-4 rounded-md border p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary/20 bg-secondary text-primary">
+                      {initials ? (
+                        <span className="font-heading text-base">{initials}</span>
+                      ) : (
+                        <User className="h-5 w-5" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <span className="block font-heading text-sm text-foreground">{requester.nombre}</span>
+                      <span className="block text-xs text-muted-foreground">Solicitante</span>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  </button>
+                );
+              })}
         </div>
-        {!usersLoading && solicitantes.length === 0 && !usersError && (
-          <p className="text-sm text-slate-400">No hay usuarios activos.</p>
-        )}
+        {!usersLoading && solicitantes.length === 0 && !usersError ? (
+          <p className="text-sm text-muted-foreground">No hay usuarios activos.</p>
+        ) : null}
       </section>
+
+      <div className="divider-ornament flex items-center justify-center gap-4 py-2">
+        <div className="h-px flex-1 bg-border" />
+        <span className="text-xs italic text-muted-foreground font-heading">Administracion</span>
+        <div className="h-px flex-1 bg-border" />
+      </div>
 
       <section className="space-y-3">
         <button
           type="button"
           onClick={handleOpenAdmin}
           disabled={isBusy}
-          className="flex min-h-[56px] w-full items-center justify-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-base font-semibold text-slate-100 transition-all duration-200 hover:border-cyan-500 hover:text-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+          className="balance-card flex min-h-[72px] w-full items-center justify-between gap-4 rounded-md p-4 text-left text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <Shield className="h-5 w-5" />
-          Acceso para administradores
-        </button>
-        <p className="text-xs text-slate-500">Protegido. Solo cuentas autorizadas.</p>
-      </section>
-
-      {adminOpen && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/80 px-4 py-8">
-          <div className="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-50 shadow-xl">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Administradores</h3>
-              <button
-                type="button"
-                onClick={handleCloseAdmin}
-                className="rounded-full border border-slate-700 p-2 text-slate-200 transition hover:border-cyan-400 hover:text-cyan-300"
-                aria-label="Cerrar"
-              >
-                <X className="h-4 w-4" />
-              </button>
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white">
+              <Shield className="h-5 w-5" />
             </div>
-            <p className="mt-2 text-sm text-slate-400">
-              Ingresa con Google o con tu correo y contrasena.
-            </p>
-
-            {adminError && (
-              <div className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-                {adminError}
-              </div>
-            )}
-
-            <form onSubmit={handleAdminLoginPassword} className="mt-5 space-y-3">
-              <label className="block space-y-1 text-sm text-slate-300">
-                Correo
-                <input
-                  type="email"
-                  autoComplete="email"
-                  value={adminEmail}
-                  onChange={(event) => {
-                    setAdminEmail(event.target.value);
-                    if (adminError) setAdminError('');
-                  }}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-base text-slate-50 outline-none transition focus:border-cyan-400"
-                  placeholder="admin@correo.com"
-                  disabled={isBusy}
-                  required
-                />
-              </label>
-
-              <label className="block space-y-1 text-sm text-slate-300">
-                Contrasena
-                <input
-                  type="password"
-                  autoComplete="current-password"
-                  value={adminPassword}
-                  onChange={(event) => {
-                    setAdminPassword(event.target.value);
-                    if (adminError) setAdminError('');
-                  }}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-base text-slate-50 outline-none transition focus:border-cyan-400"
-                  placeholder="Tu contrasena"
-                  disabled={isBusy}
-                  required
-                />
-              </label>
-
-              <button
-                type="submit"
-                disabled={isBusy}
-                className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-xl bg-slate-100 px-4 py-3 text-base font-semibold text-slate-950 transition-all duration-200 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <Shield className="h-5 w-5" />
-                {isSubmitting ? 'Validando...' : 'Ingresar con correo'}
-              </button>
-            </form>
-
-            <div className="my-4 flex items-center gap-3">
-              <div className="h-px flex-1 bg-slate-800" />
-              <span className="text-xs uppercase tracking-[0.3em] text-slate-500">o</span>
-              <div className="h-px flex-1 bg-slate-800" />
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={handleAdminLoginGoogle}
-                disabled={isBusy}
-                className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base font-semibold text-slate-700 transition-all duration-200 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    fill="#EA4335"
-                    d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 3.3 14.7 2.2 12 2.2 6.9 2.2 2.8 6.3 2.8 11.4s4.1 9.2 9.2 9.2c5.3 0 8.8-3.7 8.8-8.9 0-.6-.1-1-.1-1.5H12z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M3.7 7.7l3.2 2.3c.9-1.8 2.8-3.1 5.1-3.1 1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 3.3 14.7 2.2 12 2.2c-3.6 0-6.8 2-8.3 5z"
-                  />
-                  <path
-                    fill="#4A90E2"
-                    d="M12 20.6c2.6 0 4.8-.9 6.4-2.5l-3-2.5c-.8.5-1.9.9-3.4.9-3.3 0-6-2.7-6-6 0-.7.1-1.3.3-1.9l-3.3-2.5c-.6 1.2-1 2.6-1 4.1 0 5.1 4.1 9.4 9.2 9.4z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M6 11.4c0-.7.1-1.3.3-1.9L3 7c-.6 1.2-1 2.6-1 4.1s.4 2.9 1 4.1l3.3-2.5c-.2-.6-.3-1.2-.3-1.9z"
-                  />
-                </svg>
-                {isSubmitting ? 'Conectando...' : 'Ingresar con Google'}
-              </button>
-              <button
-                type="button"
-                onClick={handleCloseAdmin}
-                disabled={isBusy}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-200 hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                Cancelar
-              </button>
+            <div>
+              <p className="font-heading text-base text-white">Acceso para administradores</p>
+              <p className="text-xs text-white/80">Protegido. Solo cuentas autorizadas.</p>
             </div>
           </div>
+          <ChevronRight className="h-5 w-5 text-white/90" />
+        </button>
+      </section>
+
+      <Modal
+        isOpen={adminOpen}
+        onClose={handleCloseAdmin}
+        title="Administradores"
+        size="sm"
+        closeOnOverlayClick={!isSubmitting}
+      >
+        <p className="mb-4 text-sm text-muted-foreground">
+          Ingresa con Google o con tu correo y contrasena.
+        </p>
+
+        {adminError ? (
+          <Alert variant="danger" className="mb-4">
+            {adminError}
+          </Alert>
+        ) : null}
+
+        <form onSubmit={handleAdminLoginPassword} className="space-y-3">
+          <Input
+            label="Correo"
+            type="email"
+            autoComplete="email"
+            value={adminEmail}
+            onChange={(event) => {
+              setAdminEmail(event.target.value);
+              if (adminError) setAdminError('');
+            }}
+            placeholder="admin@correo.com"
+            disabled={isBusy}
+            required
+            fullWidth
+          />
+
+          <Input
+            label="Contrasena"
+            type="password"
+            autoComplete="current-password"
+            value={adminPassword}
+            onChange={(event) => {
+              setAdminPassword(event.target.value);
+              if (adminError) setAdminError('');
+            }}
+            placeholder="Tu contrasena"
+            disabled={isBusy}
+            required
+            fullWidth
+          />
+
+          <Button type="submit" disabled={isBusy} fullWidth icon={<Shield className="h-5 w-5" />}>
+            {isSubmitting ? 'Validando...' : 'Ingresar con correo'}
+          </Button>
+        </form>
+
+        <div className="divider-ornament flex items-center justify-center gap-4 py-4">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">o</span>
+          <div className="h-px flex-1 bg-border" />
         </div>
-      )}
+
+        <div className="flex flex-col gap-3">
+          <Button
+            type="button"
+            onClick={handleAdminLoginGoogle}
+            disabled={isBusy}
+            variant="ghost"
+            fullWidth
+            className="justify-center border border-border bg-white text-foreground hover:bg-secondary"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="#EA4335"
+                d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 3.3 14.7 2.2 12 2.2 6.9 2.2 2.8 6.3 2.8 11.4s4.1 9.2 9.2 9.2c5.3 0 8.8-3.7 8.8-8.9 0-.6-.1-1-.1-1.5H12z"
+              />
+              <path
+                fill="#34A853"
+                d="M3.7 7.7l3.2 2.3c.9-1.8 2.8-3.1 5.1-3.1 1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 3.3 14.7 2.2 12 2.2c-3.6 0-6.8 2-8.3 5z"
+              />
+              <path
+                fill="#4A90E2"
+                d="M12 20.6c2.6 0 4.8-.9 6.4-2.5l-3-2.5c-.8.5-1.9.9-3.4.9-3.3 0-6-2.7-6-6 0-.7.1-1.3.3-1.9l-3.3-2.5c-.6 1.2-1 2.6-1 4.1 0 5.1 4.1 9.4 9.2 9.4z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M6 11.4c0-.7.1-1.3.3-1.9L3 7c-.6 1.2-1 2.6-1 4.1s.4 2.9 1 4.1l3.3-2.5c-.2-.6-.3-1.2-.3-1.9z"
+              />
+            </svg>
+            {isSubmitting ? 'Conectando...' : 'Ingresar con Google'}
+          </Button>
+          <Button type="button" onClick={handleCloseAdmin} disabled={isBusy} variant="outline" fullWidth>
+            Cancelar
+          </Button>
+        </div>
+      </Modal>
     </main>
   );
 }
 
 export default LoginScreen;
+

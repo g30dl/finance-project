@@ -9,32 +9,36 @@ function Badge({
   ...props
 }) {
   const variants = {
-    success: 'border-emerald-500/50 bg-emerald-500/20 text-emerald-400',
-    warning: 'border-amber-500/50 bg-amber-500/20 text-amber-400',
-    danger: 'border-rose-500/50 bg-rose-500/20 text-rose-400',
-    info: 'border-blue-500/50 bg-blue-500/20 text-blue-400',
-    neutral: 'border-slate-600/50 bg-slate-700/50 text-slate-300',
+    success: 'border-success/25 bg-success/10 text-success',
+    warning: 'border-warning/25 bg-warning/10 text-warning',
+    danger: 'border-destructive/25 bg-destructive/10 text-destructive',
+    info: 'border-info/25 bg-info/10 text-info',
+    accent: 'border-accent/25 bg-accent/10 text-accent',
+    neutral: 'border-border bg-secondary/80 text-muted-foreground',
   };
 
   const sizes = {
     sm: 'px-2 py-0.5 text-xs',
-    md: 'px-2.5 py-1 text-sm',
-    lg: 'px-3 py-1.5 text-base',
+    md: 'px-2.5 py-1 text-xs',
+    lg: 'px-3 py-1.5 text-sm',
   };
 
   const dotColors = {
-    success: 'bg-emerald-500',
-    warning: 'bg-amber-500',
-    danger: 'bg-rose-500',
-    info: 'bg-blue-500',
-    neutral: 'bg-slate-400',
+    success: 'bg-success',
+    warning: 'bg-warning',
+    danger: 'bg-destructive',
+    info: 'bg-info',
+    accent: 'bg-accent',
+    neutral: 'bg-muted-foreground',
   };
+
+  const variantStyles = variants[variant] || variants.neutral;
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border font-medium ${
-        variants[variant]
-      } ${sizes[size]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-sm border font-medium ${variantStyles} ${
+        sizes[size]
+      } ${className}`}
       {...props}
     >
       {dot ? <span className={`h-1.5 w-1.5 rounded-full ${dotColors[variant]}`} /> : null}
@@ -44,3 +48,4 @@ function Badge({
 }
 
 export default Badge;
+

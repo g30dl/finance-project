@@ -16,7 +16,7 @@ function AccountsGrid({ accounts, loading, onAccountClick, error }) {
     return (
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {Array.from({ length: 5 }).map((_, index) => (
-          <Skeleton key={`account-skeleton-${index}`} height="h-32" className="rounded-xl" />
+          <Skeleton key={`account-skeleton-${index}`} height="h-32" className="rounded-md" />
         ))}
       </div>
     );
@@ -24,7 +24,7 @@ function AccountsGrid({ accounts, loading, onAccountClick, error }) {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+      <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
         Error al cargar cuentas personales.
       </div>
     );
@@ -32,7 +32,7 @@ function AccountsGrid({ accounts, loading, onAccountClick, error }) {
 
   if (accountsArray.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-6 text-center text-sm text-slate-400">
+      <div className="vintage-card rounded-md px-4 py-6 text-center text-sm text-muted-foreground">
         No hay cuentas personales disponibles.
       </div>
     );
@@ -52,3 +52,4 @@ function AccountsGrid({ accounts, loading, onAccountClick, error }) {
 }
 
 export default AccountsGrid;
+

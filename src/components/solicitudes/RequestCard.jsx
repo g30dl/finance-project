@@ -7,29 +7,22 @@ const STATUS_CONFIG = {
   pendiente: {
     badge: 'warning',
     label: 'Pendiente',
-    card: 'border-amber-500/30 bg-amber-950/10',
+    card: 'border-warning/35 bg-warning/10',
   },
   aprobada: {
     badge: 'success',
     label: 'Aprobada',
-    card: 'border-emerald-500/30 bg-emerald-950/10',
+    card: 'border-success/35 bg-success/10',
   },
   rechazada: {
     badge: 'danger',
     label: 'Rechazada',
-    card: 'border-rose-500/30 bg-rose-950/10',
+    card: 'border-destructive/35 bg-destructive/10',
   },
 };
 
 function RequestCard({ request, onClick }) {
-  const {
-    cantidad,
-    categoria,
-    concepto,
-    estado,
-    fechaSolicitud,
-    motivoRechazo,
-  } = request;
+  const { cantidad, categoria, concepto, estado, fechaSolicitud, motivoRechazo } = request;
 
   const config = STATUS_CONFIG[estado] || STATUS_CONFIG.pendiente;
   const categoryIcon = getCategoryIcon(categoria);
@@ -40,28 +33,24 @@ function RequestCard({ request, onClick }) {
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
-      className={`rounded-xl border-2 p-4 transition-all duration-200 ${
-        onClick ? 'cursor-pointer hover:scale-[1.02] hover:shadow-lg' : ''
+      className={`vintage-card rounded-md border p-4 transition-all duration-300 ${
+        onClick ? 'cursor-pointer hover:-translate-y-1 hover:shadow-lg' : ''
       } ${config.card}`}
     >
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className={`text-2xl ${categoryColor}`}>{categoryIcon}</span>
           <div>
-            <p className="font-medium text-slate-200">
+            <p className="font-heading text-sm text-foreground">
               {categoria?.replace('_', ' ') || 'Categoria'}
             </p>
-            <p className="text-sm text-slate-400">{getRelativeTime(fechaSolicitud)}</p>
+            <p className="text-xs text-muted-foreground">{getRelativeTime(fechaSolicitud)}</p>
           </div>
         </div>
-        <p className="text-xl font-bold text-slate-100">
-          {formatCurrency(cantidad)}
-        </p>
+        <p className="font-heading text-xl text-foreground">{formatCurrency(cantidad)}</p>
       </div>
 
-      <p className="mb-3 max-h-10 overflow-hidden text-sm text-slate-300">
-        {concepto}
-      </p>
+      <p className="mb-3 max-h-10 overflow-hidden text-sm text-muted-foreground">{concepto}</p>
 
       <div className="flex items-center justify-between">
         <Badge variant={config.badge} dot>
@@ -70,8 +59,8 @@ function RequestCard({ request, onClick }) {
       </div>
 
       {estado === 'rechazada' && motivoRechazo ? (
-        <div className="mt-3 border-t border-rose-500/30 pt-3">
-          <p className="text-sm text-rose-300">
+        <div className="mt-3 border-t border-destructive/30 pt-3">
+          <p className="text-sm text-destructive">
             <span className="font-medium">Motivo: </span>
             {motivoRechazo}
           </p>
@@ -82,3 +71,4 @@ function RequestCard({ request, onClick }) {
 }
 
 export default RequestCard;
+

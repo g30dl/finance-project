@@ -148,9 +148,9 @@ function DepositModal({ isOpen, onClose }) {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <p className="text-sm font-medium text-slate-300">Depositar a</p>
+          <p className="text-sm font-medium text-muted-foreground">Depositar a</p>
           <div className="mt-2 space-y-2">
-            <label className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-slate-200">
+            <label className="flex items-center gap-2 rounded-md border border-border/80 bg-secondary/70 px-3 py-2 text-sm text-foreground">
               <input
                 type="radio"
                 name="deposit-type"
@@ -160,7 +160,7 @@ function DepositModal({ isOpen, onClose }) {
               />
               Dinero Casa (Gastos familiares)
             </label>
-            <label className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-sm text-slate-200">
+            <label className="flex items-center gap-2 rounded-md border border-border/80 bg-secondary/70 px-3 py-2 text-sm text-foreground">
               <input
                 type="radio"
                 name="deposit-type"

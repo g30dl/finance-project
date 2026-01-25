@@ -4,24 +4,24 @@ import { formatCurrency } from '../../utils/helpers';
 
 const getStatus = (balance) => {
   if (balance >= 50) {
-    return { color: 'green', label: 'Saludable', icon: '🟢' };
+    return { color: 'green', label: 'Saludable' };
   }
   if (balance >= 20) {
-    return { color: 'yellow', label: 'Bajo', icon: '🟡' };
+    return { color: 'yellow', label: 'Bajo' };
   }
-  return { color: 'red', label: 'Critico', icon: '🔴' };
+  return { color: 'red', label: 'Critico' };
 };
 
 const STATUS_CLASSES = {
-  green: 'border-emerald-500/50 bg-emerald-950/20 hover:bg-emerald-950/30',
-  yellow: 'border-amber-500/50 bg-amber-950/20 hover:bg-amber-950/30',
-  red: 'border-rose-500/50 bg-rose-950/20 hover:bg-rose-950/30',
+  green: 'border-success/45 bg-success/10 hover:bg-success/15',
+  yellow: 'border-warning/45 bg-warning/10 hover:bg-warning/15',
+  red: 'border-destructive/45 bg-destructive/10 hover:bg-destructive/15',
 };
 
 const STATUS_TEXT = {
-  green: 'text-emerald-400',
-  yellow: 'text-amber-400',
-  red: 'text-rose-400',
+  green: 'text-success',
+  yellow: 'text-warning',
+  red: 'text-destructive',
 };
 
 function PersonalAccountCard({ account, onClick }) {
@@ -35,26 +35,25 @@ function PersonalAccountCard({ account, onClick }) {
       type="button"
       onClick={onClick}
       disabled={isDisabled}
-      className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 hover:scale-105 hover:shadow-lg ${
+      className={`w-full rounded-md border p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
         STATUS_CLASSES[status.color]
-      } ${isDisabled ? 'cursor-not-allowed opacity-50 hover:scale-100' : ''}`}
+      } ${isDisabled ? 'cursor-not-allowed border-border bg-secondary/70 opacity-60 hover:translate-y-0 hover:shadow-none' : ''}`}
     >
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <User className="h-4 w-4 text-slate-400" />
-          <p className="text-sm font-medium text-slate-200 truncate">
-            {nombreUsuario || 'Cuenta'}
-          </p>
+          <User className="h-4 w-4 text-muted-foreground" />
+          <p className="truncate font-heading text-sm text-foreground">{nombreUsuario || 'Cuenta'}</p>
         </div>
-        <span className="text-lg">{status.icon}</span>
+        <span className={`mt-1 h-2.5 w-2.5 rounded-full ${STATUS_TEXT[status.color]} bg-current`} />
       </div>
 
-      <p className={`mb-1 text-2xl font-bold ${STATUS_TEXT[status.color]}`}>
+      <p className={`mb-1 font-heading text-2xl ${STATUS_TEXT[status.color]}`}>
         {formatCurrency(balanceValue)}
       </p>
-      <p className="text-xs text-slate-500">{status.label}</p>
+      <p className="text-xs text-muted-foreground">{status.label}</p>
     </button>
   );
 }
 
 export default PersonalAccountCard;
+

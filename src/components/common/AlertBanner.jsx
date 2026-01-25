@@ -3,9 +3,9 @@ import { AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 const getAlertStyles = (type) => {
   const styles = {
-    warning: 'bg-amber-950/30 border-amber-500/50 text-amber-200',
-    danger: 'bg-rose-950/30 border-rose-500/50 text-rose-200',
-    info: 'bg-blue-950/30 border-blue-500/50 text-blue-200',
+    warning: 'border-warning/40 bg-warning/10 text-warning',
+    danger: 'border-destructive/40 bg-destructive/10 text-destructive',
+    info: 'border-info/40 bg-info/10 text-info',
   };
   return styles[type] || styles.info;
 };
@@ -23,24 +23,24 @@ function AlertBanner({ alerts = [], onDismiss }) {
   if (!alerts || alerts.length === 0) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {alerts.map((alert) => (
         <div
           key={alert.id}
-          className={`flex flex-col gap-3 rounded-lg border-2 p-4 sm:flex-row sm:items-center sm:justify-between ${getAlertStyles(
+          className={`flex flex-col gap-3 rounded-md border p-4 shadow-card sm:flex-row sm:items-center sm:justify-between ${getAlertStyles(
             alert.type
           )}`}
         >
           <div className="flex items-center gap-3">
             {getIcon(alert.type)}
-            <p className="text-sm font-medium">{alert.message}</p>
+            <p className="text-sm font-medium text-current">{alert.message}</p>
           </div>
           <div className="flex items-center gap-2">
             {alert.action ? (
               <button
                 type="button"
                 onClick={alert.action.onClick}
-                className="rounded bg-white/10 px-3 py-1 text-xs font-medium transition-colors hover:bg-white/20"
+                className="rounded-sm border border-current/25 bg-white/50 px-3 py-1 text-xs font-heading font-semibold text-current transition-colors hover:bg-white/70"
               >
                 {alert.action.text}
               </button>
@@ -50,7 +50,7 @@ function AlertBanner({ alerts = [], onDismiss }) {
                 type="button"
                 onClick={() => onDismiss(alert.id)}
                 aria-label="Cerrar alerta"
-                className="rounded p-1 transition-colors hover:bg-white/10"
+                className="rounded-sm p-1 transition-colors hover:bg-white/40"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -63,3 +63,4 @@ function AlertBanner({ alerts = [], onDismiss }) {
 }
 
 export default AlertBanner;
+

@@ -7,19 +7,19 @@ function ComponentsShowcase() {
   const [inputValue, setInputValue] = useState('');
 
   return (
-    <div className="min-h-screen bg-slate-950 p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-6xl space-y-12">
         <header>
-          <h1 className="mb-2 text-4xl font-bold text-white">
+          <h1 className="mb-2 text-4xl font-bold text-foreground">
             Biblioteca de Componentes
           </h1>
-          <p className="text-slate-400">
+          <p className="text-muted-foreground">
             Vista previa de los componentes UI disponibles.
           </p>
         </header>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Buttons</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Buttons</h2>
           <div className="space-y-4">
             <div className="flex flex-wrap gap-3">
               <UI.Button variant="primary">Primary</UI.Button>
@@ -42,7 +42,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Inputs</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Inputs</h2>
           <div className="max-w-md space-y-4">
             <UI.Input
               label="Email"
@@ -66,7 +66,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Select</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Select</h2>
           <div className="max-w-md">
             <UI.Select
               label="Categoria"
@@ -80,7 +80,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Textarea</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Textarea</h2>
           <div className="max-w-md">
             <UI.Textarea
               label="Descripcion"
@@ -94,7 +94,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Badges</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Badges</h2>
           <div className="flex flex-wrap gap-3">
             <UI.Badge variant="success">Exitoso</UI.Badge>
             <UI.Badge variant="warning">Advertencia</UI.Badge>
@@ -116,7 +116,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Alerts</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Alerts</h2>
           <div className="max-w-2xl space-y-3">
             <UI.Alert variant="success" title="Exito">
               Tu operacion se completo correctamente.
@@ -132,7 +132,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Cards</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Cards</h2>
           <div className="grid gap-4 md:grid-cols-2">
             <UI.Card title="Card Simple">Contenido de la tarjeta.</UI.Card>
             <UI.Card
@@ -150,7 +150,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Modal</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Modal</h2>
           <UI.Button onClick={() => setModalOpen(true)}>Abrir Modal</UI.Button>
 
           <UI.Modal
@@ -158,7 +158,7 @@ function ComponentsShowcase() {
             onClose={() => setModalOpen(false)}
             title="Modal de Ejemplo"
           >
-            <p className="mb-4 text-slate-300">Este es el contenido del modal.</p>
+            <p className="mb-4 text-muted-foreground">Este es el contenido del modal.</p>
             <div className="flex justify-end gap-3">
               <UI.Button variant="ghost" onClick={() => setModalOpen(false)}>
                 Cancelar
@@ -169,7 +169,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Empty State</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Empty State</h2>
           <UI.Card>
             <UI.EmptyState
               icon={<Trash2 size={48} />}
@@ -181,7 +181,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Tooltip</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Tooltip</h2>
           <div className="flex flex-wrap gap-4">
             <UI.Tooltip content="Tooltip arriba" position="top">
               <UI.Button variant="outline">Hover Top</UI.Button>
@@ -199,7 +199,7 @@ function ComponentsShowcase() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-2xl font-bold text-white">Skeleton</h2>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">Skeleton</h2>
           <div className="max-w-md space-y-3">
             <UI.Skeleton height="h-12" />
             <UI.Skeleton height="h-6" width="w-3/4" />

@@ -44,7 +44,7 @@ function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-foreground/35 backdrop-blur-sm"
         onClick={closeOnOverlayClick ? onClose : undefined}
         aria-hidden="true"
       />
@@ -52,19 +52,19 @@ function Modal({
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative w-full ${sizes[size]} max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl ${className}`}
+        className={`vintage-card relative w-full ${sizes[size]} max-h-[90vh] overflow-y-auto rounded-md shadow-card ${className}`}
       >
         {title || showCloseButton ? (
-          <div className="flex items-center justify-between border-b border-slate-700 p-6">
-            {title ? <h2 className="text-xl font-semibold text-slate-100">{title}</h2> : null}
+          <div className="flex items-center justify-between border-b border-border/80 p-6">
+            {title ? <h2 className="font-heading text-xl text-foreground">{title}</h2> : null}
             {showCloseButton ? (
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Cerrar"
-                className="rounded-lg p-2 transition-colors hover:bg-slate-800"
+                className="rounded-sm border border-border bg-secondary p-2 text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
               >
-                <X className="h-5 w-5 text-slate-400" />
+                <X className="h-5 w-5" />
               </button>
             ) : null}
           </div>
@@ -77,3 +77,4 @@ function Modal({
 }
 
 export default Modal;
+

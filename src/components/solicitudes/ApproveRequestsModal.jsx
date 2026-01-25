@@ -38,9 +38,7 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
 
     const result = await approve(requestId, user?.userId);
     if (result.success) {
-      setSuccessMessage(
-        `Solicitud aprobada. Nuevo saldo: ${formatCurrency(result.newBalance)}`
-      );
+      setSuccessMessage(`Solicitud aprobada. Nuevo saldo: ${formatCurrency(result.newBalance)}`);
       setTimeout(() => setSuccessMessage(''), 3000);
     }
 
@@ -65,7 +63,7 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
       return (
         <div className="space-y-3">
           {[1, 2].map((i) => (
-            <div key={`pending-skeleton-${i}`} className="h-48 rounded-xl bg-slate-800/80 animate-pulse" />
+            <div key={`pending-skeleton-${i}`} className="h-48 animate-pulse rounded-md bg-secondary/80" />
           ))}
         </div>
       );
@@ -97,10 +95,16 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
   }, [data, handleApprove, handleReject, isProcessing, loadingRequests, processingId]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Aprobar Solicitudes" size="lg" closeOnOverlayClick={false}>
-      <div className="mb-6 rounded-xl border border-blue-500/30 bg-blue-950/10 p-4">
-        <p className="text-sm text-blue-200">Dinero Casa disponible</p>
-        <p className="text-2xl font-bold text-blue-400">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Aprobar Solicitudes"
+      size="lg"
+      closeOnOverlayClick={false}
+    >
+      <div className="balance-card mb-6 rounded-md p-5 text-white shadow-card">
+        <p className="text-sm text-white/85">Dinero Casa disponible</p>
+        <p className="mt-1 font-heading text-3xl">
           {loadingCasa ? 'Cargando...' : formatCurrency(casaBalance)}
         </p>
       </div>
@@ -111,7 +115,7 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
         </Alert>
       ) : null}
 
-      {(approveError || rejectError) ? (
+      {approveError || rejectError ? (
         <Alert variant="danger" className="mb-4">
           {approveError || rejectError}
         </Alert>
@@ -129,3 +133,4 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
 }
 
 export default ApproveRequestsModal;
+

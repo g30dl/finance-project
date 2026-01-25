@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Home, TrendingDown, TrendingUp, Users } from 'lucide-react';
 import {
   Bar,
@@ -19,9 +19,27 @@ import { formatCurrency } from '../../utils/helpers';
 
 const formatTooltip = (value) => formatCurrency(value);
 
+const CHART_THEME = {
+  grid: 'hsl(var(--border))',
+  axis: 'hsl(var(--muted-foreground))',
+  tooltip: {
+    backgroundColor: 'hsl(var(--card))',
+    border: '1px solid hsl(var(--border))',
+    borderRadius: '6px',
+    color: 'hsl(var(--foreground))',
+  },
+};
+
+const CHART_COLORS = {
+  ingresos: 'hsl(var(--sage))',
+  egresos: 'hsl(var(--terracotta))',
+  balance: 'hsl(var(--primary))',
+  casa: 'hsl(var(--navy))',
+  personal: 'hsl(var(--sage))',
+};
+
 function AccountTypeReport() {
-  const { casaData, personalData, comparativa, loading, error } =
-    useAccountTypeData();
+  const { casaData, personalData, comparativa, loading, error } = useAccountTypeData();
   const { users } = useUsers();
   const [activeTab, setActiveTab] = useState('casa');
 
@@ -55,14 +73,14 @@ function AccountTypeReport() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
+      <div className="flex flex-wrap gap-2 border-b border-border/80 pb-2">
         <button
           type="button"
           onClick={() => setActiveTab('casa')}
-          className={`flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-colors ${
+          className={`flex items-center gap-2 rounded-sm border px-3 py-2 text-sm font-semibold transition-colors ${
             activeTab === 'casa'
-              ? 'border-b-2 border-blue-400 text-blue-400'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'border-navy/40 bg-navy/10 text-navy'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
           <Home className="h-4 w-4" />
@@ -71,10 +89,10 @@ function AccountTypeReport() {
         <button
           type="button"
           onClick={() => setActiveTab('personal')}
-          className={`flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-colors ${
+          className={`flex items-center gap-2 rounded-sm border px-3 py-2 text-sm font-semibold transition-colors ${
             activeTab === 'personal'
-              ? 'border-b-2 border-emerald-400 text-emerald-400'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'border-sage/40 bg-sage/10 text-sage'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
           <Users className="h-4 w-4" />
@@ -83,53 +101,44 @@ function AccountTypeReport() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-2 border-emerald-500/30 bg-emerald-950/20">
+        <Card className="border border-success/35 bg-success/10">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-emerald-500/20 p-3">
-              <TrendingUp className="h-6 w-6 text-emerald-400" />
+            <div className="rounded-sm border border-success/30 bg-success/10 p-3 text-success">
+              <TrendingUp className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Total Recibido</p>
-              <p className="text-2xl font-bold text-emerald-400">
-                {formatCurrency(currentData.totalRecibido)}
-              </p>
+              <p className="text-sm text-muted-foreground">Total Recibido</p>
+              <p className="font-heading text-2xl text-success">{formatCurrency(currentData.totalRecibido)}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="border-2 border-rose-500/30 bg-rose-950/20">
+        <Card className="border border-destructive/35 bg-destructive/10">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-rose-500/20 p-3">
-              <TrendingDown className="h-6 w-6 text-rose-400" />
+            <div className="rounded-sm border border-destructive/30 bg-destructive/10 p-3 text-destructive">
+              <TrendingDown className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-slate-400">Total Gastado</p>
-              <p className="text-2xl font-bold text-rose-400">
-                {formatCurrency(currentData.totalGastado)}
-              </p>
+              <p className="text-sm text-muted-foreground">Total Gastado</p>
+              <p className="font-heading text-2xl text-destructive">{formatCurrency(currentData.totalGastado)}</p>
             </div>
           </div>
         </Card>
 
         <Card
-          className={`border-2 ${
+          className={`border ${
             currentData.balance >= 0
-              ? 'border-cyan-500/30 bg-cyan-950/20'
-              : 'border-amber-500/30 bg-amber-950/20'
+              ? 'border-primary/35 bg-primary/10'
+              : 'border-warning/35 bg-warning/10'
           }`}
         >
           <div>
-            <p className="text-sm text-slate-400">Balance Neto</p>
-            <p
-              className={`text-2xl font-bold ${
-                currentData.balance >= 0 ? 'text-cyan-400' : 'text-amber-400'
-              }`}
-            >
+            <p className="text-sm text-muted-foreground">Balance Neto</p>
+            <p className={`font-heading text-2xl ${currentData.balance >= 0 ? 'text-primary' : 'text-warning'}`}>
               {formatCurrency(currentData.balance)}
             </p>
-            <p className="mt-1 text-xs text-slate-500">
-              {currentData.transacciones.ingresos} ingresos,{' '}
-              {currentData.transacciones.egresos} egresos
+            <p className="mt-1 text-xs text-muted-foreground">
+              {currentData.transacciones.ingresos} ingresos, {currentData.transacciones.egresos} egresos
             </p>
           </div>
         </Card>
@@ -139,49 +148,20 @@ function AccountTypeReport() {
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={currentData.ultimosMeses}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="mes" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip
-                formatter={formatTooltip}
-                contentStyle={{
-                  backgroundColor: '#0f172a',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                }}
-              />
+              <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+              <XAxis dataKey="mes" stroke={CHART_THEME.axis} />
+              <YAxis stroke={CHART_THEME.axis} />
+              <Tooltip formatter={formatTooltip} contentStyle={CHART_THEME.tooltip} />
               <Legend />
-              <Line
-                type="monotone"
-                dataKey="ingresos"
-                stroke="#34d399"
-                strokeWidth={2}
-                name="Ingresos"
-              />
-              <Line
-                type="monotone"
-                dataKey="egresos"
-                stroke="#f87171"
-                strokeWidth={2}
-                name="Egresos"
-              />
-              <Line
-                type="monotone"
-                dataKey="balance"
-                stroke="#38bdf8"
-                strokeWidth={2}
-                name="Balance"
-              />
+              <Line type="monotone" dataKey="ingresos" stroke={CHART_COLORS.ingresos} strokeWidth={2} name="Ingresos" />
+              <Line type="monotone" dataKey="egresos" stroke={CHART_COLORS.egresos} strokeWidth={2} name="Egresos" />
+              <Line type="monotone" dataKey="balance" stroke={CHART_COLORS.balance} strokeWidth={2} name="Balance" />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </Card>
 
-      {activeTab === 'casa' ? (
-        <CasaDistribution data={casaData} />
-      ) : (
-        <PersonalDistribution data={personalData} userMap={userMap} />
-      )}
+      {activeTab === 'casa' ? <CasaDistribution data={casaData} /> : <PersonalDistribution data={personalData} userMap={userMap} />}
 
       <GlobalComparison comparativa={comparativa} />
     </div>
@@ -203,23 +183,16 @@ function CasaDistribution({ data }) {
   return (
     <Card title="Top 5 Categorias Mas Gastadas">
       {categories.length === 0 ? (
-        <p className="text-sm text-slate-400">Sin categorias registradas.</p>
+        <p className="text-sm text-muted-foreground">Sin categorias registradas.</p>
       ) : (
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={categories}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="categoria" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip
-                formatter={formatTooltip}
-                contentStyle={{
-                  backgroundColor: '#0f172a',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                }}
-              />
-              <Bar dataKey="monto" fill="#60a5fa" name="Gasto Total" />
+              <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+              <XAxis dataKey="categoria" stroke={CHART_THEME.axis} />
+              <YAxis stroke={CHART_THEME.axis} />
+              <Tooltip formatter={formatTooltip} contentStyle={CHART_THEME.tooltip} />
+              <Bar dataKey="monto" fill={CHART_COLORS.casa} name="Gasto Total" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -242,23 +215,16 @@ function PersonalDistribution({ data, userMap }) {
   return (
     <Card title="Distribucion del Gasto por Usuario">
       {users.length === 0 ? (
-        <p className="text-sm text-slate-400">Sin movimientos personales.</p>
+        <p className="text-sm text-muted-foreground">Sin movimientos personales.</p>
       ) : (
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={users}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="usuario" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip
-                formatter={formatTooltip}
-                contentStyle={{
-                  backgroundColor: '#0f172a',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                }}
-              />
-              <Bar dataKey="monto" fill="#34d399" name="Gasto Total" />
+              <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+              <XAxis dataKey="usuario" stroke={CHART_THEME.axis} />
+              <YAxis stroke={CHART_THEME.axis} />
+              <Tooltip formatter={formatTooltip} contentStyle={CHART_THEME.tooltip} />
+              <Bar dataKey="monto" fill={CHART_COLORS.personal} name="Gasto Total" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -274,63 +240,43 @@ function GlobalComparison({ comparativa }) {
     <Card title="Comparativa Global del Sistema">
       <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-slate-300">
-            Distribucion de Ingresos
-          </h4>
+          <h4 className="mb-3 font-heading text-sm text-foreground">Distribucion de Ingresos</h4>
           <div className="space-y-3">
-            <ProgressRow
-              label="Dinero Casa"
-              value={comparativa.porcentajes.casaRecibido}
-              color="blue"
-            />
+            <ProgressRow label="Dinero Casa" value={comparativa.porcentajes.casaRecibido} color="casa" />
             <ProgressRow
               label="Cuentas Personales"
               value={comparativa.porcentajes.personalRecibido}
-              color="emerald"
+              color="personal"
             />
           </div>
         </div>
 
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-slate-300">
-            Distribucion de Gastos
-          </h4>
+          <h4 className="mb-3 font-heading text-sm text-foreground">Distribucion de Gastos</h4>
           <div className="space-y-3">
-            <ProgressRow
-              label="Dinero Casa"
-              value={comparativa.porcentajes.casaGastado}
-              color="blue"
-            />
+            <ProgressRow label="Dinero Casa" value={comparativa.porcentajes.casaGastado} color="casa" />
             <ProgressRow
               label="Cuentas Personales"
               value={comparativa.porcentajes.personalGastado}
-              color="emerald"
+              color="personal"
             />
           </div>
         </div>
       </div>
 
-      <div className="mt-6 border-t border-slate-700 pt-4">
+      <div className="mt-6 border-t border-border/80 pt-4">
         <div className="grid gap-4 md:grid-cols-3">
           <div className="text-center">
-            <p className="text-sm text-slate-400">Total Recibido</p>
-            <p className="text-xl font-bold text-emerald-400">
-              {formatCurrency(comparativa.totalRecibido)}
-            </p>
+            <p className="text-sm text-muted-foreground">Total Recibido</p>
+            <p className="font-heading text-xl text-success">{formatCurrency(comparativa.totalRecibido)}</p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-slate-400">Total Gastado</p>
-            <p className="text-xl font-bold text-rose-400">
-              {formatCurrency(comparativa.totalGastado)}
-            </p>
+            <p className="text-sm text-muted-foreground">Total Gastado</p>
+            <p className="font-heading text-xl text-destructive">{formatCurrency(comparativa.totalGastado)}</p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-slate-400">Balance Sistema</p>
-            <p
-              className={`text-xl font-bold ${
-                comparativa.balance >= 0 ? 'text-cyan-400' : 'text-amber-400'
-              }`}
-            >
+            <p className="text-sm text-muted-foreground">Balance Sistema</p>
+            <p className={`font-heading text-xl ${comparativa.balance >= 0 ? 'text-primary' : 'text-warning'}`}>
               {formatCurrency(comparativa.balance)}
             </p>
           </div>
@@ -341,18 +287,17 @@ function GlobalComparison({ comparativa }) {
 }
 
 function ProgressRow({ label, value, color }) {
-  const colorClass = color === 'emerald' ? 'bg-emerald-500' : 'bg-blue-500';
-  const textClass = color === 'emerald' ? 'text-emerald-400' : 'text-blue-400';
+  const isPersonal = color === 'personal';
+  const colorClass = isPersonal ? 'bg-sage' : 'bg-navy';
+  const textClass = isPersonal ? 'text-sage' : 'text-navy';
 
   return (
     <div>
       <div className="mb-1 flex justify-between text-sm">
         <span className={textClass}>{label}</span>
-        <span className="font-semibold text-slate-200">
-          {Number(value || 0).toFixed(1)}%
-        </span>
+        <span className="font-semibold text-foreground">{Number(value || 0).toFixed(1)}%</span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+      <div className="h-2 overflow-hidden rounded-sm bg-secondary">
         <div className={`h-full ${colorClass}`} style={{ width: `${value}%` }} />
       </div>
     </div>
@@ -360,3 +305,4 @@ function ProgressRow({ label, value, color }) {
 }
 
 export default AccountTypeReport;
+

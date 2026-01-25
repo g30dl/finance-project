@@ -86,8 +86,8 @@ function PersonReportView() {
 
       {!selectedUser ? (
         <Card>
-          <div className="py-12 text-center text-slate-400">
-            <Users className="mx-auto mb-4 h-12 w-12" />
+          <div className="py-12 text-center text-muted-foreground">
+            <Users className="mx-auto mb-4 h-12 w-12 text-primary" />
             <p>Selecciona un usuario para ver su reporte.</p>
           </div>
         </Card>

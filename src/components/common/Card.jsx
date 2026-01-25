@@ -21,18 +21,18 @@ function Card({
 
   return (
     <div
-      className={`rounded-xl bg-slate-900/50 ${noBorder ? '' : 'border border-slate-700'} ${
+      className={`vintage-card rounded-md text-foreground shadow-card ${noBorder ? 'border-0' : ''} ${
         paddings[padding]
       } ${className}`}
       {...props}
     >
       {hasHeader ? (
-        <div className="mb-4 border-b border-slate-700 pb-4">
+        <div className="mb-5 border-b border-border/80 pb-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              {title ? <h3 className="text-lg font-semibold text-slate-200">{title}</h3> : null}
+              {title ? <h3 className="font-heading text-lg text-foreground">{title}</h3> : null}
               {subtitle ? (
-                <p className="mt-1 text-sm text-slate-400">{subtitle}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
               ) : null}
             </div>
             {headerAction ? <div>{headerAction}</div> : null}
@@ -46,3 +46,4 @@ function Card({
 }
 
 export default Card;
+

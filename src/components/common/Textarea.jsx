@@ -25,10 +25,7 @@ const Textarea = forwardRef(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label ? (
-          <label
-            htmlFor={textareaId}
-            className="mb-2 block text-sm font-medium text-slate-300"
-          >
+          <label htmlFor={textareaId} className="mb-2 block text-sm font-medium text-muted-foreground">
             {label}
           </label>
         ) : null}
@@ -39,10 +36,10 @@ const Textarea = forwardRef(
           rows={rows}
           maxLength={maxLength}
           value={value}
-          className={`w-full resize-none rounded-lg border-2 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder-slate-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`w-full resize-none rounded-md border bg-card px-4 py-2.5 text-foreground placeholder:text-muted-foreground/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 ${
             hasError
-              ? 'border-rose-500 focus:ring-rose-500'
-              : 'border-slate-700 hover:border-slate-600'
+              ? 'border-destructive focus:ring-destructive'
+              : 'border-border hover:border-primary/40'
           } ${className}`}
           {...props}
         />
@@ -50,7 +47,7 @@ const Textarea = forwardRef(
         <div className="mt-2 flex items-start justify-between">
           <div className="flex-1">
             {helperText || error ? (
-              <p className={`text-sm ${hasError ? 'text-rose-400' : 'text-slate-500'}`}>
+              <p className={`text-sm ${hasError ? 'text-destructive' : 'text-muted-foreground'}`}>
                 {error || helperText}
               </p>
             ) : null}
@@ -58,7 +55,7 @@ const Textarea = forwardRef(
           {showCount && maxLength ? (
             <p
               className={`ml-2 text-sm ${
-                currentLength >= maxLength * 0.9 ? 'text-amber-400' : 'text-slate-500'
+                currentLength >= maxLength * 0.9 ? 'text-warning' : 'text-muted-foreground'
               }`}
             >
               {currentLength}/{maxLength}
@@ -73,3 +70,4 @@ const Textarea = forwardRef(
 Textarea.displayName = 'Textarea';
 
 export default Textarea;
+

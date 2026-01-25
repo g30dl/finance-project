@@ -263,64 +263,60 @@ function TransferModal({ isOpen, onClose }) {
             </Alert>
           ) : null}
 
-          <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-950/10 p-6">
-            <h4 className="mb-4 font-semibold text-cyan-300">
-              Resumen de la transferencia
-            </h4>
+          <div className="vintage-card rounded-md border border-primary/30 bg-primary/5 p-6">
+            <h4 className="mb-4 font-heading text-base text-primary">Resumen de la transferencia</h4>
 
             <div className="mb-4 text-center">
-              <p className="text-sm text-slate-400">Monto a transferir</p>
-              <p className="text-4xl font-bold text-cyan-400">
-                {formatCurrency(amountValue)}
-              </p>
+              <p className="text-sm text-muted-foreground">Monto a transferir</p>
+              <p className="font-heading text-4xl text-primary">{formatCurrency(amountValue)}</p>
             </div>
 
-            <div className="mb-4 rounded-lg border border-slate-700 bg-slate-900/50 p-3">
-              <p className="text-xs text-slate-500">Concepto</p>
-              <p className="text-sm text-slate-200">{formData.concepto}</p>
+            <div className="mb-4 rounded-md border border-border/80 bg-secondary/70 p-3">
+              <p className="text-xs text-muted-foreground">Concepto</p>
+              <p className="text-sm text-foreground">{formData.concepto}</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-4">
-                <p className="mb-2 text-xs font-semibold uppercase text-slate-500">
+              <div className="rounded-md border border-border/80 bg-secondary/70 p-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   Cuenta Origen
                 </p>
-                <p className="mb-3 text-sm text-slate-300">
+                <p className="mb-3 text-sm text-foreground">
                   {accountOptions.find((opt) => opt.value === formData.origen)?.label}
                 </p>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Actual:</span>
-                    <span className="font-semibold text-slate-200">
+                    <span className="text-muted-foreground">Actual:</span>
+                    <span className="font-semibold text-foreground">
                       {formatCurrency(saldosResultantes?.origenActual)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Despues:</span>
-                    <span className="font-semibold text-rose-400">
+                    <span className="text-muted-foreground">Despues:</span>
+                    <span className="font-semibold text-destructive">
                       {formatCurrency(saldosResultantes?.origenNuevo)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-4">
-                <p className="mb-2 text-xs font-semibold uppercase text-slate-500">
+              <div className="rounded-md border border-border/80 bg-secondary/70 p-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   Cuenta Destino
                 </p>
-                <p className="mb-3 text-sm text-slate-300">
+                <p className="mb-3 text-sm text-foreground">
                   {accountOptions.find((opt) => opt.value === formData.destino)?.label}
                 </p>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Actual:</span>
-                    <span className="font-semibold text-slate-200">
+                    <span className="text-muted-foreground">Actual:</span>
+                    <span className="font-semibold text-foreground">
                       {formatCurrency(saldosResultantes?.destinoActual)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Despues:</span>
-                    <span className="font-semibold text-emerald-400">
+                    <span className="text-muted-foreground">Despues:</span>
+                    <span className="font-semibold text-success">
                       {formatCurrency(saldosResultantes?.destinoNuevo)}
                     </span>
                   </div>

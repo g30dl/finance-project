@@ -1,44 +1,38 @@
-﻿import React from 'react';
+import React from 'react';
 import { CheckCircle, Clock, Home, XCircle } from 'lucide-react';
 import { Card } from '../common';
 import { formatCurrency } from '../../utils/helpers';
 
 const STAT_STYLES = {
   blue: {
-    container: 'border-blue-500/30 bg-blue-950/20',
-    icon: 'text-blue-400',
-    label: 'text-blue-300',
-    value: 'text-blue-400',
+    container: 'border-navy/35 bg-navy/10',
+    icon: 'text-navy',
+    label: 'text-navy',
+    value: 'text-navy',
   },
   emerald: {
-    container: 'border-emerald-500/30 bg-emerald-950/20',
-    icon: 'text-emerald-400',
-    label: 'text-emerald-300',
-    value: 'text-emerald-400',
+    container: 'border-success/35 bg-success/10',
+    icon: 'text-success',
+    label: 'text-success',
+    value: 'text-success',
   },
   rose: {
-    container: 'border-rose-500/30 bg-rose-950/20',
-    icon: 'text-rose-400',
-    label: 'text-rose-300',
-    value: 'text-rose-400',
+    container: 'border-destructive/35 bg-destructive/10',
+    icon: 'text-destructive',
+    label: 'text-destructive',
+    value: 'text-destructive',
   },
   amber: {
-    container: 'border-amber-500/30 bg-amber-950/20',
-    icon: 'text-amber-400',
-    label: 'text-amber-300',
-    value: 'text-amber-400',
+    container: 'border-warning/35 bg-warning/10',
+    icon: 'text-warning',
+    label: 'text-warning',
+    value: 'text-warning',
   },
 };
 
 function RequestStatsCard({ stats }) {
-  const {
-    total = 0,
-    approved = 0,
-    rejected = 0,
-    pending = 0,
-    approvalRate = 0,
-    requestCount = 0,
-  } = stats || {};
+  const { total = 0, approved = 0, rejected = 0, pending = 0, approvalRate = 0, requestCount = 0 } =
+    stats || {};
 
   return (
     <Card title="Uso de Dinero Casa" subtitle={`${requestCount} solicitudes`}>
@@ -71,16 +65,14 @@ function RequestStatsCard({ stats }) {
         </div>
 
         {total > 0 ? (
-          <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-4">
+          <div className="rounded-md border border-border/80 bg-secondary/70 p-4">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm text-slate-400">Tasa de Aprobacion</span>
-              <span className="text-lg font-bold text-cyan-400">
-                {approvalRate.toFixed(1)}%
-              </span>
+              <span className="text-sm text-muted-foreground">Tasa de Aprobacion</span>
+              <span className="font-heading text-lg text-primary">{approvalRate.toFixed(1)}%</span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+            <div className="h-2 overflow-hidden rounded-sm bg-secondary">
               <div
-                className="h-full bg-emerald-500 transition-all duration-500"
+                className="h-full bg-success transition-all duration-500"
                 style={{ width: `${approvalRate}%` }}
               />
             </div>
@@ -95,14 +87,15 @@ function StatItem({ icon, label, value, color }) {
   const styles = STAT_STYLES[color] || STAT_STYLES.blue;
 
   return (
-    <div className={`rounded-lg border p-3 ${styles.container}`}>
+    <div className={`rounded-md border p-3 ${styles.container}`}>
       <div className="mb-1 flex items-center gap-2">
         <div className={styles.icon}>{icon}</div>
         <span className={`text-xs ${styles.label}`}>{label}</span>
       </div>
-      <p className={`text-xl font-bold ${styles.value}`}>{value}</p>
+      <p className={`font-heading text-xl ${styles.value}`}>{value}</p>
     </div>
   );
 }
 
 export default RequestStatsCard;
+

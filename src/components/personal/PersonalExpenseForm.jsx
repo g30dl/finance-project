@@ -19,12 +19,8 @@ function PersonalExpenseForm() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const userId = user?.userId;
-  const { balance, loading: loadingBalance, error: balanceError } = useBalance(
-    'personal',
-    userId
-  );
-  const { submitExpense, loading, error, success, resetState } =
-    useCreatePersonalExpense();
+  const { balance, loading: loadingBalance, error: balanceError } = useBalance('personal', userId);
+  const { submitExpense, loading, error, success, resetState } = useCreatePersonalExpense();
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -56,11 +52,7 @@ function PersonalExpenseForm() {
 
   if (user.role !== 'solicitante') {
     return (
-      <Navigate
-        to="/"
-        replace
-        state={{ message: 'No tienes permiso para acceder a esta pagina.' }}
-      />
+      <Navigate to="/" replace state={{ message: 'No tienes permiso para acceder a esta pagina.' }} />
     );
   }
 
@@ -106,47 +98,38 @@ function PersonalExpenseForm() {
   };
 
   const canSubmit = !loading && !success && hasBalance && resolvedBalance > 0;
-  const helperText =
-    formData.amount && !errors.amount
-      ? `Gastaras: ${formatCurrency(formData.amount)}`
-      : undefined;
+  const helperText = formData.amount && !errors.amount ? `Gastaras: ${formatCurrency(formData.amount)}` : undefined;
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-20 text-slate-50">
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+    <div className="min-h-screen bg-background pb-20 text-foreground">
+      <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-4 py-4">
           <button
             type="button"
             onClick={handleCancel}
-            className="rounded-lg p-2 transition-colors hover:bg-slate-800"
+            className="inline-flex items-center justify-center rounded-sm border border-border bg-secondary p-2 text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-primary"
             aria-label="Volver"
           >
-            <ArrowLeft className="h-5 w-5 text-slate-400" />
+            <ArrowLeft className="h-5 w-5" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-slate-50">
-              Usar Mi Dinero Personal
-            </h1>
-            <p className="text-sm text-slate-400">Sin aprobacion requerida</p>
+            <h1 className="font-heading text-2xl text-foreground">Usar Mi Dinero Personal</h1>
+            <p className="text-sm text-muted-foreground">Sin aprobacion requerida</p>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-2xl space-y-6 px-4 py-6">
-        <Card className="border-2 border-emerald-500/40 bg-emerald-950/20">
+      <main className="mx-auto w-full max-w-2xl space-y-6 px-4 py-6 slide-up">
+        <Card className="border border-sage/40 bg-sage/10">
           <div className="text-center">
-            <p className="mb-2 text-sm text-emerald-300">Tu saldo disponible</p>
+            <p className="mb-2 text-sm text-sage">Tu saldo disponible</p>
             {loadingBalance ? (
-              <div className="mx-auto h-10 w-32 animate-pulse rounded bg-emerald-500/20" />
+              <div className="mx-auto h-10 w-32 animate-pulse rounded-sm bg-sage/20" />
             ) : (
-              <p className="text-4xl font-bold text-emerald-400">
-                {formatCurrency(resolvedBalance)}
-              </p>
+              <p className="font-heading text-4xl text-sage">{formatCurrency(resolvedBalance)}</p>
             )}
             {!loadingBalance && resolvedBalance === 0 ? (
-              <p className="mt-2 text-sm text-amber-400">
-                No tienes saldo disponible
-              </p>
+              <p className="mt-2 text-sm text-warning">No tienes saldo disponible</p>
             ) : null}
           </div>
         </Card>
@@ -212,7 +195,7 @@ function PersonalExpenseForm() {
               disabled={!canSubmit}
             />
 
-            <div className="flex gap-3 border-t border-slate-700 pt-4">
+            <div className="flex gap-3 border-t border-border/80 pt-4">
               <Button
                 type="button"
                 variant="ghost"
@@ -235,11 +218,9 @@ function PersonalExpenseForm() {
           </form>
         </Card>
 
-        <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-4">
-          <p className="text-sm text-slate-400">
-            <span className="font-semibold text-slate-300">Recuerda:</span>{' '}
-            Los gastos de tu dinero personal se registran inmediatamente.
-          </p>
+        <div className="vintage-card rounded-md border px-4 py-4 text-sm text-muted-foreground">
+          <span className="font-heading text-foreground">Recuerda:</span>{' '}
+          Los gastos de tu dinero personal se registran inmediatamente.
         </div>
       </main>
     </div>

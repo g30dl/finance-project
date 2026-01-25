@@ -36,35 +36,33 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
   };
 
   return (
-    <div className="rounded-xl border-2 border-amber-500/30 bg-amber-950/10 p-5">
+    <div className="vintage-card rounded-md border border-warning/35 bg-warning/10 p-5">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="text-3xl">{getCategoryIcon(request.categoria)}</span>
           <div>
-            <p className="font-semibold text-slate-100">
+            <p className="font-heading text-sm text-foreground">
               {(request.categoria || 'categoria').replace('_', ' ')}
             </p>
-            <div className="mt-1 flex items-center gap-2 text-sm text-slate-400">
+            <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
               <User className="h-4 w-4" />
               <span>{request.nombreUsuario}</span>
             </div>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-amber-400">
-            {formatCurrency(request.cantidad)}
-          </p>
-          <div className="mt-1 flex items-center gap-1 text-xs text-slate-400">
+          <p className="font-heading text-2xl text-warning">{formatCurrency(request.cantidad)}</p>
+          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />
             <span>{getRelativeTime(request.fechaSolicitud)}</span>
           </div>
         </div>
       </div>
 
-      <div className="mb-4 rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+      <div className="mb-4 rounded-md border border-border/80 bg-secondary/70 p-3">
         <div className="flex items-start gap-2">
-          <MessageSquare className="mt-0.5 h-4 w-4 text-slate-400" />
-          <p className="text-sm text-slate-200">{request.concepto}</p>
+          <MessageSquare className="mt-0.5 h-4 w-4 text-muted-foreground" />
+          <p className="text-sm text-foreground">{request.concepto}</p>
         </div>
       </div>
 
@@ -83,12 +81,7 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
             disabled={loading}
           />
           <div className="flex justify-end gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRejectCancel}
-              disabled={loading}
-            >
+            <Button variant="ghost" size="sm" onClick={handleRejectCancel} disabled={loading}>
               Cancelar
             </Button>
             <Button
@@ -131,3 +124,4 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
 }
 
 export default PendingRequestCard;
+

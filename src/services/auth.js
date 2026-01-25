@@ -1,4 +1,4 @@
-import {
+﻿import {
   EmailAuthProvider,
   GoogleAuthProvider,
   fetchSignInMethodsForEmail,
@@ -17,7 +17,6 @@ const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || '')
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
 
-const FALLBACK_ADMIN_EMAILS = ['geovanny@gmail.com', 'eliana@gmail.com'];
 const ADMIN_WHITELIST = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : FALLBACK_ADMIN_EMAILS;
 
 const AUTH_MAP_PATH = 'familia_finanzas/auth_map';

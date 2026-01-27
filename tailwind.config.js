@@ -4,53 +4,71 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: 'hsl(var(--background) / <alpha-value>)',
-        foreground: 'hsl(var(--foreground) / <alpha-value>)',
-        primary: 'hsl(var(--primary) / <alpha-value>)',
-        secondary: 'hsl(var(--secondary) / <alpha-value>)',
-        muted: 'hsl(var(--muted) / <alpha-value>)',
-        accent: 'hsl(var(--accent) / <alpha-value>)',
-        destructive: 'hsl(var(--destructive) / <alpha-value>)',
-        success: 'hsl(var(--success) / <alpha-value>)',
-        warning: 'hsl(var(--warning) / <alpha-value>)',
-        info: 'hsl(var(--info) / <alpha-value>)',
-        border: 'hsl(var(--border) / <alpha-value>)',
-        card: 'hsl(var(--card) / <alpha-value>)',
-        'muted-foreground': 'hsl(var(--muted-foreground) / <alpha-value>)',
-        burgundy: 'hsl(var(--burgundy) / <alpha-value>)',
-        sage: 'hsl(var(--sage) / <alpha-value>)',
-        mustard: 'hsl(var(--mustard) / <alpha-value>)',
-        terracotta: 'hsl(var(--terracotta) / <alpha-value>)',
-        navy: 'hsl(var(--navy) / <alpha-value>)',
-        cream: 'hsl(var(--cream) / <alpha-value>)',
-        gold: 'hsl(var(--gold) / <alpha-value>)',
-        slate: 'hsl(var(--slate) / <alpha-value>)',
-        olive: 'hsl(var(--olive) / <alpha-value>)',
-        rust: 'hsl(var(--rust) / <alpha-value>)',
+        // Backgrounds
+        background: 'hsl(220, 17%, 97%)',
+        surface: 'hsl(0, 0%, 100%)',
+
+        // Funcionales
+        primary: {
+          DEFAULT: 'hsl(221, 83%, 53%)',
+          light: 'hsl(221, 83%, 65%)',
+          dark: 'hsl(221, 83%, 40%)',
+        },
+        success: {
+          DEFAULT: 'hsl(142, 76%, 36%)',
+          light: 'hsl(142, 76%, 90%)',
+          dark: 'hsl(142, 76%, 25%)',
+        },
+        danger: {
+          DEFAULT: 'hsl(0, 72%, 51%)',
+          light: 'hsl(0, 72%, 95%)',
+          dark: 'hsl(0, 72%, 40%)',
+        },
+        warning: {
+          DEFAULT: 'hsl(38, 92%, 50%)',
+          light: 'hsl(38, 92%, 95%)',
+          dark: 'hsl(38, 92%, 40%)',
+        },
+        info: {
+          DEFAULT: 'hsl(199, 89%, 48%)',
+          light: 'hsl(199, 89%, 95%)',
+        },
+
+        // Categorias (10 colores distintos)
+        category: {
+          food: 'hsl(142, 71%, 45%)',
+          transport: 'hsl(221, 83%, 53%)',
+          health: 'hsl(0, 72%, 51%)',
+          education: 'hsl(271, 81%, 56%)',
+          entertainment: 'hsl(340, 82%, 52%)',
+          services: 'hsl(38, 92%, 50%)',
+          shopping: 'hsl(199, 89%, 48%)',
+          home: 'hsl(25, 75%, 47%)',
+          tech: 'hsl(262, 52%, 47%)',
+          other: 'hsl(218, 17%, 46%)',
+        },
+
+        // UI Base
+        border: 'hsl(214, 32%, 91%)',
+        muted: 'hsl(210, 40%, 96%)',
+        foreground: 'hsl(222, 47%, 11%)',
+        'foreground-muted': 'hsl(215, 16%, 47%)',
       },
       fontFamily: {
-        heading: ['var(--font-heading)'],
-        body: ['var(--font-body)'],
+        heading: ['Poppins', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
-      borderRadius: {
-        DEFAULT: 'var(--radius)',
-        vintage: 'var(--radius)',
+      fontSize: {
+        hero: ['4rem', { lineHeight: '1', fontWeight: '700' }],
+        stat: ['3rem', { lineHeight: '1.1', fontWeight: '700' }],
       },
       boxShadow: {
-        card: 'var(--shadow-card)',
-      },
-      backgroundImage: {
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-card': 'var(--gradient-card)',
-        'gradient-balance': 'var(--gradient-balance)',
-        'texture-paper': 'var(--texture-paper)',
-      },
-      animation: {
-        'fade-in': 'fade-in 400ms ease-out both',
-        'slide-up': 'slide-up 500ms ease-out both',
+        card: '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
+        'card-hover':
+          '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
       },
     },
   },
   plugins: [],
 };
-

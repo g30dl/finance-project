@@ -1,174 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* --- Tipografía --- */
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Lora', serif;
-
-  /* --- Paleta de Colores (HSL) --- */
-  --background: 40 25% 96%;
-  --foreground: 25 30% 15%;
-
-  --primary: 25 45% 35%;
-  --secondary: 35 20% 90%;
-  --muted: 35 15% 88%;
-  --accent: 30 40% 45%;
-
-  --destructive: 0 50% 45%;
-  --success: 140 35% 35%;
-  --warning: 38 70% 45%;
-  --info: 200 45% 40%;
-
-  --border: 30 15% 82%;
-
-  /* --- Colores Extendidos --- */
-  --burgundy: 0 40% 35%;
-  --sage: 140 20% 50%;
-  --mustard: 45 60% 50%;
-  --terracotta: 15 50% 45%;
-  --navy: 220 30% 25%;
-  --cream: 40 40% 92%;
-  --gold: 45 70% 55%;
-  --slate: 210 15% 45%;
-  --olive: 80 25% 40%;
-  --rust: 20 55% 40%;
-
-  /* --- Estilos Base --- */
-  --radius: 0.25rem;
-
-  /* --- Tokens adicionales del sistema --- */
-  --card: 40 30% 98%;
-  --muted-foreground: 25 15% 35%;
-  --shadow-card: 0 12px 30px -18px hsl(25 35% 20% / 0.35);
-  --texture-paper: radial-gradient(
-      circle at 1px 1px,
-      hsl(30 20% 70% / 0.12) 1px,
-      transparent 0
-    )
-    0 0 / 18px 18px;
-
-  /* --- Gradientes --- */
-  --gradient-primary: linear-gradient(180deg, hsl(25 45% 38%), hsl(25 50% 30%));
-  --gradient-card: linear-gradient(180deg, hsl(40 30% 98%), hsl(40 25% 95%));
-  --gradient-balance: linear-gradient(180deg, hsl(25 45% 38%), hsl(30 50% 32%));
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  font-family: var(--font-body);
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  min-height: 100vh;
-  background-image: var(--texture-paper);
+  font-family: 'Inter', sans-serif;
+  background-color: hsl(220, 17%, 97%);
+  color: hsl(222, 47%, 11%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Poppins', sans-serif;
 }
 
-#root {
-  min-height: 100vh;
-}
-
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-heading);
-    letter-spacing: 0.01em;
-  }
-
-  ::selection {
-    background-color: hsl(var(--primary) / 0.2);
-    color: hsl(var(--foreground));
-  }
-}
-
-@layer components {
-  .font-heading {
-    font-family: var(--font-heading);
-  }
-
-  .font-body {
-    font-family: var(--font-body);
-  }
-
-  .vintage-surface {
-    background: var(--gradient-card);
-    border: 1px solid hsl(var(--border));
-    box-shadow: var(--shadow-card);
-  }
-
-  .vintage-card {
-    position: relative;
-    background: var(--gradient-card);
-    border: 1px solid hsl(var(--border));
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
-    isolation: isolate;
-  }
-
-  .vintage-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: var(--texture-paper);
-    opacity: 0.45;
-    z-index: 0;
-  }
-
-  .vintage-card > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .vintage-card-hover {
-    background: var(--gradient-card);
-    border: 1px solid hsl(var(--border));
-    box-shadow: var(--shadow-card);
-  }
-
-  .vintage-card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 30px -22px hsl(25 40% 20% / 0.45);
-  }
-
-  .balance-card {
-    background: var(--gradient-balance);
-    border: 1px solid hsl(var(--primary) / 0.25);
-    box-shadow: var(--shadow-card);
-  }
-
-  .divider-ornament::before,
-  .divider-ornament::after {
-    content: '✦';
-    color: hsl(var(--accent));
-    font-size: 0.75rem;
-    opacity: 0.65;
-  }
-
-  .slide-up {
-    animation: slide-up 500ms ease-out both;
-  }
-
-  .fade-in {
-    animation: fade-in 400ms ease-out both;
-  }
-}
-
+/* Animaciones sutiles */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -187,4 +46,42 @@ a {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Esconder scrollbar pero mantener funcionalidad */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

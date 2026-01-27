@@ -6,9 +6,31 @@ import LoginScreen from './components/auth/LoginScreen';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminDashboard from './components/dashboard/AdminDashboard';
 import SolicitanteDashboard from './components/dashboard/SolicitanteDashboard';
+import BottomNav from './components/layout/BottomNav';
 import PersonalExpenseForm from './components/personal/PersonalExpenseForm';
 import ReportsPage from './pages/ReportsPage';
 import NotificationsPage from './pages/NotificationsPage';
+import HomeTab from './pages/tabs/HomeTab';
+
+function TabsShell({ children }) {
+  return (
+    <>
+      {children}
+      <BottomNav />
+    </>
+  );
+}
+
+function TabPlaceholder({ title }) {
+  return (
+    <div className="pb-24 px-4 pt-4">
+      <div className="bg-surface rounded-2xl p-6 shadow-card animate-slide-up">
+        <h2 className="font-heading text-lg text-foreground">{title}</h2>
+        <p className="mt-1 text-sm text-foreground-muted">Proximamente</p>
+      </div>
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -18,6 +40,56 @@ function App() {
           <div className="min-h-screen bg-background text-foreground font-body">
             <Routes>
               <Route path="/" element={<LoginScreen />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <TabsShell>
+                      <HomeTab />
+                    </TabsShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/activity"
+                element={
+                  <ProtectedRoute>
+                    <TabsShell>
+                      <TabPlaceholder title="Actividad" />
+                    </TabsShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/request"
+                element={
+                  <ProtectedRoute>
+                    <TabsShell>
+                      <TabPlaceholder title="Solicitar" />
+                    </TabsShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/requests"
+                element={
+                  <ProtectedRoute>
+                    <TabsShell>
+                      <TabPlaceholder title="Solicitudes" />
+                    </TabsShell>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <TabsShell>
+                      <TabPlaceholder title="Perfil" />
+                    </TabsShell>
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/dashboard/solicitante/:userId"
                 element={

@@ -162,7 +162,7 @@ function LoginScreen() {
                     type="button"
                     disabled={disableUsers}
                     onClick={() => handleUserLogin(requester)}
-                    className="vintage-card-hover flex min-h-[72px] items-center gap-4 rounded-md border p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex min-h-[72px] items-center gap-4 rounded-2xl border border-border bg-white p-4 text-left shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary/20 bg-secondary text-primary">
                       {initials ? (
@@ -185,7 +185,7 @@ function LoginScreen() {
         ) : null}
       </section>
 
-      <div className="divider-ornament flex items-center justify-center gap-4 py-2">
+      <div className="flex items-center justify-center gap-4 py-2">
         <div className="h-px flex-1 bg-border" />
         <span className="text-xs italic text-muted-foreground font-heading">Administracion</span>
         <div className="h-px flex-1 bg-border" />
@@ -196,7 +196,7 @@ function LoginScreen() {
           type="button"
           onClick={handleOpenAdmin}
           disabled={isBusy}
-          className="balance-card flex min-h-[72px] w-full items-center justify-between gap-4 rounded-md p-4 text-left text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex min-h-[72px] w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-br from-primary to-primary-dark p-4 text-left text-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white">
@@ -264,7 +264,7 @@ function LoginScreen() {
           </Button>
         </form>
 
-        <div className="divider-ornament flex items-center justify-center gap-4 py-4">
+        <div className="flex items-center justify-center gap-4 py-4">
           <div className="h-px flex-1 bg-border" />
           <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">o</span>
           <div className="h-px flex-1 bg-border" />
@@ -309,4 +309,3 @@ function LoginScreen() {
 }
 
 export default LoginScreen;
-

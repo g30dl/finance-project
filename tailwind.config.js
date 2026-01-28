@@ -33,6 +33,9 @@ export default {
           DEFAULT: 'hsl(199, 89%, 48%)',
           light: 'hsl(199, 89%, 95%)',
         },
+        secondary: 'hsl(210, 40%, 98%)',
+        accent: 'hsl(271, 81%, 56%)',
+        destructive: 'hsl(0, 72%, 51%)',
 
         // Categorias (10 colores distintos)
         category: {
@@ -53,6 +56,7 @@ export default {
         muted: 'hsl(210, 40%, 96%)',
         foreground: 'hsl(222, 47%, 11%)',
         'foreground-muted': 'hsl(215, 16%, 47%)',
+        'muted-foreground': 'hsl(215, 16%, 47%)',
       },
       fontFamily: {
         heading: ['Poppins', 'sans-serif'],

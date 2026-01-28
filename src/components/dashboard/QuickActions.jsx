@@ -13,15 +13,15 @@ function QuickActions({ onUsePersonal, onRequestCasa, personalBalance }) {
         type="button"
         onClick={onUsePersonal}
         disabled={!canUsePersonal}
-        className={`w-full rounded-md border p-4 text-left transition-all duration-300 ${
+        className={`w-full p-4 text-left transition-all duration-300 ${
           canUsePersonal
-            ? 'vintage-card-hover border-sage/40 hover:-translate-y-1 hover:shadow-lg'
-            : 'cursor-not-allowed border-border bg-secondary/60 text-muted-foreground opacity-70'
+            ? 'rounded-2xl border border-success/30 bg-white shadow-card hover:-translate-y-1 hover:shadow-card-hover'
+            : 'rounded-2xl border border-border bg-muted text-muted-foreground opacity-70 cursor-not-allowed'
         }`}
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="rounded-sm border border-sage/30 bg-sage/10 p-2 text-sage">
+            <div className="rounded-sm border border-success/30 bg-success/10 p-2 text-success">
               <DollarSign className="h-5 w-5" />
             </div>
             <div>
@@ -36,11 +36,11 @@ function QuickActions({ onUsePersonal, onRequestCasa, personalBalance }) {
       <button
         type="button"
         onClick={onRequestCasa}
-        className="vintage-card-hover w-full rounded-md border border-navy/40 p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+        className="w-full rounded-2xl border border-primary/30 bg-white p-4 text-left shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover"
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="rounded-sm border border-navy/30 bg-navy/10 p-2 text-navy">
+            <div className="rounded-sm border border-primary/30 bg-primary/10 p-2 text-primary">
               <Home className="h-5 w-5" />
             </div>
             <div>
@@ -56,4 +56,3 @@ function QuickActions({ onUsePersonal, onRequestCasa, personalBalance }) {
 }
 
 export default QuickActions;
-

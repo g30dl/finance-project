@@ -8,11 +8,11 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import { usePersonalAccountsTotal } from '../../hooks/usePersonalAccountsTotal';
 import { useSystemAlerts } from '../../hooks/useSystemAlerts';
 import AlertBanner from '../common/AlertBanner';
-import BalanceCard from '../common/BalanceCard';
-import ComingSoon from '../common/ComingSoon';
 import AccountsGrid from './AccountsGrid';
-import AdminQuickActions from './AdminQuickActions';
-import SystemSummary from './SystemSummary';
+import PendingRequestsCard from '../admin/PendingRequestsCard';
+import QuickActionsGrid from '../admin/QuickActionsGrid';
+import RecentActivityCard from '../admin/RecentActivityCard';
+import SystemStatsGrid from '../admin/SystemStatsGrid';
 import ApproveRequestsModal from '../solicitudes/ApproveRequestsModal';
 import TransferModal from '../admin/TransferModal';
 import DepositModal from '../admin/DepositModal';
@@ -27,7 +27,7 @@ function AdminDashboard() {
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [depositModalOpen, setDepositModalOpen] = useState(false);
 
-  const { balance: casaBalance, loading: loadingCasa } = useBalance('casa');
+  const { balance: casaBalance } = useBalance('casa');
   const {
     data: personalAccounts,
     loading: loadingAccounts,
@@ -60,18 +60,17 @@ function AdminDashboard() {
   const handleDeposit = () => setDepositModalOpen(true);
   const handleTransfer = () => setTransferModalOpen(true);
   const handleApproveRequests = () => setApproveModalOpen(true);
-  const handleDirectExpense = () => navigate('/gasto-directo');
   const handleRecurringExpenses = () => navigate('/gastos-recurrentes');
   const handleReports = () => navigate('/reportes');
 
   return (
     <div className="min-h-screen bg-background pb-20 text-foreground">
-      <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="sticky top-0 z-10 border-b border-border bg-white/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4">
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Panel de Control</p>
+            <p className="text-sm text-foreground-muted">Panel de control</p>
             <h1 className="font-heading text-2xl text-foreground">Administrador</h1>
-            <p className="text-sm text-muted-foreground">{user?.userName || 'Admin'}</p>
+            <p className="text-sm text-foreground-muted">{user?.userName || 'Admin'}</p>
           </div>
           <div className="flex items-center gap-3">
             <NotificationCenter />
@@ -79,7 +78,7 @@ function AdminDashboard() {
               type="button"
               onClick={handleLogout}
               aria-label="Cerrar sesion"
-              className="inline-flex items-center justify-center rounded-sm border border-border bg-secondary p-2 text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-primary"
+              className="inline-flex items-center justify-center rounded-xl border border-border bg-white p-2 text-foreground-muted transition-colors hover:text-primary"
             >
               <LogOut className="h-5 w-5" />
             </button>
@@ -87,9 +86,9 @@ function AdminDashboard() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 slide-up">
+      <main className="mx-auto w-full max-w-7xl space-y-8 px-4 py-6 animate-slide-up">
         {notice ? (
-          <div className="rounded-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
+          <div className="rounded-2xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
             {notice}
           </div>
         ) : null}
@@ -101,57 +100,45 @@ function AdminDashboard() {
         ) : null}
 
         <section>
-          <BalanceCard
-            title="Dinero Casa - Cuenta Compartida"
-            balance={casaBalance}
-            loading={loadingCasa}
-            type="casa"
-            showIndicator={true}
-            threshold={100}
-            large={true}
-          />
-        </section>
-
-        <section>
-          <h2 className="mb-4 font-heading text-xl text-foreground">Cuentas Personales</h2>
-          <AccountsGrid
-            accounts={personalAccounts}
-            loading={loadingAccounts}
-            error={accountsError}
-            onAccountClick={handleAccountClick}
-          />
-        </section>
-
-        <section>
-          <SystemSummary
+          <SystemStatsGrid
             casaBalance={casaBalance}
-            personalAccountsTotal={personalTotal}
-            loading={loadingCasa || loadingAccounts}
+            personalTotal={personalTotal}
+            pendingRequests={pendingRequests}
           />
         </section>
 
         <section>
-          <AdminQuickActions
-            pendingRequests={pendingRequests}
+          <QuickActionsGrid
             onDeposit={handleDeposit}
             onTransfer={handleTransfer}
-            onApproveRequests={handleApproveRequests}
-            onDirectExpense={handleDirectExpense}
-            onRecurringExpenses={handleRecurringExpenses}
+            onApprove={handleApproveRequests}
+            onRecurring={handleRecurringExpenses}
             onReports={handleReports}
           />
         </section>
 
         <section>
-          <ComingSoon
-            features={[
-              'Vista detallada de cada cuenta personal',
-              'Historial completo de transacciones',
-              'Reportes y analisis por periodo',
-              'Graficos de tendencias',
-              'Exportar datos a Excel/CSV',
-            ]}
-          />
+          <div className="grid gap-6 lg:grid-cols-2">
+            <PendingRequestsCard
+              requests={pendingRequestsData}
+              loading={loadingPendingRequests}
+              error={pendingRequestsError}
+              onViewAll={handleApproveRequests}
+            />
+            <RecentActivityCard />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="font-heading text-xl text-foreground">Cuentas personales</h2>
+          <div className="mt-4">
+            <AccountsGrid
+              accounts={personalAccounts}
+              loading={loadingAccounts}
+              error={accountsError}
+              onAccountClick={handleAccountClick}
+            />
+          </div>
         </section>
       </main>
 

@@ -4,7 +4,7 @@ import { AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
 const getAlertStyles = (type) => {
   const styles = {
     warning: 'border-warning/40 bg-warning/10 text-warning',
-    danger: 'border-destructive/40 bg-destructive/10 text-destructive',
+    danger: 'border-danger/40 bg-danger/10 text-danger',
     info: 'border-info/40 bg-info/10 text-info',
   };
   return styles[type] || styles.info;
@@ -63,4 +63,3 @@ function AlertBanner({ alerts = [], onDismiss }) {
 }
 
 export default AlertBanner;
-

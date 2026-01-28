@@ -17,16 +17,16 @@ export const getCategoryIcon = (category) => {
 
 export const getCategoryColor = (category) => {
   const colors = {
-    comida: 'text-sage',
-    servicios: 'text-mustard',
-    transporte: 'text-navy',
-    salud: 'text-burgundy',
-    educacion: 'text-accent',
-    hogar: 'text-rust',
-    ropa: 'text-terracotta',
-    entretenimiento: 'text-gold',
-    tecnologia: 'text-slate',
-    otros: 'text-muted-foreground',
+    comida: 'text-category-food',
+    servicios: 'text-category-services',
+    transporte: 'text-category-transport',
+    salud: 'text-category-health',
+    educacion: 'text-category-education',
+    hogar: 'text-category-home',
+    ropa: 'text-category-shopping',
+    entretenimiento: 'text-category-entertainment',
+    tecnologia: 'text-category-tech',
+    otros: 'text-category-other',
   };
 
   return colors[category] || colors.otros;

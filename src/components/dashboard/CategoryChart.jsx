@@ -5,16 +5,16 @@ import { formatCurrency } from '../../utils/helpers';
 import { getCategoryLabel } from '../../utils/transactionHelpers';
 
 const CATEGORY_COLORS = {
-  comida: 'hsl(var(--sage))',
-  servicios: 'hsl(var(--mustard))',
-  transporte: 'hsl(var(--navy))',
-  salud: 'hsl(var(--burgundy))',
-  educacion: 'hsl(var(--accent))',
-  hogar: 'hsl(var(--rust))',
-  ropa: 'hsl(var(--terracotta))',
-  entretenimiento: 'hsl(var(--gold))',
-  tecnologia: 'hsl(var(--slate))',
-  otros: 'hsl(var(--primary))',
+  comida: 'hsl(142, 71%, 45%)',
+  servicios: 'hsl(38, 92%, 50%)',
+  transporte: 'hsl(221, 83%, 53%)',
+  salud: 'hsl(0, 72%, 51%)',
+  educacion: 'hsl(271, 81%, 56%)',
+  hogar: 'hsl(25, 75%, 47%)',
+  ropa: 'hsl(199, 89%, 48%)',
+  entretenimiento: 'hsl(340, 82%, 52%)',
+  tecnologia: 'hsl(262, 52%, 47%)',
+  otros: 'hsl(218, 17%, 46%)',
 };
 
 function CategoryChart({ categoryBreakdown }) {

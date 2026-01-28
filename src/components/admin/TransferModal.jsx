@@ -263,7 +263,7 @@ function TransferModal({ isOpen, onClose }) {
             </Alert>
           ) : null}
 
-          <div className="vintage-card rounded-md border border-primary/30 bg-primary/5 p-6">
+          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 shadow-card">
             <h4 className="mb-4 font-heading text-base text-primary">Resumen de la transferencia</h4>
 
             <div className="mb-4 text-center">

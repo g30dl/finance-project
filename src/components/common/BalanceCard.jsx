@@ -5,18 +5,19 @@ import Skeleton from './Skeleton';
 
 const TYPE_STYLES = {
   personal: {
-    container: 'vintage-card border border-sage/40 text-foreground',
-    title: 'text-muted-foreground',
-    amount: 'text-sage',
-    icon: 'text-sage',
-    hover: 'hover:-translate-y-1 hover:shadow-lg cursor-pointer',
+    container: 'rounded-2xl border border-success/30 bg-white text-foreground shadow-card',
+    title: 'text-foreground-muted',
+    amount: 'text-success',
+    icon: 'text-success',
+    hover: 'hover:-translate-y-1 hover:shadow-card-hover cursor-pointer',
   },
   casa: {
-    container: 'balance-card text-white',
+    container:
+      'rounded-2xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-card',
     title: 'text-white/85',
     amount: 'text-white',
     icon: 'text-white/90',
-    hover: 'hover:-translate-y-1 hover:shadow-lg cursor-pointer',
+    hover: 'hover:-translate-y-1 hover:shadow-card-hover cursor-pointer',
   },
 };
 
@@ -67,7 +68,7 @@ function BalanceCard({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-md p-6 transition-all duration-300 ${styles.container} ${
+      className={`relative overflow-hidden p-6 transition-all duration-300 ${styles.container} ${
         readonly ? 'cursor-default' : styles.hover
       }`}
     >

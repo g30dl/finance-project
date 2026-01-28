@@ -12,6 +12,5 @@ export { default as Textarea } from './Textarea';
 export { default as Alert } from './Alert';
 export { default as AlertBanner } from './AlertBanner';
 export { default as Badge } from './Badge';
-export { default as Tooltip } from './Tooltip';
 
 export { default as BalanceCard } from './BalanceCard';

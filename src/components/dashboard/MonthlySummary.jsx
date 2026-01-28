@@ -17,7 +17,7 @@ function MonthlySummary({ userId, personalBalance: _personalBalance }) {
   const balanceValue = useMemo(() => summary.balance, [summary]);
 
   return (
-    <div className="vintage-card rounded-md p-6 text-foreground shadow-card">
+    <div className="rounded-2xl border border-border bg-white p-6 text-foreground shadow-card">
       <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
         <Calendar className="h-4 w-4 text-accent" />
         <span className="font-medium">{getCurrentMonthName()}</span>

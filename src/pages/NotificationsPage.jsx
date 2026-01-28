@@ -38,9 +38,9 @@ function NotificationsPage() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-4xl space-y-4 px-4 py-6 slide-up">
+      <main className="mx-auto w-full max-w-4xl space-y-4 px-4 py-6 animate-slide-up">
         {loading ? (
-          <div className="vintage-card rounded-md p-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-2xl border border-border bg-white p-6 text-center text-sm text-muted-foreground shadow-card">
             Cargando notificaciones...
           </div>
         ) : error ? (
@@ -48,7 +48,7 @@ function NotificationsPage() {
             {error}
           </div>
         ) : notifications.length === 0 ? (
-          <div className="vintage-card rounded-md p-6 text-center text-muted-foreground">
+          <div className="rounded-2xl border border-border bg-white p-6 text-center text-muted-foreground shadow-card">
             <Bell className="mx-auto mb-2 h-10 w-10 opacity-50" />
             No tienes notificaciones.
           </div>
@@ -65,4 +65,3 @@ function NotificationsPage() {
 }
 
 export default NotificationsPage;
-

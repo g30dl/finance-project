@@ -5,6 +5,7 @@ import { useCreateRequest } from '../../hooks/useCreateRequest';
 import { Alert, Button, Input, Select, Textarea } from '../common';
 import { CATEGORIES, REQUEST_LIMITS } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
+import { fireConfetti } from '../../utils/confetti';
 
 const buildCategoryOptions = () =>
   CATEGORIES.map((category) => ({
@@ -41,7 +42,7 @@ const validateConcept = (concept) => {
   return '';
 };
 
-function RequestForm({ onSuccess, onCancel }) {
+function RequestForm({ onSuccess, onCancel, onAmountChange }) {
   const { user } = useAuth();
   const { submitRequest, loading, error, success } = useCreateRequest();
   const [formData, setFormData] = useState({
@@ -66,6 +67,10 @@ function RequestForm({ onSuccess, onCancel }) {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+    if (field === 'amount') {
+      const numeric = Number(value) || 0;
+      onAmountChange?.(numeric);
     }
   };
 
@@ -97,6 +102,11 @@ function RequestForm({ onSuccess, onCancel }) {
 
     const result = await submitRequest(requestData);
     if (result.success) {
+      if (navigator?.vibrate) {
+        navigator.vibrate(20);
+      }
+      fireConfetti();
+      onAmountChange?.(0);
       timeoutRef.current = setTimeout(() => {
         onSuccess?.();
       }, 1500);
@@ -111,7 +121,7 @@ function RequestForm({ onSuccess, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {success ? (
-        <Alert variant="success" title="Solicitud enviada">
+        <Alert variant="success" title="Solicitud enviada" className="animate-scale-in">
           Tu solicitud fue enviada correctamente. Los administradores la revisaran pronto.
         </Alert>
       ) : null}

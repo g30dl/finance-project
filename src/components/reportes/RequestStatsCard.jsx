@@ -5,10 +5,10 @@ import { formatCurrency } from '../../utils/helpers';
 
 const STAT_STYLES = {
   blue: {
-    container: 'border-navy/35 bg-navy/10',
-    icon: 'text-navy',
-    label: 'text-navy',
-    value: 'text-navy',
+    container: 'border-primary/35 bg-primary/10',
+    icon: 'text-primary',
+    label: 'text-primary',
+    value: 'text-primary',
   },
   emerald: {
     container: 'border-success/35 bg-success/10',
@@ -98,4 +98,3 @@ function StatItem({ icon, label, value, color }) {
 }
 
 export default RequestStatsCard;
-

@@ -21,7 +21,7 @@ function Card({
 
   return (
     <div
-      className={`vintage-card rounded-md text-foreground shadow-card ${noBorder ? 'border-0' : ''} ${
+      className={`rounded-2xl bg-white text-foreground shadow-card ${noBorder ? 'border-0' : ''} ${
         paddings[padding]
       } ${className}`}
       {...props}
@@ -32,7 +32,7 @@ function Card({
             <div>
               {title ? <h3 className="font-heading text-lg text-foreground">{title}</h3> : null}
               {subtitle ? (
-                <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+                <p className="mt-1 text-sm text-foreground-muted">{subtitle}</p>
               ) : null}
             </div>
             {headerAction ? <div>{headerAction}</div> : null}
@@ -46,4 +46,3 @@ function Card({
 }
 
 export default Card;
-

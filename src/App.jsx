@@ -10,7 +10,11 @@ import BottomNav from './components/layout/BottomNav';
 import PersonalExpenseForm from './components/personal/PersonalExpenseForm';
 import ReportsPage from './pages/ReportsPage';
 import NotificationsPage from './pages/NotificationsPage';
+import ActivityTab from './pages/tabs/ActivityTab';
 import HomeTab from './pages/tabs/HomeTab';
+import ProfileTab from './pages/tabs/ProfileTab';
+import RequestTab from './pages/tabs/RequestTab';
+import RequestsTab from './pages/tabs/RequestsTab';
 
 function TabsShell({ children }) {
   return (
@@ -18,17 +22,6 @@ function TabsShell({ children }) {
       {children}
       <BottomNav />
     </>
-  );
-}
-
-function TabPlaceholder({ title }) {
-  return (
-    <div className="pb-24 px-4 pt-4">
-      <div className="bg-surface rounded-2xl p-6 shadow-card animate-slide-up">
-        <h2 className="font-heading text-lg text-foreground">{title}</h2>
-        <p className="mt-1 text-sm text-foreground-muted">Proximamente</p>
-      </div>
-    </div>
   );
 }
 
@@ -55,7 +48,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <TabsShell>
-                      <TabPlaceholder title="Actividad" />
+                      <ActivityTab />
                     </TabsShell>
                   </ProtectedRoute>
                 }
@@ -65,7 +58,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <TabsShell>
-                      <TabPlaceholder title="Solicitar" />
+                      <RequestTab />
                     </TabsShell>
                   </ProtectedRoute>
                 }
@@ -75,7 +68,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <TabsShell>
-                      <TabPlaceholder title="Solicitudes" />
+                      <RequestsTab />
                     </TabsShell>
                   </ProtectedRoute>
                 }
@@ -85,7 +78,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <TabsShell>
-                      <TabPlaceholder title="Perfil" />
+                      <ProfileTab />
                     </TabsShell>
                   </ProtectedRoute>
                 }

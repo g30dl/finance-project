@@ -119,14 +119,14 @@ function PersonalExpenseForm() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-2xl space-y-6 px-4 py-6 slide-up">
-        <Card className="border border-sage/40 bg-sage/10">
+      <main className="mx-auto w-full max-w-2xl space-y-6 px-4 py-6 animate-slide-up">
+        <Card className="border border-success/40 bg-success/10">
           <div className="text-center">
-            <p className="mb-2 text-sm text-sage">Tu saldo disponible</p>
+            <p className="mb-2 text-sm text-success">Tu saldo disponible</p>
             {loadingBalance ? (
-              <div className="mx-auto h-10 w-32 animate-pulse rounded-sm bg-sage/20" />
+              <div className="mx-auto h-10 w-32 animate-pulse rounded-sm bg-success/20" />
             ) : (
-              <p className="font-heading text-4xl text-sage">{formatCurrency(resolvedBalance)}</p>
+              <p className="font-heading text-4xl text-success">{formatCurrency(resolvedBalance)}</p>
             )}
             {!loadingBalance && resolvedBalance === 0 ? (
               <p className="mt-2 text-sm text-warning">No tienes saldo disponible</p>
@@ -218,7 +218,7 @@ function PersonalExpenseForm() {
           </form>
         </Card>
 
-        <div className="vintage-card rounded-md border px-4 py-4 text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-border bg-white px-4 py-4 text-sm text-muted-foreground shadow-card">
           <span className="font-heading text-foreground">Recuerda:</span>{' '}
           Los gastos de tu dinero personal se registran inmediatamente.
         </div>

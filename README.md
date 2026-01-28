@@ -30,8 +30,6 @@ Una Progressive Web App (PWA) para gestionar las finanzas del hogar de manera ef
 - **Tailwind CSS 3** - Estilos y diseño responsive
 - **Recharts 2** - Gráficos interactivos
 - **Lucide React** - Iconos modernos
-- **React Hook Form 7** - Manejo de formularios
-- **date-fns 3** - Manejo de fechas
 
 ### Backend & Servicios
 - **Firebase Realtime Database** - Base de datos en tiempo real

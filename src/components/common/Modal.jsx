@@ -52,7 +52,7 @@ function Modal({
       <div
         role="dialog"
         aria-modal="true"
-        className={`vintage-card relative w-full ${sizes[size]} max-h-[90vh] overflow-y-auto rounded-md shadow-card ${className}`}
+        className={`relative w-full ${sizes[size]} max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-card ${className}`}
       >
         {title || showCloseButton ? (
           <div className="flex items-center justify-between border-b border-border/80 p-6">
@@ -62,7 +62,7 @@ function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Cerrar"
-                className="rounded-sm border border-border bg-secondary p-2 text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
+                className="rounded-xl border border-border bg-white p-2 text-foreground-muted transition-colors hover:text-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -77,4 +77,3 @@ function Modal({
 }
 
 export default Modal;
-

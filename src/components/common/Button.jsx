@@ -22,14 +22,14 @@ function Button({
     primary:
       'bg-primary text-white shadow-card hover:bg-primary/90 active:bg-primary/80',
     secondary:
-      'border-border bg-secondary text-foreground hover:bg-secondary/80 active:bg-secondary/70',
+      'border-border bg-muted text-foreground hover:bg-muted/80 active:bg-muted/70',
     danger:
-      'bg-destructive text-white shadow-card hover:bg-destructive/90 active:bg-destructive/80',
+      'bg-danger text-white shadow-card hover:bg-danger/90 active:bg-danger/80',
     ghost:
-      'border-border/60 bg-transparent text-foreground/80 hover:bg-secondary/60 active:bg-secondary/80',
+      'border-border/60 bg-transparent text-foreground-muted hover:bg-muted/60 active:bg-muted/80',
     outline:
       'border-primary bg-transparent text-primary hover:bg-primary/10 active:bg-primary/15',
-    accent: 'bg-accent text-white shadow-card hover:bg-accent/90 active:bg-accent/80',
+    accent: 'bg-info text-white shadow-card hover:bg-info/90 active:bg-info/80',
   };
 
   const sizes = {
@@ -67,4 +67,3 @@ function Button({
 }
 
 export default Button;
-

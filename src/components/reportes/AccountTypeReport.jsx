@@ -20,22 +20,22 @@ import { formatCurrency } from '../../utils/helpers';
 const formatTooltip = (value) => formatCurrency(value);
 
 const CHART_THEME = {
-  grid: 'hsl(var(--border))',
-  axis: 'hsl(var(--muted-foreground))',
+  grid: 'hsl(214, 32%, 91%)',
+  axis: 'hsl(215, 16%, 47%)',
   tooltip: {
-    backgroundColor: 'hsl(var(--card))',
-    border: '1px solid hsl(var(--border))',
+    backgroundColor: 'hsl(0, 0%, 100%)',
+    border: '1px solid hsl(214, 32%, 91%)',
     borderRadius: '6px',
-    color: 'hsl(var(--foreground))',
+    color: 'hsl(222, 47%, 11%)',
   },
 };
 
 const CHART_COLORS = {
-  ingresos: 'hsl(var(--sage))',
-  egresos: 'hsl(var(--terracotta))',
-  balance: 'hsl(var(--primary))',
-  casa: 'hsl(var(--navy))',
-  personal: 'hsl(var(--sage))',
+  ingresos: 'hsl(142, 76%, 36%)',
+  egresos: 'hsl(0, 72%, 51%)',
+  balance: 'hsl(221, 83%, 53%)',
+  casa: 'hsl(221, 83%, 53%)',
+  personal: 'hsl(142, 76%, 36%)',
 };
 
 function AccountTypeReport() {
@@ -79,7 +79,7 @@ function AccountTypeReport() {
           onClick={() => setActiveTab('casa')}
           className={`flex items-center gap-2 rounded-sm border px-3 py-2 text-sm font-semibold transition-colors ${
             activeTab === 'casa'
-              ? 'border-navy/40 bg-navy/10 text-navy'
+              ? 'border-primary/40 bg-primary/10 text-primary'
               : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -91,7 +91,7 @@ function AccountTypeReport() {
           onClick={() => setActiveTab('personal')}
           className={`flex items-center gap-2 rounded-sm border px-3 py-2 text-sm font-semibold transition-colors ${
             activeTab === 'personal'
-              ? 'border-sage/40 bg-sage/10 text-sage'
+              ? 'border-success/40 bg-success/10 text-success'
               : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -288,8 +288,8 @@ function GlobalComparison({ comparativa }) {
 
 function ProgressRow({ label, value, color }) {
   const isPersonal = color === 'personal';
-  const colorClass = isPersonal ? 'bg-sage' : 'bg-navy';
-  const textClass = isPersonal ? 'text-sage' : 'text-navy';
+  const colorClass = isPersonal ? 'bg-success' : 'bg-primary';
+  const textClass = isPersonal ? 'text-success' : 'text-primary';
 
   return (
     <div>
@@ -297,7 +297,7 @@ function ProgressRow({ label, value, color }) {
         <span className={textClass}>{label}</span>
         <span className="font-semibold text-foreground">{Number(value || 0).toFixed(1)}%</span>
       </div>
-      <div className="h-2 overflow-hidden rounded-sm bg-secondary">
+      <div className="h-2 overflow-hidden rounded-sm bg-muted">
         <div className={`h-full ${colorClass}`} style={{ width: `${value}%` }} />
       </div>
     </div>
@@ -305,4 +305,3 @@ function ProgressRow({ label, value, color }) {
 }
 
 export default AccountTypeReport;
-

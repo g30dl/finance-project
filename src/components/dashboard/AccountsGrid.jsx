@@ -24,7 +24,7 @@ function AccountsGrid({ accounts, loading, onAccountClick, error }) {
 
   if (error) {
     return (
-      <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+      <div className="rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
         Error al cargar cuentas personales.
       </div>
     );
@@ -32,7 +32,7 @@ function AccountsGrid({ accounts, loading, onAccountClick, error }) {
 
   if (accountsArray.length === 0) {
     return (
-      <div className="vintage-card rounded-md px-4 py-6 text-center text-sm text-muted-foreground">
+      <div className="rounded-2xl bg-white px-4 py-6 text-center text-sm text-gray-500 shadow-card">
         No hay cuentas personales disponibles.
       </div>
     );
@@ -52,4 +52,3 @@ function AccountsGrid({ accounts, loading, onAccountClick, error }) {
 }
 
 export default AccountsGrid;
-

@@ -36,7 +36,7 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
   };
 
   return (
-    <div className="vintage-card rounded-md border border-warning/35 bg-warning/10 p-5">
+    <div className="rounded-2xl border border-warning/30 bg-white p-5 shadow-card">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="text-3xl">{getCategoryIcon(request.categoria)}</span>
@@ -44,7 +44,7 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
             <p className="font-heading text-sm text-foreground">
               {(request.categoria || 'categoria').replace('_', ' ')}
             </p>
-            <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="mt-1 flex items-center gap-2 text-sm text-foreground-muted">
               <User className="h-4 w-4" />
               <span>{request.nombreUsuario}</span>
             </div>
@@ -52,16 +52,16 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
         </div>
         <div className="text-right">
           <p className="font-heading text-2xl text-warning">{formatCurrency(request.cantidad)}</p>
-          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="mt-1 flex items-center gap-1 text-xs text-foreground-muted">
             <Calendar className="h-3 w-3" />
             <span>{getRelativeTime(request.fechaSolicitud)}</span>
           </div>
         </div>
       </div>
 
-      <div className="mb-4 rounded-md border border-border/80 bg-secondary/70 p-3">
+      <div className="mb-4 rounded-xl border border-border/80 bg-muted p-3">
         <div className="flex items-start gap-2">
-          <MessageSquare className="mt-0.5 h-4 w-4 text-muted-foreground" />
+          <MessageSquare className="mt-0.5 h-4 w-4 text-foreground-muted" />
           <p className="text-sm text-foreground">{request.concepto}</p>
         </div>
       </div>
@@ -124,4 +124,3 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
 }
 
 export default PendingRequestCard;
-

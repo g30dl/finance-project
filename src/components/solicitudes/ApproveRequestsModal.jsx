@@ -7,6 +7,7 @@ import { useRejectRequest } from '../../hooks/useRejectRequest';
 import { usePendingRequests } from '../../hooks/usePendingRequests';
 import { useBalance } from '../../hooks/useBalance';
 import { formatCurrency } from '../../utils/helpers';
+import { fireConfetti } from '../../utils/confetti';
 import PendingRequestCard from './PendingRequestCard';
 
 function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
@@ -38,6 +39,10 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
 
     const result = await approve(requestId, user?.userId);
     if (result.success) {
+      if (navigator?.vibrate) {
+        navigator.vibrate(20);
+      }
+      fireConfetti();
       setSuccessMessage(`Solicitud aprobada. Nuevo saldo: ${formatCurrency(result.newBalance)}`);
       setTimeout(() => setSuccessMessage(''), 3000);
     }
@@ -51,6 +56,9 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
 
     const result = await reject(requestId, user?.userId, reason);
     if (result.success) {
+      if (navigator?.vibrate) {
+        navigator.vibrate(10);
+      }
       setSuccessMessage('Solicitud rechazada correctamente');
       setTimeout(() => setSuccessMessage(''), 3000);
     }
@@ -102,7 +110,7 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
       size="lg"
       closeOnOverlayClick={false}
     >
-      <div className="balance-card mb-6 rounded-md p-5 text-white shadow-card">
+      <div className="mb-6 rounded-2xl bg-gradient-to-br from-primary to-primary-dark p-5 text-white shadow-card">
         <p className="text-sm text-white/85">Dinero Casa disponible</p>
         <p className="mt-1 font-heading text-3xl">
           {loadingCasa ? 'Cargando...' : formatCurrency(casaBalance)}
@@ -133,4 +141,3 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
 }
 
 export default ApproveRequestsModal;
-

@@ -12,8 +12,8 @@ function Alert({ variant = 'info', title, children, onClose, icon, className = '
       icon: <AlertTriangle className="h-5 w-5 text-warning" />,
     },
     danger: {
-      container: 'border-destructive/35 bg-destructive/10 text-destructive',
-      icon: <AlertCircle className="h-5 w-5 text-destructive" />,
+      container: 'border-danger/35 bg-danger/10 text-danger',
+      icon: <AlertCircle className="h-5 w-5 text-danger" />,
     },
     info: {
       container: 'border-info/35 bg-info/10 text-info',
@@ -36,7 +36,7 @@ function Alert({ variant = 'info', title, children, onClose, icon, className = '
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="flex-shrink-0 rounded-sm p-1 transition-colors hover:bg-secondary/60"
+            className="flex-shrink-0 rounded-sm p-1 transition-colors hover:bg-muted"
           >
             <X className="h-4 w-4" />
           </button>
@@ -47,4 +47,3 @@ function Alert({ variant = 'info', title, children, onClose, icon, className = '
 }
 
 export default Alert;
-

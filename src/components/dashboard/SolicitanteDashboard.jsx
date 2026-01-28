@@ -84,7 +84,7 @@ function SolicitanteDashboard() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-6 slide-up">
+      <main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-6 animate-slide-up">
         {notice ? (
           <div className="rounded-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
             {notice}

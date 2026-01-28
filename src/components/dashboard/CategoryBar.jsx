@@ -28,7 +28,9 @@ const CATEGORY_EMOJIS = {
 };
 
 function CategoryBar({ category, spent, budget }) {
-  const percentage = Math.min((spent / budget) * 100, 100);
+  const safeBudget = Number(budget) || 0;
+  const safeSpent = Number(spent) || 0;
+  const percentage = safeBudget > 0 ? Math.min((safeSpent / safeBudget) * 100, 100) : 0;
   const status = percentage < 70 ? 'safe' : percentage < 90 ? 'warning' : 'danger';
 
   const barColor =
@@ -46,7 +48,7 @@ function CategoryBar({ category, spent, budget }) {
           <span className="font-semibold text-gray-900 capitalize">{category}</span>
         </div>
         <span className="text-sm font-mono text-gray-600">
-          {formatCurrency(spent)} / {formatCurrency(budget)}
+          {formatCurrency(safeSpent)} / {formatCurrency(safeBudget)}
         </span>
       </div>
 
@@ -67,9 +69,11 @@ function CategoryBar({ category, spent, budget }) {
                 : 'text-red-600'
           }`}
         >
-          {percentage.toFixed(0)}% usado
+          {safeBudget > 0 ? `${percentage.toFixed(0)}% usado` : 'Sin presupuesto'}
         </span>
-        <span className="text-xs text-gray-500">{formatCurrency(budget - spent)} disponible</span>
+        <span className="text-xs text-gray-500">
+          {safeBudget > 0 ? formatCurrency(safeBudget - safeSpent) : 'Configura un presupuesto'}
+        </span>
       </div>
     </div>
   );

@@ -33,8 +33,8 @@ function RequestCard({ request, onClick }) {
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
-      className={`vintage-card rounded-md border p-4 transition-all duration-300 ${
-        onClick ? 'cursor-pointer hover:-translate-y-1 hover:shadow-lg' : ''
+      className={`rounded-2xl border p-4 shadow-card transition-all duration-300 ${
+        onClick ? 'cursor-pointer hover:-translate-y-1 hover:shadow-card-hover' : ''
       } ${config.card}`}
     >
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -71,4 +71,3 @@ function RequestCard({ request, onClick }) {
 }
 
 export default RequestCard;
-

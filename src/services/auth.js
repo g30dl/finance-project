@@ -17,7 +17,7 @@ const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || '')
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
 
-const ADMIN_WHITELIST = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : FALLBACK_ADMIN_EMAILS;
+const ADMIN_WHITELIST = ADMIN_EMAILS;
 
 const AUTH_MAP_PATH = 'familia_finanzas/auth_map';
 const USERS_PATH = 'familia_finanzas/usuarios';
@@ -25,6 +25,12 @@ const USERS_PATH = 'familia_finanzas/usuarios';
 const normalizeEmail = (email) => (email || '').trim().toLowerCase();
 const isEmailAllowed = (email) => ADMIN_WHITELIST.includes(normalizeEmail(email));
 const GOOGLE_PROVIDER_ID = 'google.com';
+
+const assertAdminWhitelist = () => {
+  if (ADMIN_WHITELIST.length === 0) {
+    throw new Error('Acceso admin deshabilitado. Configura VITE_ADMIN_EMAILS en .env.local.');
+  }
+};
 
 export const ensureAuthSession = async () => {
   if (auth.currentUser) {
@@ -110,6 +116,7 @@ const getSignInMethods = async (email) => {
   return fetchSignInMethodsForEmail(auth, email);
 };
 const signInAdminWithPassword = async (email, password) => {
+  assertAdminWhitelist();
   const normalizedEmail = normalizeEmail(email);
   if (!normalizedEmail || !password) {
     throw new Error('Ingresa tu correo y contrasena.');
@@ -187,6 +194,7 @@ const buildUserFromDatabase = async (firebaseUser) => {
 // Login como Admin con Google o correo/contraseña
 export const loginAsAdmin = async (credentials = {}) => {
   try {
+    assertAdminWhitelist();
     const method = credentials?.method === 'password' ? 'password' : 'google';
     const result = await signInAdmin({
       method,
@@ -300,4 +308,3 @@ export const getCurrentUser = async () => {
 };
 
 export const getUserFromDatabase = buildUserFromDatabase;
-

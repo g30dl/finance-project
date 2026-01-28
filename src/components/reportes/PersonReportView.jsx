@@ -1,13 +1,15 @@
 ﻿import React, { useMemo, useState } from 'react';
-import { Download, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { usePersonReport } from '../../hooks/usePersonReport';
 import { useUsers } from '../../hooks/useUsers';
-import { Alert, Button, Card, Select, Skeleton } from '../common';
-import { downloadCSV, generateCSV } from '../../utils/csvExport';
+import { Alert, Card, Select, Skeleton } from '../common';
+import { generateCSV } from '../../utils/csvExport';
 import PersonalStatsCard from './PersonalStatsCard';
 import RequestStatsCard from './RequestStatsCard';
 import ComparisonChart from './ComparisonChart';
 import TransactionsList from './TransactionsList';
+import ExportButtons from './ExportButtons';
+import ReportPreview from './ReportPreview';
 
 const PERIOD_OPTIONS = [
   { value: 'week', label: 'Ultima semana' },
@@ -39,11 +41,25 @@ function PersonReportView() {
       }));
   }, [users]);
 
-  const handleExportCSV = () => {
-    if (!selectedUser) return;
-    const content = generateCSV(transactions, requests);
-    downloadCSV(content, `reporte_${selectedUser}_${period}.csv`);
-  };
+  const csvContent = useMemo(() => {
+    if (!selectedUser) return '';
+    return generateCSV(transactions, requests);
+  }, [selectedUser, transactions, requests]);
+
+  const exportFilename = useMemo(
+    () => (selectedUser ? `reporte_${selectedUser}_${period}` : 'reporte'),
+    [selectedUser, period]
+  );
+
+  const previewItems = useMemo(
+    () => [
+      { label: 'Ingresos', value: personalStats?.ingresos || 0 },
+      { label: 'Egresos', value: personalStats?.egresos || 0 },
+      { label: 'Solicitudes', value: requestStats?.total || 0 },
+      { label: 'Aprobadas', value: requestStats?.aprobadas || 0 },
+    ],
+    [personalStats, requestStats]
+  );
 
   const showReport = selectedUser && !loading && !error;
 
@@ -68,14 +84,11 @@ function PersonReportView() {
             disabled={!selectedUser}
           />
           <div className="flex items-end">
-            <Button
-              onClick={handleExportCSV}
+            <ExportButtons
+              csvContent={csvContent}
+              filenameBase={exportFilename}
               disabled={!selectedUser || loading}
-              icon={<Download className="h-4 w-4" />}
-              fullWidth
-            >
-              Exportar CSV
-            </Button>
+            />
           </div>
         </div>
       </Card>
@@ -86,7 +99,7 @@ function PersonReportView() {
 
       {!selectedUser ? (
         <Card>
-          <div className="py-12 text-center text-muted-foreground">
+          <div className="py-12 text-center text-foreground-muted">
             <Users className="mx-auto mb-4 h-12 w-12 text-primary" />
             <p>Selecciona un usuario para ver su reporte.</p>
           </div>
@@ -105,6 +118,11 @@ function PersonReportView() {
 
       {showReport ? (
         <>
+          <ReportPreview
+            title="Resumen del reporte"
+            subtitle="Vista previa antes de exportar"
+            items={previewItems}
+          />
           <PersonalStatsCard stats={personalStats} />
           <RequestStatsCard stats={requestStats} />
           <ComparisonChart personalStats={personalStats} requestStats={requestStats} />

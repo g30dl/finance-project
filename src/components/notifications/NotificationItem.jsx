@@ -15,8 +15,8 @@ const NOTIF_CONFIG = {
   },
   solicitud_rechazada: {
     icon: <XCircle className="h-5 w-5" />,
-    color: 'text-destructive',
-    surface: 'border-destructive/25 bg-destructive/10',
+    color: 'text-danger',
+    surface: 'border-danger/25 bg-danger/10',
   },
   deposito_recibido: {
     icon: <DollarSign className="h-5 w-5" />,
@@ -37,8 +37,8 @@ const NOTIF_CONFIG = {
 
 const DEFAULT_CONFIG = {
   icon: <FileText className="h-5 w-5" />,
-  color: 'text-muted-foreground',
-  surface: 'border-border bg-secondary/70',
+  color: 'text-foreground-muted',
+  surface: 'border-border bg-muted',
 };
 
 function NotificationItem({ notification, onMarkAsRead }) {
@@ -60,8 +60,8 @@ function NotificationItem({ notification, onMarkAsRead }) {
           handleClick();
         }
       }}
-      className={`cursor-pointer rounded-md border p-3 transition-colors hover:bg-secondary/60 ${
-        notification.leida ? 'border-transparent bg-transparent' : 'border-border bg-secondary/70'
+      className={`cursor-pointer rounded-2xl border p-3 transition-colors hover:bg-muted ${
+        notification.leida ? 'border-transparent bg-transparent' : 'border-border bg-muted'
       }`}
     >
       <div className="flex gap-3">
@@ -70,7 +70,7 @@ function NotificationItem({ notification, onMarkAsRead }) {
         </div>
         <div className="flex-1">
           <p className="text-sm text-foreground">{notification.mensaje}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{getRelativeTime(notification.fecha)}</p>
+          <p className="mt-1 text-xs text-foreground-muted">{getRelativeTime(notification.fecha)}</p>
         </div>
         {!notification.leida ? <div className="mt-2 h-2 w-2 rounded-full bg-primary" /> : null}
       </div>
@@ -79,4 +79,3 @@ function NotificationItem({ notification, onMarkAsRead }) {
 }
 
 export default NotificationItem;
-

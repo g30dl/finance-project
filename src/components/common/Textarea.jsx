@@ -25,7 +25,7 @@ const Textarea = forwardRef(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label ? (
-          <label htmlFor={textareaId} className="mb-2 block text-sm font-medium text-muted-foreground">
+          <label htmlFor={textareaId} className="mb-2 block text-sm font-medium text-foreground-muted">
             {label}
           </label>
         ) : null}
@@ -36,9 +36,9 @@ const Textarea = forwardRef(
           rows={rows}
           maxLength={maxLength}
           value={value}
-          className={`w-full resize-none rounded-md border bg-card px-4 py-2.5 text-foreground placeholder:text-muted-foreground/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 ${
+          className={`w-full resize-none rounded-md border bg-white px-4 py-2.5 text-foreground placeholder:text-foreground-muted/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 ${
             hasError
-              ? 'border-destructive focus:ring-destructive'
+              ? 'border-danger focus:ring-danger'
               : 'border-border hover:border-primary/40'
           } ${className}`}
           {...props}
@@ -47,7 +47,7 @@ const Textarea = forwardRef(
         <div className="mt-2 flex items-start justify-between">
           <div className="flex-1">
             {helperText || error ? (
-              <p className={`text-sm ${hasError ? 'text-destructive' : 'text-muted-foreground'}`}>
+              <p className={`text-sm ${hasError ? 'text-danger' : 'text-foreground-muted'}`}>
                 {error || helperText}
               </p>
             ) : null}
@@ -55,7 +55,7 @@ const Textarea = forwardRef(
           {showCount && maxLength ? (
             <p
               className={`ml-2 text-sm ${
-                currentLength >= maxLength * 0.9 ? 'text-warning' : 'text-muted-foreground'
+                currentLength >= maxLength * 0.9 ? 'text-warning' : 'text-foreground-muted'
               }`}
             >
               {currentLength}/{maxLength}
@@ -70,4 +70,3 @@ const Textarea = forwardRef(
 Textarea.displayName = 'Textarea';
 
 export default Textarea;
-

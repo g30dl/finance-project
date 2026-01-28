@@ -10,7 +10,6 @@ export { default as Select } from './Select';
 export { default as Textarea } from './Textarea';
 
 export { default as Alert } from './Alert';
-export { default as AlertBanner } from './AlertBanner';
 export { default as Badge } from './Badge';
 
 export { default as BalanceCard } from './BalanceCard';

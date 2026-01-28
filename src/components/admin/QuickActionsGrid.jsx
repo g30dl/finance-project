@@ -2,11 +2,36 @@ import React from 'react';
 import { ArrowLeftRight, FileText, Plus, Repeat, Send } from 'lucide-react';
 
 const ACTIONS = [
-  { id: 'deposit', label: 'Depositar', icon: Plus },
-  { id: 'transfer', label: 'Transferir', icon: ArrowLeftRight },
-  { id: 'approve', label: 'Aprobar', icon: Send },
-  { id: 'recurring', label: 'Recurrentes', icon: Repeat },
-  { id: 'reports', label: 'Reportes', icon: FileText },
+  {
+    id: 'deposit',
+    label: 'Depositar',
+    icon: Plus,
+    gradient: 'from-success to-success/80',
+  },
+  {
+    id: 'transfer',
+    label: 'Transferir',
+    icon: ArrowLeftRight,
+    gradient: 'from-primary to-primary-dark',
+  },
+  {
+    id: 'approve',
+    label: 'Aprobar',
+    icon: Send,
+    gradient: 'from-info to-info/80',
+  },
+  {
+    id: 'recurring',
+    label: 'Recurrentes',
+    icon: Repeat,
+    gradient: 'from-warning to-warning/80',
+  },
+  {
+    id: 'reports',
+    label: 'Reportes',
+    icon: FileText,
+    gradient: 'from-accent to-accent/80',
+  },
 ];
 
 function QuickActionsGrid({ onDeposit, onTransfer, onApprove, onRecurring, onReports }) {
@@ -27,12 +52,10 @@ function QuickActionsGrid({ onDeposit, onTransfer, onApprove, onRecurring, onRep
             key={action.id}
             type="button"
             onClick={handlers[action.id]}
-            className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left shadow-card transition-all hover:shadow-card-hover"
+            className={`rounded-2xl bg-gradient-to-br ${action.gradient} p-5 text-left text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl`}
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Icon className="h-5 w-5" />
-            </span>
-            <span className="text-sm font-semibold text-gray-800">{action.label}</span>
+            <Icon className="mb-3 h-7 w-7" />
+            <span className="text-sm font-semibold">{action.label}</span>
           </button>
         );
       })}

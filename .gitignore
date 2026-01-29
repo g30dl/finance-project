@@ -199,6 +199,7 @@ workbox-*.js.map
 local/
 *.local.js
 *.local.json
+public/firebase-messaging-config.js
 
 # ============================================
 # 📦 Backups

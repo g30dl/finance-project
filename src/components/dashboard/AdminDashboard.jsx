@@ -21,6 +21,7 @@ import AdminHeroSection from '../admin/AdminHeroSection';
 import StatCardWithChart from '../admin/StatCardWithChart';
 import TimelineActivity from '../admin/TimelineActivity';
 import AccountsCarousel from '../admin/AccountsCarousel';
+import RecurringExpensesList from '../admin/RecurringExpensesList';
 import ApproveRequestsModal from '../solicitudes/ApproveRequestsModal';
 import TransferModal from '../admin/TransferModal';
 import DepositModal from '../admin/DepositModal';
@@ -454,6 +455,10 @@ function AdminDashboard() {
             <h3 className="mb-4 font-heading text-lg text-foreground">Actividad reciente</h3>
             <TimelineActivity items={recentActivities} />
           </motion.div>
+        </section>
+
+        <section>
+          <RecurringExpensesList />
         </section>
 
         <section>

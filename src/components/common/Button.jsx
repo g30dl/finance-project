@@ -16,7 +16,7 @@ function Button({
   ...props
 }) {
   const baseStyles =
-    'inline-flex items-center justify-center gap-2 rounded-md border border-transparent font-heading font-semibold tracking-[0.02em] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60';
+    'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-transparent font-heading font-semibold tracking-[0.02em] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60';
 
   const variants = {
     primary:

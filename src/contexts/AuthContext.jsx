@@ -14,6 +14,7 @@ import {
   loginAsAdmin,
   loginAsUser,
   logout as logoutService,
+  handleAdminRedirectResult,
 } from '../services/auth';
 
 const AuthContext = createContext(null);
@@ -44,6 +45,19 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let mounted = true;
+
+    handleAdminRedirectResult()
+      .then((result) => {
+        if (!mounted) return;
+        if (result?.success && result.user) {
+          setUser(result.user);
+        } else if (result?.error) {
+          console.warn('Login redirect admin:', result.error);
+        }
+      })
+      .catch((error) => {
+        console.warn('Login redirect admin:', error);
+      });
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!mounted) return;

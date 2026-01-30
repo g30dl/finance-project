@@ -2,10 +2,12 @@
   EmailAuthProvider,
   GoogleAuthProvider,
   fetchSignInMethodsForEmail,
+  getRedirectResult,
   linkWithCredential,
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from 'firebase/auth';
 import { get, ref, set } from 'firebase/database';
@@ -151,12 +153,76 @@ const signInAdminWithPassword = async (email, password) => {
   }
   throw new Error('Esta cuenta requiere otro metodo de acceso.');
 };
+const shouldFallbackToRedirect = (error) => {
+  const code = error?.code || '';
+  return (
+    code === 'auth/operation-not-supported-in-this-environment' ||
+    code === 'auth/popup-blocked' ||
+    code === 'auth/popup-closed-by-user'
+  );
+};
+
+const isStandaloneDisplay = () => {
+  if (typeof window === 'undefined') return false;
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+    return true;
+  }
+  return Boolean(window.navigator?.standalone);
+};
+
 const signInAdmin = async ({ method, email, password } = {}) => {
   if (method === 'password') {
     return signInAdminWithPassword(email, password);
   }
+
   const provider = new GoogleAuthProvider();
-  return signInWithPopup(auth, provider);
+  if (isStandaloneDisplay()) {
+    await signInWithRedirect(auth, provider);
+    return { redirect: true };
+  }
+
+  try {
+    return await signInWithPopup(auth, provider);
+  } catch (error) {
+    if (shouldFallbackToRedirect(error)) {
+      await signInWithRedirect(auth, provider);
+      return { redirect: true };
+    }
+    throw error;
+  }
+};
+
+const completeAdminLogin = async (firebaseUser) => {
+  const email = normalizeEmail(firebaseUser.email);
+  if (!isEmailAllowed(email)) {
+    await signOut(auth);
+    return { success: false, error: 'Email no autorizado' };
+  }
+
+  const adminRecord = await ensureAdminInDatabase(firebaseUser);
+  await linkAuthToUserId(firebaseUser.uid, adminRecord.userId);
+
+  await syncRoleClaimSafe();
+  await firebaseUser.getIdToken(true);
+  const token = await firebaseUser.getIdTokenResult(true);
+  const claimRole = token?.claims?.role;
+
+  if (claimRole && claimRole !== 'admin') {
+    return {
+      success: false,
+      error: 'Cuenta sin permisos. Contacta al administrador para activar tu rol.',
+    };
+  }
+
+  const user = await buildUserFromDatabase(firebaseUser);
+  if (!user || user.role !== 'admin') {
+    return {
+      success: false,
+      error: 'Cuenta sin permisos. Asegura el custom claim role=admin o el rol en database.',
+    };
+  }
+
+  return { success: true, user };
 };
 
 const buildUserFromDatabase = async (firebaseUser) => {
@@ -201,44 +267,23 @@ export const loginAsAdmin = async (credentials = {}) => {
       email: credentials?.email,
       password: credentials?.password,
     });
-    const firebaseUser = result.user;
-
-    const email = normalizeEmail(firebaseUser.email);
-    if (!isEmailAllowed(email)) {
-      await signOut(auth);
-      return { success: false, error: 'Email no autorizado' };
+    if (result?.redirect) {
+      return { success: true, redirect: true };
     }
-
-    const adminRecord = await ensureAdminInDatabase(firebaseUser);
-
-    // Vincular UID de auth con el userId de la app
-    await linkAuthToUserId(firebaseUser.uid, adminRecord.userId);
-
-    // Intentar sincronizar claims reales si ya existen functions
-    await syncRoleClaimSafe();
-    await firebaseUser.getIdToken(true);
-    const token = await firebaseUser.getIdTokenResult(true);
-    const claimRole = token?.claims?.role;
-
-    if (claimRole && claimRole !== 'admin') {
-      return {
-        success: false,
-        error: 'Cuenta sin permisos. Contacta al administrador para activar tu rol.',
-      };
-    }
-
-    const user = await buildUserFromDatabase(firebaseUser);
-    if (!user || user.role !== 'admin') {
-      return {
-        success: false,
-        error:
-          'Cuenta sin permisos. Asegura el custom claim role=admin o el rol en database.',
-      };
-    }
-
-    return { success: true, user };
+    return completeAdminLogin(result.user);
   } catch (error) {
     console.error('Error login admin:', error);
+    return { success: false, error: error?.message || 'Error al iniciar sesion' };
+  }
+};
+
+export const handleAdminRedirectResult = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (!result?.user) return null;
+    return await completeAdminLogin(result.user);
+  } catch (error) {
+    console.error('Error login redirect admin:', error);
     return { success: false, error: error?.message || 'Error al iniciar sesion' };
   }
 };

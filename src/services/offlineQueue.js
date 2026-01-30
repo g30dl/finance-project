@@ -1,5 +1,7 @@
+import { get, ref } from 'firebase/database';
 import { createRequest } from './requests';
 import { createPersonalExpense } from './personalExpenses';
+import { db } from './firebase';
 import {
   addToQueue,
   getQueuedOperations,
@@ -8,6 +10,8 @@ import {
 } from '../utils/indexedDBHelper';
 
 let processingPromise = null;
+
+const CASA_BALANCE_PATH = 'familia_finanzas/cuentas/dinero_casa/saldo';
 
 const notifyQueueUpdate = () => {
   if (typeof window === 'undefined') return;
@@ -113,6 +117,26 @@ const executeOperation = async (operation) => {
   }
 };
 
+const canProcessRequest = async (operation) => {
+  const amount = Number(operation?.payload?.amount);
+  if (!amount || Number.isNaN(amount)) {
+    throw new Error('Monto invalido en solicitud');
+  }
+
+  const snapshot = await get(ref(db, CASA_BALANCE_PATH));
+  const casaBalance = Number(snapshot.val()) || 0;
+
+  if (casaBalance < amount) {
+    const error = new Error(
+      `Saldo insuficiente en Dinero Casa. Disponible: $${casaBalance.toFixed(2)}`
+    );
+    error.code = 'INSUFFICIENT_FUNDS';
+    throw error;
+  }
+
+  return true;
+};
+
 export const processQueue = async () => {
   if (!isOnline()) {
     return { processed: 0, failed: 0, total: 0 };
@@ -129,11 +153,24 @@ export const processQueue = async () => {
 
     for (const op of operations) {
       try {
+        if (op.type === 'CREATE_REQUEST') {
+          await canProcessRequest(op);
+        }
+
         await updateOperation(op.id, { status: 'syncing', lastError: null });
         await executeOperation(op);
         await removeFromQueue(op.id);
         processed += 1;
       } catch (error) {
+        if (error?.code === 'INSUFFICIENT_FUNDS') {
+          await updateOperation(op.id, {
+            status: 'pending',
+            lastError: error?.message || 'Saldo insuficiente para sincronizar',
+          });
+          failed += 1;
+          continue;
+        }
+
         const nextRetries = Number(op.retries || 0) + 1;
         const reachedMax = nextRetries >= Number(op.maxRetries || 3);
         await updateOperation(op.id, {

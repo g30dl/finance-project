@@ -76,6 +76,11 @@ function PersonalExpenseForm() {
       return;
     }
 
+    if (!hasBalance) {
+      setErrorMessage('No se pudo validar el saldo sin conexion. Intenta de nuevo cuando tengas internet.');
+      return;
+    }
+
     const amount = Number(formData.amount);
     if (hasBalance && amount > resolvedBalance) {
       setErrors({
@@ -121,7 +126,7 @@ function PersonalExpenseForm() {
     navigate(`/dashboard/solicitante/${userId}`);
   };
 
-  const canSubmit = !loading && !successMessage && (isOnline ? hasBalance && resolvedBalance > 0 : true);
+  const canSubmit = !loading && !successMessage && hasBalance && resolvedBalance > 0;
   const helperText = formData.amount && !errors.amount ? `Gastaras: ${formatCurrency(formData.amount)}` : undefined;
 
   return (

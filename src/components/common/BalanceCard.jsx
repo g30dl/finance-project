@@ -60,7 +60,7 @@ function BalanceCard({
   const balanceValue = Number.isFinite(Number(balance)) ? Number(balance) : 0;
   const hasData = balance !== null && !loading && !error;
   const status = hasData ? getStatusColor(balanceValue, threshold) : null;
-  const amountClasses = large ? 'text-4xl sm:text-5xl' : 'text-3xl';
+  const amountClasses = large ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-2xl sm:text-3xl';
   const skeletonHeight = large ? 'h-12' : 'h-10';
   const shouldShowIndicator = showIndicator && resolvedType === 'personal';
   const Icon = resolvedType === 'personal' ? Wallet : Home;
@@ -68,7 +68,7 @@ function BalanceCard({
 
   return (
     <div
-      className={`relative overflow-hidden p-6 transition-all duration-300 ${styles.container} ${
+      className={`relative overflow-hidden p-4 sm:p-6 transition-all duration-300 ${styles.container} ${
         readonly ? 'cursor-default' : styles.hover
       }`}
     >

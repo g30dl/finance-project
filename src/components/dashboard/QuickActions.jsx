@@ -6,14 +6,14 @@ function QuickActions({ onUsePersonal, onRequestCasa, personalBalance }) {
   const canUsePersonal = balanceValue > 0;
 
   return (
-    <div className="space-y-3">
-      <h3 className="font-heading text-lg text-foreground">Acciones Rapidas</h3>
+    <div className="space-y-3 sm:space-y-4">
+      <h3 className="font-heading text-base sm:text-lg text-foreground">Acciones Rapidas</h3>
 
       <button
         type="button"
         onClick={onUsePersonal}
         disabled={!canUsePersonal}
-        className={`w-full p-4 text-left transition-all duration-300 ${
+        className={`w-full min-h-[72px] p-4 sm:p-5 text-left transition-all duration-300 ${
           canUsePersonal
             ? 'rounded-2xl border border-success/30 bg-white shadow-card hover:-translate-y-1 hover:shadow-card-hover'
             : 'rounded-2xl border border-border bg-muted text-muted-foreground opacity-70 cursor-not-allowed'
@@ -25,8 +25,8 @@ function QuickActions({ onUsePersonal, onRequestCasa, personalBalance }) {
               <DollarSign className="h-5 w-5" />
             </div>
             <div>
-              <p className="font-heading text-sm text-foreground">Usar Mi Dinero Personal</p>
-              <p className="text-xs text-muted-foreground">Gasta sin aprobacion</p>
+              <p className="font-heading text-sm text-foreground sm:text-base">Usar Mi Dinero Personal</p>
+              <p className="text-xs text-muted-foreground sm:text-sm">Gasta sin aprobacion</p>
             </div>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
@@ -36,7 +36,7 @@ function QuickActions({ onUsePersonal, onRequestCasa, personalBalance }) {
       <button
         type="button"
         onClick={onRequestCasa}
-        className="w-full rounded-2xl border border-primary/30 bg-white p-4 text-left shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover"
+        className="w-full min-h-[72px] rounded-2xl border border-primary/30 bg-white p-4 sm:p-5 text-left shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover"
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -44,8 +44,8 @@ function QuickActions({ onUsePersonal, onRequestCasa, personalBalance }) {
               <Home className="h-5 w-5" />
             </div>
             <div>
-              <p className="font-heading text-sm text-foreground">Solicitar de Casa</p>
-              <p className="text-xs text-muted-foreground">Requiere aprobacion</p>
+              <p className="font-heading text-sm text-foreground sm:text-base">Solicitar de Casa</p>
+              <p className="text-xs text-muted-foreground sm:text-sm">Requiere aprobacion</p>
             </div>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground" />

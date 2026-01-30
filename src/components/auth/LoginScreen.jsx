@@ -94,6 +94,11 @@ function LoginScreen() {
       return;
     }
 
+    if (result?.redirect) {
+      setAdminOpen(false);
+      return;
+    }
+
     setAdminOpen(false);
     navigate('/dashboard/admin', { replace: true });
   };

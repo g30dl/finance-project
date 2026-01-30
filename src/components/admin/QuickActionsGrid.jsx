@@ -52,10 +52,10 @@ function QuickActionsGrid({ onDeposit, onTransfer, onApprove, onRecurring, onRep
             key={action.id}
             type="button"
             onClick={handlers[action.id]}
-            className={`rounded-2xl bg-gradient-to-br ${action.gradient} p-5 text-left text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl`}
+            className={`min-h-[96px] rounded-2xl bg-gradient-to-br ${action.gradient} p-4 text-left text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl sm:p-5`}
           >
-            <Icon className="mb-3 h-7 w-7" />
-            <span className="text-sm font-semibold">{action.label}</span>
+            <Icon className="mb-3 h-6 w-6 sm:h-7 sm:w-7" />
+            <span className="text-xs font-semibold sm:text-sm">{action.label}</span>
           </button>
         );
       })}

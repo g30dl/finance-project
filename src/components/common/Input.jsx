@@ -38,7 +38,7 @@ const Input = forwardRef(
           <input
             ref={ref}
             id={inputId}
-            className={`w-full rounded-md border bg-white px-4 py-2.5 text-foreground placeholder:text-foreground-muted/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`w-full min-h-[44px] rounded-md border bg-white px-4 py-2.5 text-base text-foreground placeholder:text-foreground-muted/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 ${
               hasError
                 ? 'border-danger focus:ring-danger'
                 : 'border-border hover:border-primary/40'

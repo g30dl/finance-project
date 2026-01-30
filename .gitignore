@@ -289,3 +289,15 @@ ssl/
 
 # Carpeta local del proyecto
 cosas del proyecto/
+
+# ============================================
+# 🚀 Fase 10 - Evidence/Reports (no versionar)
+# ============================================
+FASE-10-EVIDENCE/
+lighthouse-report.html
+bundle-stats.html
+performance-metrics.json
+before-after-comparison.md
+
+# Salida de optimización de imágenes
+public/icons-optimized/

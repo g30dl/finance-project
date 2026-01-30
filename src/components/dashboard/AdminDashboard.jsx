@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import {
   Activity,
   AlertCircle,
@@ -25,11 +25,12 @@ import StatCardWithChart from '../admin/StatCardWithChart';
 import TimelineActivity from '../admin/TimelineActivity';
 import AccountsCarousel from '../admin/AccountsCarousel';
 import RecurringExpensesList from '../admin/RecurringExpensesList';
-import ApproveRequestsModal from '../solicitudes/ApproveRequestsModal';
-import TransferModal from '../admin/TransferModal';
-import DepositModal from '../admin/DepositModal';
 import NotificationCenter from '../notifications/NotificationCenter';
 import { motion } from 'framer-motion';
+
+const ApproveRequestsModal = lazy(() => import('../solicitudes/ApproveRequestsModal'));
+const TransferModal = lazy(() => import('../admin/TransferModal'));
+const DepositModal = lazy(() => import('../admin/DepositModal'));
 
 function AdminDashboard() {
   const { user, logout } = useAuthContext();
@@ -509,17 +510,20 @@ function AdminDashboard() {
         </section>
       </main>
 
-      <ApproveRequestsModal
-        isOpen={approveModalOpen}
-        onClose={() => setApproveModalOpen(false)}
-        requests={pendingRequestsData}
-        loading={loadingPendingRequests}
-        error={pendingRequestsError}
-      />
-
-      <TransferModal isOpen={transferModalOpen} onClose={() => setTransferModalOpen(false)} />
-
-      <DepositModal isOpen={depositModalOpen} onClose={() => setDepositModalOpen(false)} />
+      <Suspense fallback={null}>
+        <ApproveRequestsModal
+          isOpen={approveModalOpen}
+          onClose={() => setApproveModalOpen(false)}
+          requests={pendingRequestsData}
+          loading={loadingPendingRequests}
+          error={pendingRequestsError}
+        />
+        <TransferModal
+          isOpen={transferModalOpen}
+          onClose={() => setTransferModalOpen(false)}
+        />
+        <DepositModal isOpen={depositModalOpen} onClose={() => setDepositModalOpen(false)} />
+      </Suspense>
     </div>
   );
 }

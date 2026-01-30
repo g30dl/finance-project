@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { Suspense, useMemo, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useFirebaseData } from '../../hooks/useFirebaseData';
 import { filterUserTransactions, isUserIncome } from '../../utils/transactionHelpers';
 import TransactionFilter from '../../components/activity/TransactionFilter';
 import DateRangePicker from '../../components/activity/DateRangePicker';
 import TransactionList from '../../components/activity/TransactionList';
-import MonthlyBarChart from '../../components/charts/MonthlyBarChart';
+import { ChartLoader, MonthlyBarChart } from '../../components/charts/LazyCharts';
 import AnimatedSection from '../../components/common/AnimatedSection';
 
 const VALID_TYPES = new Set([
@@ -104,7 +104,9 @@ function ActivityTab() {
       <AnimatedSection delay={0.1}>
         <div className="rounded-3xl bg-white p-4 shadow-card">
           <h3 className="mb-3 text-sm font-semibold text-gray-700">Tendencia mensual</h3>
-          <MonthlyBarChart data={chartData} />
+          <Suspense fallback={<ChartLoader />}>
+            <MonthlyBarChart data={chartData} />
+          </Suspense>
         </div>
       </AnimatedSection>
 

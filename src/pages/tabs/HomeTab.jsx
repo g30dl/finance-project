@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { Suspense, useMemo } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useBalance } from '../../hooks/useBalance';
@@ -7,7 +7,7 @@ import { useMonthlyStats } from '../../hooks/useMonthlyStats';
 import { useMonthlyPersonalSummary } from '../../hooks/useMonthlyPersonalSummary';
 import StatCard from '../../components/dashboard/StatCard';
 import CategoryBar from '../../components/dashboard/CategoryBar';
-import CategoryDonutChart from '../../components/charts/CategoryDonutChart';
+import { CategoryDonutChart, ChartLoader } from '../../components/charts/LazyCharts';
 import AnimatedSection from '../../components/common/AnimatedSection';
 import { formatCurrency } from '../../utils/helpers';
 
@@ -118,7 +118,9 @@ function HomeTab() {
             <h3 className="text-sm font-semibold text-gray-700">Gastos por categoria</h3>
             <span className="text-xs text-gray-400">Mes actual</span>
           </div>
-          <CategoryDonutChart data={chartData} />
+          <Suspense fallback={<ChartLoader />}>
+            <CategoryDonutChart data={chartData} />
+          </Suspense>
         </div>
       </AnimatedSection>
     </div>

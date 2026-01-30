@@ -7,7 +7,6 @@ import { useRejectRequest } from '../../hooks/useRejectRequest';
 import { usePendingRequests } from '../../hooks/usePendingRequests';
 import { useBalance } from '../../hooks/useBalance';
 import { formatCurrency } from '../../utils/helpers';
-import { fireConfetti } from '../../utils/confetti';
 import PendingRequestCard from './PendingRequestCard';
 
 function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
@@ -42,7 +41,6 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
       if (navigator?.vibrate) {
         navigator.vibrate(20);
       }
-      fireConfetti();
       setSuccessMessage(`Solicitud aprobada. Nuevo saldo: ${formatCurrency(result.newBalance)}`);
       setTimeout(() => setSuccessMessage(''), 3000);
     }

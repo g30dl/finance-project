@@ -10,6 +10,8 @@ function NotificationCenter() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
+  const notifiedIdsRef = useRef(new Set());
+  const notifiedLoadedRef = useRef(false);
 
   const { notifications, loading, error, unreadCount, markAsRead } = useNotifications(
     user?.userId,
@@ -18,6 +20,34 @@ function NotificationCenter() {
 
   const recentNotifications = useMemo(() => notifications.slice(0, 5), [notifications]);
   const seenIdsRef = useRef(new Set());
+  const STORAGE_KEY = 'ff_notified_notifications_v1';
+
+  const loadNotifiedIds = () => {
+    if (notifiedLoadedRef.current) return;
+    notifiedLoadedRef.current = true;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((id) => {
+          if (id) notifiedIdsRef.current.add(id);
+        });
+      }
+    } catch (err) {
+      console.warn('No se pudo leer notificaciones persistidas', err);
+    }
+  };
+
+  const persistNotifiedIds = () => {
+    try {
+      const ids = Array.from(notifiedIdsRef.current);
+      const trimmed = ids.slice(-200);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+    } catch (err) {
+      console.warn('No se pudo guardar notificaciones persistidas', err);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -32,17 +62,31 @@ function NotificationCenter() {
 
   useEffect(() => {
     if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    loadNotifiedIds();
     const seen = seenIdsRef.current;
+    const notified = notifiedIdsRef.current;
+    let didNotify = false;
+
     notifications.forEach((notification) => {
       if (!notification?.id || seen.has(notification.id)) return;
       if (notification.leida) return;
+      if (notified.has(notification.id)) {
+        seen.add(notification.id);
+        return;
+      }
       seen.add(notification.id);
       try {
         new Notification('Familia Finanzas', { body: notification.mensaje });
+        notified.add(notification.id);
+        didNotify = true;
       } catch (error) {
         console.warn('No se pudo mostrar notificacion', error);
       }
     });
+
+    if (didNotify) {
+      persistNotifiedIds();
+    }
   }, [notifications]);
 
   return (

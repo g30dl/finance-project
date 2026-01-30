@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
-import { Bell, Calendar, Clock, Pencil, Power, Trash2 } from 'lucide-react';
+import React from 'react';
+import { Bell, Calendar, Pencil, Power, Trash2 } from 'lucide-react';
 import { Badge } from '../common';
 import { formatCurrency } from '../../utils/helpers';
 import { getCategoryIcon, getCategoryColor } from '../../utils/categories';
 import { CATEGORIES } from '../../utils/constants';
+import { formatProximaEjecucion, getBadgeVariantByDays } from '../../utils/recurringHelpers';
 
 const CATEGORY_LABELS = CATEGORIES.reduce((acc, category) => {
   acc[category.id] = category.label;
@@ -11,13 +12,10 @@ const CATEGORY_LABELS = CATEGORIES.reduce((acc, category) => {
 }, {});
 
 function RecurringExpenseCard({ expense, onEdit, onToggle, onDelete }) {
-  const diasRestantes = useMemo(() => {
-    const diff = Number(expense.proximaEjecucion || 0) - Date.now();
-    return Math.ceil(diff / (1000 * 60 * 60 * 24));
-  }, [expense.proximaEjecucion]);
-
   const categoryLabel = CATEGORY_LABELS[expense.categoria] || expense.categoria || 'Categoria';
   const categoryColor = getCategoryColor(expense.categoria);
+  const nextExecutionLabel = formatProximaEjecucion(expense.proximaEjecucion);
+  const nextExecutionVariant = getBadgeVariantByDays(expense.proximaEjecucion);
 
   return (
     <div
@@ -30,9 +28,16 @@ function RecurringExpenseCard({ expense, onEdit, onToggle, onDelete }) {
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className={`text-3xl ${categoryColor}`}>{getCategoryIcon(expense.categoria)}</span>
-          <Badge variant={expense.activo ? 'success' : 'neutral'}>
-            {expense.activo ? 'Activo' : 'Inactivo'}
-          </Badge>
+          <div className="flex flex-col gap-1">
+            <Badge variant={expense.activo ? 'success' : 'neutral'} size="sm">
+              {expense.activo ? 'Activo' : 'Inactivo'}
+            </Badge>
+            {expense.activo ? (
+              <Badge variant={nextExecutionVariant} size="sm">
+                {nextExecutionLabel}
+              </Badge>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -76,15 +81,6 @@ function RecurringExpenseCard({ expense, onEdit, onToggle, onDelete }) {
           </span>
         </div>
 
-        {Number.isFinite(diasRestantes) && diasRestantes <= 7 ? (
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            <span className={diasRestantes <= 3 ? 'text-warning font-semibold' : ''}>
-              {diasRestantes <= 0 ? 'Hoy' : `En ${diasRestantes} dias`}
-            </span>
-          </div>
-        ) : null}
-
         {expense.notificarAntes ? (
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
@@ -92,6 +88,13 @@ function RecurringExpenseCard({ expense, onEdit, onToggle, onDelete }) {
           </div>
         ) : null}
       </div>
+      {expense.ultimaEjecucion ? (
+        <div className="mt-3 border-t border-border/60 pt-3">
+          <p className="text-xs text-foreground-muted">
+            Ultimo pago: {new Date(expense.ultimaEjecucion).toLocaleDateString('es-MX')}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }

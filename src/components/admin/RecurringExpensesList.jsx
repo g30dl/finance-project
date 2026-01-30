@@ -2,10 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Repeat, Plus } from 'lucide-react';
 import { onValue, ref, remove, update } from 'firebase/database';
 import { db } from '../../services/firebase';
-import { Button, Card, EmptyState, Skeleton } from '../common';
+import { Alert, Button, Card, EmptyState, Skeleton } from '../common';
 import RecurringExpenseCard from './RecurringExpenseCard';
 import RecurringExpenseForm from './RecurringExpenseForm';
 import { calcularProximaEjecucion } from '../../utils/recurringHelpers';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { useRecurringExpenses } from '../../hooks/useRecurringExpenses';
 
 const FILTERS = [
   { id: 'all', label: 'Todos' },
@@ -14,11 +16,13 @@ const FILTERS = [
 ];
 
 function RecurringExpensesList() {
+  const { user } = useAuthContext();
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [filter, setFilter] = useState('all');
+  const { processing, result } = useRecurringExpenses(user?.userId, user?.role === 'admin');
 
   useEffect(() => {
     const expensesRef = ref(db, 'familia_finanzas/gastosRecurrentes');
@@ -73,7 +77,7 @@ function RecurringExpensesList() {
   return (
     <Card
       title="Gastos recurrentes"
-      subtitle="Programa pagos automáticos mensuales"
+      subtitle={processing ? 'Verificando pagos pendientes...' : 'Programa pagos automaticos mensuales'}
       headerAction={
         <Button onClick={() => setShowForm(true)} icon={<Plus className="h-4 w-4" />}>
           Agregar
@@ -97,6 +101,20 @@ function RecurringExpensesList() {
         ))}
       </div>
 
+      {result?.successful > 0 ? (
+        <Alert variant="success" className="mb-4">
+          Se ejecutaron {result.successful} pago{result.successful > 1 ? 's' : ''} automatico
+          {result.successful > 1 ? 's' : ''}
+        </Alert>
+      ) : null}
+
+      {result?.failed > 0 ? (
+        <Alert variant="warning" className="mb-4">
+          {result.failed} pago{result.failed > 1 ? 's' : ''} no pudo
+          {result.failed > 1 ? 'ieron' : ''} procesarse por saldo insuficiente
+        </Alert>
+      ) : null}
+
       {loading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((item) => (
@@ -107,7 +125,7 @@ function RecurringExpensesList() {
         <EmptyState
           icon={<Repeat className="h-6 w-6" />}
           title="Sin gastos recurrentes"
-          description="Programa pagos automáticos como luz, agua o internet."
+          description="Programa pagos automaticos como luz, agua o internet."
           action={
             <Button onClick={() => setShowForm(true)}>
               Crear primero

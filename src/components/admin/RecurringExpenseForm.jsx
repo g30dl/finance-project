@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DollarSign } from 'lucide-react';
-import { ref, set } from 'firebase/database';
+import { ref, update } from 'firebase/database';
 import { Modal, Input, Select, Button, Alert } from '../common';
 import { db } from '../../services/firebase';
 import { useAuthContext } from '../../contexts/AuthContext';
@@ -154,7 +154,7 @@ function RecurringExpenseForm({ isOpen, onClose, editingExpense = null }) {
         fechaCreacion: editingExpense?.fechaCreacion || Date.now(),
       };
 
-      await set(ref(db, `familia_finanzas/gastosRecurrentes/${id}`), payload);
+      await update(ref(db, `familia_finanzas/gastosRecurrentes/${id}`), payload);
 
       setSuccessMessage(
         editingExpense ? 'Gasto recurrente actualizado.' : 'Gasto recurrente creado.'

@@ -5,7 +5,6 @@ import { useCreateRequest } from '../../hooks/useCreateRequest';
 import { Alert, Button, Input, Select, Textarea } from '../common';
 import { CATEGORIES, REQUEST_LIMITS } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
-import { fireConfetti } from '../../utils/confetti';
 
 const buildCategoryOptions = () =>
   CATEGORIES.map((category) => ({
@@ -105,7 +104,6 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
       if (navigator?.vibrate) {
         navigator.vibrate(20);
       }
-      fireConfetti();
       onAmountChange?.(0);
       timeoutRef.current = setTimeout(() => {
         onSuccess?.();

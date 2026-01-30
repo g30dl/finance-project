@@ -27,3 +27,32 @@ export const debeNotificar = (expense) => {
 
   return ahora >= fechaNotificacion && ahora < Number(expense.proximaEjecucion || 0);
 };
+
+export const formatProximaEjecucion = (timestamp) => {
+  const fecha = new Date(Number(timestamp || 0));
+  if (!Number.isFinite(fecha.getTime())) return 'Sin fecha';
+
+  const ahora = new Date();
+  const diff = fecha.getTime() - ahora.getTime();
+  const dias = Math.ceil(diff / (24 * 60 * 60 * 1000));
+
+  if (dias < 0) return 'Vencido';
+  if (dias === 0) return 'Hoy';
+  if (dias === 1) return 'Manana';
+  if (dias <= 7) return `En ${dias} dias`;
+
+  return fecha.toLocaleDateString('es-MX', {
+    day: 'numeric',
+    month: 'short',
+  });
+};
+
+export const getBadgeVariantByDays = (timestamp) => {
+  const diff = Number(timestamp || 0) - Date.now();
+  const dias = Math.ceil(diff / (24 * 60 * 60 * 1000));
+
+  if (dias < 0) return 'danger';
+  if (dias <= 3) return 'warning';
+  if (dias <= 7) return 'info';
+  return 'neutral';
+};

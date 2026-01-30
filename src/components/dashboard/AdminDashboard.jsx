@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Activity,
   AlertCircle,
@@ -6,6 +6,7 @@ import {
   CheckCircle,
   FileText,
   Info,
+  Loader2,
   LogOut,
   XCircle,
 } from 'lucide-react';
@@ -16,6 +17,7 @@ import { usePendingRequests } from '../../hooks/usePendingRequests';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { usePersonalAccountsTotal } from '../../hooks/usePersonalAccountsTotal';
 import { useSystemAlerts } from '../../hooks/useSystemAlerts';
+import { useRecurringExpenses } from '../../hooks/useRecurringExpenses';
 import { formatCurrency, getRelativeTime } from '../../utils/helpers';
 import AdminHeroSection from '../admin/AdminHeroSection';
 import StatCardWithChart from '../admin/StatCardWithChart';
@@ -36,6 +38,10 @@ function AdminDashboard() {
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [depositModalOpen, setDepositModalOpen] = useState(false);
+  const { processing: processingRecurring, result: recurringResult } = useRecurringExpenses(
+    user?.userId,
+    user?.role === 'admin'
+  );
 
   const { balance: casaBalance } = useBalance('casa');
   const {
@@ -59,6 +65,16 @@ function AdminDashboard() {
     pendingRequests,
     onViewRequests: () => setApproveModalOpen(true),
   });
+
+  useEffect(() => {
+    if (!recurringResult) return;
+    if (recurringResult.successful > 0) {
+      console.log(`Se ejecutaron ${recurringResult.successful} gastos recurrentes`);
+    }
+    if (recurringResult.failed > 0) {
+      console.warn(`Fallaron ${recurringResult.failed} gastos recurrentes`);
+    }
+  }, [recurringResult]);
 
   const handleLogout = () => {
     logout();
@@ -274,6 +290,12 @@ function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background pb-20 text-foreground">
+      {processingRecurring ? (
+        <div className="fixed right-4 top-4 z-50 rounded-lg border border-info/30 bg-info/10 px-4 py-2 text-sm text-info shadow-sm">
+          <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
+          Verificando gastos recurrentes...
+        </div>
+      ) : null}
       <header className="sticky top-0 z-10 border-b border-border bg-white/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4">
           <div className="space-y-1">

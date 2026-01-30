@@ -10,7 +10,7 @@ const FILTER_OPTIONS = [
   { value: 'rechazada', label: 'Rechazadas' },
 ];
 
-function RequestsList({ requests, loading, error }) {
+function RequestsList({ requests, loading, error, title = 'Mis Solicitudes' }) {
   const [filter, setFilter] = useState('all');
 
   const filteredRequests = useMemo(() => {
@@ -59,7 +59,7 @@ function RequestsList({ requests, loading, error }) {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="font-heading text-lg text-foreground">
-          Mis Solicitudes
+          {title}
           <span className="ml-2 text-sm font-normal text-muted-foreground">({filteredRequests.length})</span>
         </h3>
         <div className="w-full sm:w-48">

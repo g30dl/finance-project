@@ -11,6 +11,8 @@ import { cleanupQueue } from './utils/indexedDBHelper';
 const AdminDashboard = lazy(() => import('./components/dashboard/AdminDashboard'));
 const SolicitanteDashboard = lazy(() => import('./components/dashboard/SolicitanteDashboard'));
 const PersonalExpenseForm = lazy(() => import('./components/personal/PersonalExpenseForm'));
+const AccountDetailPage = lazy(() => import('./pages/AccountDetailPage'));
+const RecurringExpensesPage = lazy(() => import('./pages/RecurringExpensesPage'));
 const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
 const ActivityTab = lazy(() => import('./pages/tabs/ActivityTab'));
@@ -138,6 +140,22 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <PersonalExpenseForm />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/gastos-recurrentes"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <RecurringExpensesPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/cuenta-detalle/:userId"
+                  element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <AccountDetailPage />
                     </ProtectedRoute>
                   }
                 />

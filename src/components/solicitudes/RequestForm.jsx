@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DollarSign } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { useCreateRequest } from '../../hooks/useCreateRequest';
 import { Alert, Button, Input, Select, Textarea } from '../common';
 import { CATEGORIES, REQUEST_LIMITS } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
+import { enqueueOrExecute } from '../../services/offlineQueue';
+import { useOfflineQueue } from '../../hooks/useOfflineQueue';
 
 const buildCategoryOptions = () =>
   CATEGORIES.map((category) => ({
@@ -43,7 +44,10 @@ const validateConcept = (concept) => {
 
 function RequestForm({ onSuccess, onCancel, onAmountChange }) {
   const { user } = useAuth();
-  const { submitRequest, loading, error, success } = useCreateRequest();
+  const { isOnline, queueCount, updateQueueCount } = useOfflineQueue();
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [formData, setFormData] = useState({
     amount: '',
     category: '',
@@ -53,6 +57,7 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
   const timeoutRef = useRef(null);
   const categoryOptions = useMemo(buildCategoryOptions, []);
   const amountValue = Number(formData.amount);
+  const isSuccess = Boolean(successMessage);
 
   useEffect(() => {
     return () => {
@@ -99,15 +104,38 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
       concept: formData.concept.trim(),
     };
 
-    const result = await submitRequest(requestData);
-    if (result.success) {
+    setLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    const operation = {
+      type: 'CREATE_REQUEST',
+      payload: requestData,
+    };
+
+    try {
+      const result = await enqueueOrExecute(operation);
+
+      if (result?.queued) {
+        setSuccessMessage('Solicitud guardada. Se enviara al recuperar conexion.');
+        await updateQueueCount();
+      } else {
+        setSuccessMessage('Solicitud enviada correctamente.');
+      }
+
       if (navigator?.vibrate) {
         navigator.vibrate(20);
       }
+
+      setFormData({ amount: '', category: '', concept: '' });
       onAmountChange?.(0);
       timeoutRef.current = setTimeout(() => {
         onSuccess?.();
       }, 1500);
+    } catch (error) {
+      setErrorMessage(error?.message || 'No se pudo crear la solicitud.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,15 +146,28 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {success ? (
-        <Alert variant="success" title="Solicitud enviada" className="animate-scale-in">
-          Tu solicitud fue enviada correctamente. Los administradores la revisaran pronto.
+      {!isOnline ? (
+        <Alert variant="warning" title="Sin conexion" className="animate-scale-in">
+          Las solicitudes se guardaran y se enviaran automaticamente al recuperar conexion.
         </Alert>
       ) : null}
 
-      {error ? (
+      {queueCount > 0 ? (
+        <Alert variant="info" title="Operaciones en cola" className="animate-scale-in">
+          {queueCount} operacion{queueCount > 1 ? 'es' : ''} pendiente
+          {queueCount > 1 ? 's' : ''} de sincronizar.
+        </Alert>
+      ) : null}
+
+      {successMessage ? (
+        <Alert variant="success" title="Solicitud enviada" className="animate-scale-in">
+          {successMessage}
+        </Alert>
+      ) : null}
+
+      {errorMessage ? (
         <Alert variant="danger" title="Error">
-          {error}
+          {errorMessage}
         </Alert>
       ) : null}
 
@@ -143,7 +184,7 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
         error={errors.amount}
         helperText={helperText}
         fullWidth
-        disabled={loading || success}
+        disabled={loading || isSuccess}
         autoFocus
       />
 
@@ -155,7 +196,7 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
         error={errors.category}
         placeholder="Selecciona una categoria..."
         fullWidth
-        disabled={loading || success}
+        disabled={loading || isSuccess}
       />
 
       <Textarea
@@ -168,7 +209,7 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
         showCount
         rows={4}
         fullWidth
-        disabled={loading || success}
+        disabled={loading || isSuccess}
       />
 
       <div className="flex justify-end gap-3">
@@ -176,11 +217,11 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
           type="button"
           variant="ghost"
           onClick={onCancel}
-          disabled={loading || success}
+          disabled={loading || isSuccess}
         >
           Cancelar
         </Button>
-        <Button type="submit" variant="primary" loading={loading} disabled={success}>
+        <Button type="submit" variant="primary" loading={loading} disabled={isSuccess}>
           Enviar Solicitud
         </Button>
       </div>

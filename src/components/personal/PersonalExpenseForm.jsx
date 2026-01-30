@@ -3,11 +3,12 @@ import { ArrowLeft, DollarSign } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useBalance } from '../../hooks/useBalance';
-import { useCreatePersonalExpense } from '../../hooks/useCreatePersonalExpense';
 import { validatePersonalExpense } from '../../services/personalExpenses';
 import { CATEGORIES } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
 import { Alert, Button, Card, Input, Select, Textarea } from '../common';
+import { enqueueOrExecute } from '../../services/offlineQueue';
+import { useOfflineQueue } from '../../hooks/useOfflineQueue';
 
 const buildCategoryOptions = () =>
   CATEGORIES.map((category) => ({
@@ -20,7 +21,10 @@ function PersonalExpenseForm() {
   const { user } = useAuth();
   const userId = user?.userId;
   const { balance, loading: loadingBalance, error: balanceError } = useBalance('personal', userId);
-  const { submitExpense, loading, error, success, resetState } = useCreatePersonalExpense();
+  const { isOnline, queueCount, updateQueueCount } = useOfflineQueue();
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -34,17 +38,17 @@ function PersonalExpenseForm() {
   const resolvedBalance = hasBalance ? Number(balance) : 0;
 
   useEffect(() => {
-    if (!success || !userId) return undefined;
+    if (!successMessage || !userId) return undefined;
 
     const timeout = setTimeout(() => {
-      resetState();
+      setSuccessMessage('');
       navigate(`/dashboard/solicitante/${userId}`, {
         state: { message: 'Gasto registrado exitosamente.' },
       });
     }, 2000);
 
     return () => clearTimeout(timeout);
-  }, [success, resetState, navigate, userId]);
+  }, [successMessage, navigate, userId]);
 
   if (!user) {
     return <Navigate to="/" replace />;
@@ -80,16 +84,36 @@ function PersonalExpenseForm() {
       return;
     }
 
-    const result = await submitExpense({
-      userId,
-      amount: Number(formData.amount),
-      category: formData.category,
-      concept: formData.concept.trim(),
-    });
+    setLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
 
-    if (result.success) {
+    const operation = {
+      type: 'CREATE_EXPENSE',
+      payload: {
+        userId,
+        amount: Number(formData.amount),
+        category: formData.category,
+        concept: formData.concept.trim(),
+      },
+    };
+
+    try {
+      const result = await enqueueOrExecute(operation);
+
+      if (result?.queued) {
+        setSuccessMessage('Gasto guardado. Se sincronizara al recuperar conexion.');
+        await updateQueueCount();
+      } else {
+        setSuccessMessage('Gasto registrado exitosamente.');
+      }
+
       setFormData({ amount: '', category: '', concept: '' });
       setErrors({});
+    } catch (error) {
+      setErrorMessage(error?.message || 'No se pudo registrar el gasto.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,7 +121,7 @@ function PersonalExpenseForm() {
     navigate(`/dashboard/solicitante/${userId}`);
   };
 
-  const canSubmit = !loading && !success && hasBalance && resolvedBalance > 0;
+  const canSubmit = !loading && !successMessage && (isOnline ? hasBalance && resolvedBalance > 0 : true);
   const helperText = formData.amount && !errors.amount ? `Gastaras: ${formatCurrency(formData.amount)}` : undefined;
 
   return (
@@ -140,15 +164,28 @@ function PersonalExpenseForm() {
           </Alert>
         ) : null}
 
-        {success ? (
-          <Alert variant="success" title="Gasto registrado" className="mb-4">
-            Tu gasto fue registrado. Regresando al dashboard...
+        {!isOnline ? (
+          <Alert variant="warning" title="Sin conexion" className="mb-4">
+            Los gastos se guardaran y se enviaran automaticamente al recuperar conexion.
           </Alert>
         ) : null}
 
-        {error ? (
+        {queueCount > 0 ? (
+          <Alert variant="info" title="Operaciones en cola" className="mb-4">
+            {queueCount} operacion{queueCount > 1 ? 'es' : ''} pendiente
+            {queueCount > 1 ? 's' : ''} de sincronizar.
+          </Alert>
+        ) : null}
+
+        {successMessage ? (
+          <Alert variant="success" title="Gasto registrado" className="mb-4">
+            {successMessage} Regresando al dashboard...
+          </Alert>
+        ) : null}
+
+        {errorMessage ? (
           <Alert variant="danger" title="Error" className="mb-4">
-            {error}
+            {errorMessage}
           </Alert>
         ) : null}
 
@@ -200,7 +237,7 @@ function PersonalExpenseForm() {
                 type="button"
                 variant="ghost"
                 onClick={handleCancel}
-                disabled={loading || success}
+                disabled={loading || successMessage}
                 fullWidth
               >
                 Cancelar
@@ -209,7 +246,7 @@ function PersonalExpenseForm() {
                 type="submit"
                 variant="primary"
                 loading={loading}
-                disabled={!canSubmit || loadingBalance || resolvedBalance === 0}
+                disabled={!canSubmit || (isOnline && (loadingBalance || resolvedBalance === 0))}
                 fullWidth
               >
                 Registrar gasto

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
@@ -15,7 +15,8 @@ import HomeTab from './pages/tabs/HomeTab';
 import ProfileTab from './pages/tabs/ProfileTab';
 import RequestTab from './pages/tabs/RequestTab';
 import RequestsTab from './pages/tabs/RequestsTab';
-import { InstallPWA } from './components/common';
+import { InstallPWA, QueueIndicator } from './components/common';
+import { cleanupQueue } from './utils/indexedDBHelper';
 
 function TabsShell({ children }) {
   return (
@@ -27,6 +28,27 @@ function TabsShell({ children }) {
 }
 
 function App() {
+  useEffect(() => {
+    let interval;
+
+    const runCleanup = async () => {
+      try {
+        await cleanupQueue();
+      } catch (error) {
+        console.warn('No se pudo limpiar la cola offline', error);
+      }
+    };
+
+    if (typeof window !== 'undefined' && typeof indexedDB !== 'undefined') {
+      runCleanup();
+      interval = setInterval(runCleanup, 24 * 60 * 60 * 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
   return (
     <AuthProvider>
       <DataProvider>
@@ -127,6 +149,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
+          <QueueIndicator />
           <InstallPWA />
         </BrowserRouter>
       </DataProvider>

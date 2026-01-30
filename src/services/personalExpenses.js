@@ -6,7 +6,8 @@ const MIN_CONCEPT_LENGTH = 10;
 
 export const createPersonalExpense = async (expenseData) => {
   try {
-    const { userId, amount, category, concept } = expenseData || {};
+    const { userId, amount, category, concept, transactionId, createdAt } =
+      expenseData || {};
     const parsedAmount = Number(amount);
 
     if (!userId) {
@@ -33,6 +34,20 @@ export const createPersonalExpense = async (expenseData) => {
       throw new Error(`El concepto debe tener al menos ${MIN_CONCEPT_LENGTH} caracteres`);
     }
 
+    const resolvedTransactionId = transactionId || `trans_${Date.now()}`;
+    const transactionRef = ref(db, `familia_finanzas/transacciones/${resolvedTransactionId}`);
+    const existingTransaction = transactionId ? await get(transactionRef) : null;
+
+    if (existingTransaction?.exists()) {
+      const transaction = existingTransaction.val();
+      return {
+        success: true,
+        newBalance: transaction?.saldosResultantes?.[userId] ?? null,
+        transactionId: resolvedTransactionId,
+        transaction,
+      };
+    }
+
     const balanceRef = ref(db, `familia_finanzas/cuentas/personales/${userId}/saldo`);
     const balanceSnapshot = await get(balanceRef);
 
@@ -50,10 +65,10 @@ export const createPersonalExpense = async (expenseData) => {
 
     const newBalance = currentBalance - parsedAmount;
     const timestamp = Date.now();
-    const transactionId = `trans_${timestamp}`;
+    const transactionDate = Number(createdAt) || timestamp;
 
     const transaction = {
-      id: transactionId,
+      id: resolvedTransactionId,
       tipo: 'gasto_personal',
       usuario: userId,
       cuentaOrigen: userId,
@@ -61,7 +76,7 @@ export const createPersonalExpense = async (expenseData) => {
       cantidad: parsedAmount,
       categoria: category,
       concepto: concept.trim(),
-      fecha: timestamp,
+      fecha: transactionDate,
       ejecutadaPor: userId,
       estado: 'completada',
       requiereAprobacion: false,
@@ -73,14 +88,14 @@ export const createPersonalExpense = async (expenseData) => {
     const updates = {};
     updates[`familia_finanzas/cuentas/personales/${userId}/saldo`] = newBalance;
     updates[`familia_finanzas/cuentas/personales/${userId}/ultimaActualizacion`] = timestamp;
-    updates[`familia_finanzas/transacciones/${transactionId}`] = transaction;
+    updates[`familia_finanzas/transacciones/${resolvedTransactionId}`] = transaction;
 
     await update(ref(db), updates);
 
     return {
       success: true,
       newBalance,
-      transactionId,
+      transactionId: resolvedTransactionId,
       transaction,
     };
   } catch (error) {

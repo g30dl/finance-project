@@ -16,3 +16,4 @@ export { default as BalanceCard } from './BalanceCard';
 
 export { default as InstallPWA } from './InstallPWA';
 export { default as OfflineIndicator } from './OfflineIndicator';
+export { default as QueueIndicator } from './QueueIndicator';

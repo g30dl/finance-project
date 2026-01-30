@@ -60,13 +60,19 @@ const getCreateRequestErrorMessage = (error) => {
 
 export const createRequest = async (requestData) => {
   try {
-    const timestamp = Date.now();
-    const requestId = `solicitud_${timestamp}`;
-    const request = buildRequestPayload(requestId, requestData, timestamp);
+    const createdAt = Number(requestData?.createdAt) || Date.now();
+    const requestId = requestData?.requestId || `solicitud_${createdAt}`;
     const requestRef = ref(db, `familia_finanzas/solicitudes/${requestId}`);
+    const existing = await get(requestRef);
+
+    if (existing.exists()) {
+      return requestId;
+    }
+
+    const request = buildRequestPayload(requestId, requestData, createdAt);
 
     await set(requestRef, request);
-    await createAdminNotification(request, timestamp);
+    await createAdminNotification(request, Date.now());
 
     return requestId;
   } catch (error) {

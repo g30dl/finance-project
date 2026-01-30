@@ -15,6 +15,7 @@ import HomeTab from './pages/tabs/HomeTab';
 import ProfileTab from './pages/tabs/ProfileTab';
 import RequestTab from './pages/tabs/RequestTab';
 import RequestsTab from './pages/tabs/RequestsTab';
+import { InstallPWA } from './components/common';
 
 function TabsShell({ children }) {
   return (
@@ -126,6 +127,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
+          <InstallPWA />
         </BrowserRouter>
       </DataProvider>
     </AuthProvider>

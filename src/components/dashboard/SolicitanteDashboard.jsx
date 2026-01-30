@@ -7,6 +7,7 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import BalanceCard from '../common/BalanceCard';
 import Card from '../common/Card';
 import ComingSoon from '../common/ComingSoon';
+import OfflineIndicator from '../common/OfflineIndicator';
 import MonthlySummary from './MonthlySummary';
 import QuickActions from './QuickActions';
 import PersonalHistory from '../personal/PersonalHistory';
@@ -70,6 +71,7 @@ function SolicitanteDashboard() {
             <p className="text-sm text-muted-foreground">Dashboard Solicitante</p>
           </div>
           <div className="flex items-center gap-3">
+            <OfflineIndicator />
             <NotificationCenter />
             <button
               type="button"

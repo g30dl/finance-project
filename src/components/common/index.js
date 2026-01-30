@@ -13,3 +13,6 @@ export { default as Alert } from './Alert';
 export { default as Badge } from './Badge';
 
 export { default as BalanceCard } from './BalanceCard';
+
+export { default as InstallPWA } from './InstallPWA';
+export { default as OfflineIndicator } from './OfflineIndicator';

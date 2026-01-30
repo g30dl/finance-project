@@ -19,6 +19,7 @@ import { usePersonalAccountsTotal } from '../../hooks/usePersonalAccountsTotal';
 import { useSystemAlerts } from '../../hooks/useSystemAlerts';
 import { useRecurringExpenses } from '../../hooks/useRecurringExpenses';
 import { formatCurrency, getRelativeTime } from '../../utils/helpers';
+import { OfflineIndicator } from '../common';
 import AdminHeroSection from '../admin/AdminHeroSection';
 import StatCardWithChart from '../admin/StatCardWithChart';
 import TimelineActivity from '../admin/TimelineActivity';
@@ -304,6 +305,7 @@ function AdminDashboard() {
             <p className="text-sm text-foreground-muted">{user?.userName || 'Admin'}</p>
           </div>
           <div className="flex items-center gap-3">
+            <OfflineIndicator />
             <NotificationCenter />
             <button
               type="button"

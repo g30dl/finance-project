@@ -19,7 +19,9 @@
 # Credenciales de Firebase
 firebase-admin-sdk.json
 serviceAccountKey.json
+serviceAccount*.json
 *-firebase-adminsdk-*.json
+.runtimeconfig.json
 
 # Archivos de secretos
 secrets.json
@@ -51,6 +53,7 @@ pnpm-lock.yaml
 # Vite
 dist/
 dist-ssr/
+dev-dist/
 *.local
 
 # Build outputs
@@ -267,6 +270,7 @@ jest_html_reporters.html
 *.key
 *.crt
 *.csr
+*.p12
 ssl/
 
 # ============================================

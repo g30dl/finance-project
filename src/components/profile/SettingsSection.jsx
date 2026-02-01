@@ -1,9 +1,40 @@
 import React, { useState } from 'react';
+import { toast } from 'sonner';
+import { useAuth } from '../../hooks/useAuth';
+import { registerPushToken, unregisterPushToken } from '../../services/pushNotifications';
 
 function SettingsSection() {
-  const [notifications, setNotifications] = useState(true);
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState(() => {
+    if (typeof Notification === 'undefined') return false;
+    return Notification.permission === 'granted';
+  });
   const [currency, setCurrency] = useState('MXN');
   const [language, setLanguage] = useState('es');
+
+  const handleToggleNotifications = async () => {
+    const next = !notifications;
+
+    if (next) {
+      if (!user?.userId) {
+        toast.error('Inicia sesion para activar notificaciones.');
+        return;
+      }
+      const result = await registerPushToken(user.userId);
+      if (!result.success) {
+        toast.error(result.error || 'No se pudieron activar notificaciones.');
+        setNotifications(false);
+        return;
+      }
+      toast.success('Notificaciones activadas.');
+      setNotifications(true);
+      return;
+    }
+
+    await unregisterPushToken(user?.userId);
+    toast.message('Notificaciones desactivadas.');
+    setNotifications(false);
+  };
 
   return (
     <div className="rounded-3xl bg-white p-5 shadow-card">
@@ -16,20 +47,12 @@ function SettingsSection() {
         </div>
         <button
           type="button"
-          onClick={async () => {
-            const next = !notifications;
-            if (next && typeof Notification !== 'undefined' && Notification.permission === 'default') {
-              try {
-                await Notification.requestPermission();
-              } catch (error) {
-                console.warn('No se pudo solicitar permiso', error);
-              }
-            }
-            setNotifications(next);
-          }}
+          onClick={handleToggleNotifications}
           className={`h-6 w-11 rounded-full p-1 transition-all ${
             notifications ? 'bg-primary' : 'bg-gray-200'
           }`}
+          aria-pressed={notifications}
+          aria-label={notifications ? 'Desactivar notificaciones' : 'Activar notificaciones'}
         >
           <span
             className={`block h-4 w-4 rounded-full bg-white transition-transform ${

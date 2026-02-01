@@ -1,288 +1,196 @@
-# finance-project
-# 💰 Familia Finanzas
+# Familia Finanzas
 
-> App de gestión financiera familiar con React + Firebase
+Aplicacion web progresiva (PWA) para gestionar las finanzas del hogar. Permite registrar solicitudes de dinero, aprobarlas, categorizar gastos, ver historiales y operar en tiempo real con Firebase.
 
-Una Progressive Web App (PWA) para gestionar las finanzas del hogar de manera eficiente, permitiendo el control de gastos, solicitudes de dinero con categorización, y seguimiento histórico de transacciones.
+## Tabla de contenidos
 
----
+- Descripcion general
+- Funcionalidades
+- Stack tecnologico
+- Estructura del proyecto
+- Requisitos
+- Configuracion de Firebase
+- Variables de entorno
+- Desarrollo local
+- Build y preview
+- Deploy
+- Roles y acceso admin
+- PWA y funcionamiento offline
+- Notificaciones push
+- Seguridad
+- Solucion de problemas
 
-## 🎯 Características Principales
+## Descripcion general
 
-- ✅ **Gestión de Solicitudes**: Los miembros de la familia pueden solicitar dinero con monto, categoría y motivo
-- ✅ **Aprobación/Rechazo**: Los administradores aprueban o rechazan solicitudes en tiempo real
-- ✅ **Categorización de Gastos**: 10 categorías predefinidas para análisis detallado
-- ✅ **Gastos Recurrentes**: Programación automática de pagos mensuales (luz, internet, etc.)
-- ✅ **Reportes y Estadísticas**: Visualización de gastos por categoría, persona y periodo
-- ✅ **Tiempo Real**: Sincronización instantánea entre todos los dispositivos
-- ✅ **Funcionalidad Offline**: Sistema de cola para crear solicitudes sin internet
-- ✅ **Notificaciones Push**: Alertas de nuevas solicitudes y aprobaciones
-- ✅ **Exportar CSV**: Descarga de reportes para análisis externo
-- ✅ **PWA**: Instalable en móviles y escritorio como app nativa
+La app esta pensada para uso familiar. Existen dos tipos de usuarios:
 
----
+- Solicitantes: crean solicitudes de dinero y consultan sus movimientos.
+- Administradores: aprueban o rechazan solicitudes, registran gastos y depositos, configuran gastos recurrentes y consultan reportes.
 
-## 🛠️ Stack Tecnológico
+## Funcionalidades
 
-### Frontend
-- **React 18** - Framework principal
-- **Vite 5** - Build tool y dev server
-- **Tailwind CSS 3** - Estilos y diseño responsive
-- **Recharts 2** - Gráficos interactivos
-- **Lucide React** - Iconos modernos
+- Solicitudes de dinero con monto, categoria y motivo.
+- Aprobacion o rechazo en tiempo real.
+- Categorizacion de gastos con categorias predefinidas.
+- Gastos recurrentes programados.
+- Reportes y estadisticas por periodo, categoria y persona.
+- Sincronizacion en tiempo real.
+- Modo offline con cola local.
+- Exportacion a CSV.
+- PWA instalable en movil y escritorio.
 
-### Backend & Servicios
-- **Firebase Realtime Database** - Base de datos en tiempo real
-- **Firebase Authentication** - Sistema de autenticación
-- **Firebase Cloud Functions** - Ejecución de gastos recurrentes (cron jobs)
-- **Firebase Cloud Messaging** - Notificaciones push
-- **Firebase Hosting** - Hosting de la PWA
+## Stack tecnologico
 
----
+- React 18
+- Vite 5
+- Tailwind CSS 3
+- Recharts 2
+- Firebase Realtime Database
+- Firebase Authentication
+- Firebase Cloud Functions
+- Firebase Cloud Messaging
+- Firebase Hosting
 
-## 🚀 Instalación y Configuración
+## Estructura del proyecto
 
-### Prerrequisitos
+```
+.
+├── .github/               Workflows de GitHub Actions
+├── .firebase/             Metadatos locales del CLI de Firebase
+├── dist/                  Build de produccion (salida de Vite)
+├── dev-dist/              Assets de service worker en desarrollo
+├── functions/             Cloud Functions de Firebase
+├── public/                Assets estaticos (manifest, icons, sw de messaging)
+├── scripts/               Scripts auxiliares
+├── src/                   Codigo fuente de la app
+├── .env.example           Plantilla de variables de entorno
+├── .firebaserc            Configuracion del proyecto de Firebase
+├── firebase.json          Configuracion de Firebase Hosting/Functions
+├── index.html             HTML base de Vite
+├── package.json           Scripts y dependencias
+└── vite.config.js         Configuracion de Vite
+```
 
-- Node.js 18+ y npm
+## Requisitos
+
+- Node.js 18+
+- npm
 - Cuenta de Firebase
-- Git
 
-### 1. Clonar el repositorio
+## Configuracion de Firebase
 
-```bash
-git clone https://github.com/TU_USUARIO/familia-finanzas.git
-cd familia-finanzas
+En Firebase Console, crea un proyecto y habilita:
+
+- Realtime Database
+- Authentication (Email/Password y Google)
+- Cloud Messaging (si usas notificaciones)
+- Hosting
+- Functions
+
+Recomendado:
+
+- Agregar dominios autorizados en Authentication > Settings > Authorized domains
+
+## Variables de entorno
+
+Crea un archivo `.env.local` en la raiz, basado en `.env.example`:
+
+```
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_DATABASE_URL=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+VITE_ADMIN_EMAILS=correo1@dominio.com,correo2@dominio.com
 ```
 
-### 2. Instalar dependencias
+Nota: `VITE_ADMIN_EMAILS` controla el acceso admin en el frontend.
 
-```bash
+## Desarrollo local
+
+Instala dependencias y ejecuta el servidor:
+
+```
 npm install
-```
-
-### 3. Configurar Firebase
-
-1. Crea un proyecto en [Firebase Console](https://console.firebase.google.com/)
-2. Habilita los siguientes servicios:
-   - Realtime Database
-   - Authentication (Anonymous + Email/Password)
-   - Cloud Messaging
-   - Hosting
-
-3. Copia tus credenciales de Firebase
-
-4. Crea un archivo `.env.local` en la raíz del proyecto (puedes copiar `.env.example` y rellenar los valores):
-
-```env
-VITE_FIREBASE_API_KEY=tu_api_key_aqui
-VITE_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
-VITE_FIREBASE_DATABASE_URL=https://tu_proyecto-default-rtdb.firebaseio.com
-VITE_FIREBASE_PROJECT_ID=tu_proyecto
-VITE_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
-VITE_FIREBASE_APP_ID=1:123456789:web:abcdef123456
-```
-
-### 4. Importar estructura de base de datos
-
-Importa el archivo `firebase-database-structure.json` en tu Realtime Database desde Firebase Console.
-
-### 5. Configurar Security Rules
-
-Copia las reglas del archivo `firebase-security-rules.json` en la pestaña "Rules" de tu Realtime Database.
-
----
-
-## 💻 Desarrollo
-
-### Ejecutar en modo desarrollo
-
-```bash
 npm run dev
 ```
 
-La app estará disponible en `http://localhost:5173`
+## Build y preview
 
-### Build para producción
-
-```bash
-npm run build
 ```
-
-Los archivos optimizados estarán en `/dist`
-
-### Preview del build
-
-```bash
+npm run build
 npm run preview
 ```
 
----
+La salida queda en `dist/`.
 
-## 🚀 Deploy
+## Deploy
 
-### Deploy a Firebase Hosting
+### Manual (Firebase CLI)
 
-```bash
-# 1. Instalar Firebase CLI (primera vez)
-npm install -g firebase-tools
-
-# 2. Login en Firebase
-firebase login
-
-# 3. Inicializar Firebase en el proyecto (primera vez)
-firebase init hosting
-
-# 4. Build y deploy
+```
 npm run build
 firebase deploy
 ```
 
-## 👥 Usuarios y Roles
+### Automatico (GitHub Actions)
 
-### Tipos de Usuarios
+El repo incluye workflows para:
 
-1. **Solicitantes (3 usuarios)**
-   - Pueden solicitar dinero
-   - Ver sus propias solicitudes
-   - Consultar saldo disponible
-   - Acceso sin contraseña (autenticación simplificada)
+- Deploy en `main`
+- Preview en Pull Requests
 
-2. **Administradores (2 usuarios)**
-   - Aprobar/rechazar solicitudes
-   - Agregar gastos directos
-   - Registrar depósitos
-   - Programar gastos recurrentes
-   - Ver reportes completos
-   - Exportar datos a CSV
-   - Acceso con PIN de 6 dígitos
+Requisitos en GitHub:
 
----
+- Configurar el secreto `FIREBASE_SERVICE_ACCOUNT_FAMILIA_FINANZAS_589F3` con el JSON del service account.
 
-## 📁 Estructura del Proyecto
+## Roles y acceso admin
 
-```
-familia-finanzas/
-├── public/
-│   ├── manifest.json          # PWA manifest
-│   ├── service-worker.js      # Service worker para offline
-│   └── icons/                 # Iconos de la app
-├── src/
-│   ├── components/            # Componentes React
-│   │   ├── common/           # Componentes reutilizables
-│   │   ├── dashboard/        # Dashboards
-│   │   ├── solicitudes/      # Gestión de solicitudes
-│   │   └── reportes/         # Reportes y gráficos
-│   ├── contexts/             # React Contexts
-│   │   ├── AuthContext.jsx   # Contexto de autenticación
-│   │   └── DataContext.jsx   # Contexto de datos Firebase
-│   ├── hooks/                # Custom hooks
-│   │   ├── useAuth.js        # Hook de autenticación
-│   │   ├── useFirebase.js    # Hook de Firebase
-│   │   └── useOffline.js     # Hook de funcionalidad offline
-│   ├── services/             # Servicios
-│   │   ├── firebase.js       # Configuración Firebase
-│   │   ├── database.js       # Operaciones de base de datos
-│   │   └── notifications.js  # Notificaciones push
-│   ├── utils/                # Utilidades
-│   │   ├── helpers.js        # Funciones auxiliares
-│   │   ├── constants.js      # Constantes
-│   │   └── validators.js     # Validadores
-│   ├── styles/               # Estilos globales
-│   ├── App.jsx               # Componente principal
-│   └── main.jsx              # Punto de entrada
-├── .gitignore                # Archivos ignorados por Git
-├── firebase.json             # Configuración Firebase
-├── package.json              # Dependencias del proyecto
-├── vite.config.js            # Configuración Vite
-└── tailwind.config.js        # Configuración Tailwind
-```
+El acceso admin usa:
 
----
+- `VITE_ADMIN_EMAILS` para permitir cuentas.
+- Custom claims en Firebase Auth (set desde Functions).
 
-## 📊 Categorías de Gastos
+Flujo resumido:
 
-1. 🛒 **Comida/Mercado** - Supermercado, frutas, verduras
-2. 💡 **Servicios** - Luz, agua, internet, gas
-3. 🚗 **Transporte** - Gasolina, Uber, taxi
-4. 🏥 **Salud** - Medicinas, consultas médicas
-5. 📚 **Educación** - Útiles escolares, libros, cursos
-6. 🏠 **Hogar** - Reparaciones, mantenimiento
-7. 👕 **Ropa** - Vestimenta, calzado
-8. 🎬 **Entretenimiento** - Cine, restaurantes, salidas
-9. 💻 **Tecnología** - Electrónicos, apps, software
-10. 📦 **Otros** - Gastos varios
+1. El admin inicia sesion (Google o email/password).
+2. Se valida contra la whitelist de emails.
+3. Se sincroniza el custom claim `role=admin`.
+4. Se redirige al dashboard admin.
 
----
+Si el admin no tiene claim, se puede ejecutar la funcion `syncMyRole`.
 
-## 🔒 Seguridad
+## PWA y funcionamiento offline
 
-- ✅ Firebase Security Rules configuradas
-- ✅ Autenticación requerida para todas las operaciones
-- ✅ Validación de permisos por rol
-- ✅ Tokens JWT seguros
-- ✅ HTTPS obligatorio
-- ✅ Variables de entorno para credenciales
-- ✅ Repositorio privado
+La app es instalable y soporta modo offline:
 
----
+- Las solicitudes se guardan en una cola local.
+- Cuando vuelve la conexion, se sincronizan.
+- Los datos en tiempo real no se actualizan mientras no haya conexion.
 
-## 📱 Funcionalidad Offline
+## Notificaciones push
 
-La app permite crear solicitudes sin conexión a internet:
+Para habilitar FCM en el service worker:
 
-1. Las solicitudes se guardan en cola local (IndexedDB)
-2. Se muestran con estado "En cola"
-3. Al recuperar conexión, se envían automáticamente
-4. El usuario recibe confirmación cuando se envían
+1. Copia `public/firebase-messaging-config.example.js` a `public/firebase-messaging-config.js`.
+2. Completa la configuracion de Firebase.
+3. No subas este archivo al repo (esta en `.gitignore`).
 
-**Limitaciones offline:**
-- ❌ No se pueden aprobar/rechazar solicitudes (solo administradores)
-- ❌ No se actualizan datos en tiempo real
-- ✅ Se puede consultar historial previamente cargado
+## Seguridad
 
----
+No versionar:
 
-## 🤝 Contribución
+- `.env.local` y cualquier `.env.*` con valores reales.
+- Service accounts de Firebase (`*firebase-adminsdk*.json`, `serviceAccount*.json`).
+- Certificados privados (`*.pem`, `*.key`, `*.p12`).
 
-Este es un proyecto personal/familiar, pero las sugerencias son bienvenidas:
+Recomendado:
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add: Amazing Feature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+- Revisar reglas de Realtime Database.
+- Rotar claves si alguna se subio por error.
 
----
+## Licencia
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-
----
-
-## 📞 Contacto
-
-**Proyecto creado para uso familiar**
-
-Si tienes preguntas o sugerencias, no dudes en abrir un issue en GitHub.
-
----
-
-## 🙏 Agradecimientos
-
-- Firebase por su plataforma gratuita y robusta
-- React y Vite por hacer el desarrollo web moderno más accesible
-- Tailwind CSS por facilitar el diseño responsive
-- La comunidad open source por sus increíbles herramientas
-
----
-
-## 📸 Screenshots
-
-> Próximamente: Capturas de pantalla de la aplicación en funcionamiento
-
----
-
-**Desarrollado con ❤️ para mejorar la gestión financiera familiar**
+MIT. Ver `LICENSE`.

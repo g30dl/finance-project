@@ -1,5 +1,6 @@
 import { equalTo, get, orderByChild, query, ref, set, update } from 'firebase/database';
 import { db } from './firebase';
+import { trackEvent } from './analytics';
 
 const buildRequestPayload = (requestId, requestData, timestamp) => ({
   id: requestId,
@@ -73,6 +74,11 @@ export const createRequest = async (requestData) => {
 
     await set(requestRef, request);
     await createAdminNotification(request, Date.now());
+    trackEvent('request_created', {
+      requestId,
+      amount: request.cantidad,
+      category: request.categoria,
+    });
 
     return requestId;
   } catch (error) {
@@ -184,6 +190,12 @@ export const approveRequest = async (requestId, adminId) => {
       category: request.categoria,
     });
 
+    trackEvent('request_approved', {
+      requestId,
+      amount: requestAmount,
+      category: request.categoria,
+    });
+
     return { success: true, newBalance, transactionId };
   } catch (error) {
     console.error('Error approving request:', error);
@@ -229,6 +241,12 @@ export const rejectRequest = async (requestId, adminId, reason) => {
       amount: Number(request.cantidad) || 0,
       category: request.categoria,
       reason: reason.trim(),
+    });
+
+    trackEvent('request_rejected', {
+      requestId,
+      amount: Number(request.cantidad) || 0,
+      category: request.categoria,
     });
 
     return { success: true };

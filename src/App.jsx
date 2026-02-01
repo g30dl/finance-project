@@ -5,8 +5,9 @@ import { DataProvider } from './contexts/DataContext';
 import LoginScreen from './components/auth/LoginScreen';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import BottomNav from './components/layout/BottomNav';
-import { InstallPWA, QueueIndicator } from './components/common';
+import { ErrorBoundary, InstallPWA, QueueIndicator } from './components/common';
 import { cleanupQueue } from './utils/indexedDBHelper';
+import { Toaster } from 'sonner';
 
 const AdminDashboard = lazy(() => import('./components/dashboard/AdminDashboard'));
 const SolicitanteDashboard = lazy(() => import('./components/dashboard/SolicitanteDashboard'));
@@ -62,128 +63,139 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <DataProvider>
-        <BrowserRouter>
-          <div className="min-h-screen bg-background text-foreground font-body">
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<LoginScreen />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <TabsShell>
-                        <HomeTab />
-                      </TabsShell>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/activity"
-                  element={
-                    <ProtectedRoute>
-                      <TabsShell>
-                        <ActivityTab />
-                      </TabsShell>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/request"
-                  element={
-                    <ProtectedRoute>
-                      <TabsShell>
-                        <RequestTab />
-                      </TabsShell>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/requests"
-                  element={
-                    <ProtectedRoute>
-                      <TabsShell>
-                        <RequestsTab />
-                      </TabsShell>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <TabsShell>
-                        <ProfileTab />
-                      </TabsShell>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/dashboard/solicitante/:userId"
-                  element={
-                    <ProtectedRoute>
-                      <SolicitanteDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/dashboard/admin"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/gasto-personal"
-                  element={
-                    <ProtectedRoute>
-                      <PersonalExpenseForm />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/gastos-recurrentes"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <RecurringExpensesPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/cuenta-detalle/:userId"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <AccountDetailPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/reportes"
-                  element={
-                    <ProtectedRoute requireAdmin={true}>
-                      <ReportsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/notificaciones"
-                  element={
-                    <ProtectedRoute>
-                      <NotificationsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Suspense>
-          </div>
-          <QueueIndicator />
-          <InstallPWA />
-        </BrowserRouter>
-      </DataProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <DataProvider>
+          <BrowserRouter>
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 z-50 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-card"
+            >
+              Saltar al contenido principal
+            </a>
+            <div className="min-h-screen bg-background text-foreground font-body">
+              <Suspense fallback={<PageLoader />}>
+                <main id="main-content" tabIndex={-1} className="min-h-screen">
+                  <Routes>
+                    <Route path="/" element={<LoginScreen />} />
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <ProtectedRoute>
+                          <TabsShell>
+                            <HomeTab />
+                          </TabsShell>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/activity"
+                      element={
+                        <ProtectedRoute>
+                          <TabsShell>
+                            <ActivityTab />
+                          </TabsShell>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/request"
+                      element={
+                        <ProtectedRoute>
+                          <TabsShell>
+                            <RequestTab />
+                          </TabsShell>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/requests"
+                      element={
+                        <ProtectedRoute>
+                          <TabsShell>
+                            <RequestsTab />
+                          </TabsShell>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/profile"
+                      element={
+                        <ProtectedRoute>
+                          <TabsShell>
+                            <ProfileTab />
+                          </TabsShell>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/dashboard/solicitante/:userId"
+                      element={
+                        <ProtectedRoute>
+                          <SolicitanteDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/dashboard/admin"
+                      element={
+                        <ProtectedRoute requireAdmin={true}>
+                          <AdminDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/gasto-personal"
+                      element={
+                        <ProtectedRoute>
+                          <PersonalExpenseForm />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/gastos-recurrentes"
+                      element={
+                        <ProtectedRoute requireAdmin={true}>
+                          <RecurringExpensesPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/cuenta-detalle/:userId"
+                      element={
+                        <ProtectedRoute requireAdmin={true}>
+                          <AccountDetailPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/reportes"
+                      element={
+                        <ProtectedRoute requireAdmin={true}>
+                          <ReportsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/notificaciones"
+                      element={
+                        <ProtectedRoute>
+                          <NotificationsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </main>
+              </Suspense>
+            </div>
+            <QueueIndicator />
+            <InstallPWA />
+            <Toaster richColors position="top-right" />
+          </BrowserRouter>
+        </DataProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

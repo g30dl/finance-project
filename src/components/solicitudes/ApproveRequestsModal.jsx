@@ -8,6 +8,8 @@ import { usePendingRequests } from '../../hooks/usePendingRequests';
 import { useBalance } from '../../hooks/useBalance';
 import { formatCurrency } from '../../utils/helpers';
 import PendingRequestCard from './PendingRequestCard';
+import RequestCardSkeleton from './RequestCardSkeleton';
+import { toast } from 'sonner';
 
 function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
   const { user } = useAuth();
@@ -42,7 +44,10 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
         navigator.vibrate(20);
       }
       setSuccessMessage(`Solicitud aprobada. Nuevo saldo: ${formatCurrency(result.newBalance)}`);
+      toast.success('Solicitud aprobada correctamente');
       setTimeout(() => setSuccessMessage(''), 3000);
+    } else if (result.error) {
+      toast.error(result.error);
     }
 
     setProcessingId(null);
@@ -58,7 +63,10 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
         navigator.vibrate(10);
       }
       setSuccessMessage('Solicitud rechazada correctamente');
+      toast.success('Solicitud rechazada correctamente');
       setTimeout(() => setSuccessMessage(''), 3000);
+    } else if (result.error) {
+      toast.error(result.error);
     }
 
     setProcessingId(null);
@@ -69,7 +77,7 @@ function ApproveRequestsModal({ isOpen, onClose, requests, loading, error }) {
       return (
         <div className="space-y-3">
           {[1, 2].map((i) => (
-            <div key={`pending-skeleton-${i}`} className="h-48 animate-pulse rounded-md bg-secondary/80" />
+            <RequestCardSkeleton key={`pending-skeleton-${i}`} />
           ))}
         </div>
       );

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronRight, Shield, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext';
@@ -26,6 +26,7 @@ function LoginScreen() {
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [adminError, setAdminError] = useState('');
+  const adminEmailRef = useRef(null);
 
   const routeMessage = location.state?.message;
   const solicitantes = useMemo(() => getUsersByRole('solicitante'), [getUsersByRole]);
@@ -222,6 +223,7 @@ function LoginScreen() {
         title="Administradores"
         size="sm"
         closeOnOverlayClick={!isSubmitting}
+        initialFocusRef={adminEmailRef}
       >
         <p className="mb-4 text-sm text-muted-foreground">
           Ingresa con Google o con tu correo y contrasena.
@@ -247,6 +249,7 @@ function LoginScreen() {
             disabled={isBusy}
             required
             fullWidth
+            ref={adminEmailRef}
           />
 
           <Input

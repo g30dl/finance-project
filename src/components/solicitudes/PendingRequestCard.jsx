@@ -8,6 +8,8 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [error, setError] = useState('');
+  const categoryLabel = (request.categoria || 'categoria').replace('_', ' ');
+  const formattedAmount = formatCurrency(request.cantidad);
 
   const handleApprove = () => {
     onApprove?.(request.id);
@@ -41,9 +43,7 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
         <div className="flex items-center gap-3">
           <span className="text-3xl">{getCategoryIcon(request.categoria)}</span>
           <div>
-            <p className="font-heading text-sm text-foreground">
-              {(request.categoria || 'categoria').replace('_', ' ')}
-            </p>
+            <p className="font-heading text-sm text-foreground">{categoryLabel}</p>
             <div className="mt-1 flex items-center gap-2 text-sm text-foreground-muted">
               <User className="h-4 w-4" />
               <span>{request.nombreUsuario}</span>
@@ -51,7 +51,7 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
           </div>
         </div>
         <div className="text-right">
-          <p className="font-heading text-2xl text-warning">{formatCurrency(request.cantidad)}</p>
+          <p className="font-heading text-2xl text-warning">{formattedAmount}</p>
           <div className="mt-1 flex items-center gap-1 text-xs text-foreground-muted">
             <Calendar className="h-3 w-3" />
             <span>{getRelativeTime(request.fechaSolicitud)}</span>
@@ -104,6 +104,7 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
             loading={loading}
             icon={<Check className="h-4 w-4" />}
             fullWidth
+            aria-label={`Aprobar solicitud de ${formattedAmount} para ${categoryLabel}`}
           >
             Aprobar
           </Button>
@@ -114,6 +115,7 @@ function PendingRequestCard({ request, onApprove, onReject, loading }) {
             disabled={loading}
             icon={<X className="h-4 w-4" />}
             fullWidth
+            aria-label={`Rechazar solicitud de ${formattedAmount} para ${categoryLabel}`}
           >
             Rechazar
           </Button>

@@ -6,41 +6,14 @@ import { CATEGORIES, REQUEST_LIMITS } from '../../utils/constants';
 import { formatCurrency } from '../../utils/helpers';
 import { enqueueOrExecute } from '../../services/offlineQueue';
 import { useOfflineQueue } from '../../hooks/useOfflineQueue';
+import { requestSchema } from '../../utils/schemas';
+import { toast } from 'sonner';
 
 const buildCategoryOptions = () =>
   CATEGORIES.map((category) => ({
     value: category.id,
     label: category.label,
   }));
-
-const validateAmount = (amountValue) => {
-  if (!amountValue || Number.isNaN(amountValue) || amountValue <= 0) {
-    return 'Ingresa un monto valido mayor a 0';
-  }
-
-  if (amountValue > REQUEST_LIMITS.MAX_AMOUNT) {
-    return `El monto no puede exceder $${REQUEST_LIMITS.MAX_AMOUNT}`;
-  }
-
-  return '';
-};
-
-const validateCategory = (category) => {
-  if (!category) {
-    return 'Selecciona una categoria';
-  }
-  return '';
-};
-
-const validateConcept = (concept) => {
-  if (!concept.trim()) {
-    return 'Describe el motivo de tu solicitud';
-  }
-  if (concept.trim().length < REQUEST_LIMITS.MIN_CONCEPT_LENGTH) {
-    return `El concepto debe tener al menos ${REQUEST_LIMITS.MIN_CONCEPT_LENGTH} caracteres`;
-  }
-  return '';
-};
 
 function RequestForm({ onSuccess, onCancel, onAmountChange }) {
   const { user } = useAuth();
@@ -56,7 +29,6 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
   const [errors, setErrors] = useState({});
   const timeoutRef = useRef(null);
   const categoryOptions = useMemo(buildCategoryOptions, []);
-  const amountValue = Number(formData.amount);
   const isSuccess = Boolean(successMessage);
 
   useEffect(() => {
@@ -78,32 +50,39 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    const amountError = validateAmount(amountValue);
-    const categoryError = validateCategory(formData.category);
-    const conceptError = validateConcept(formData.concept);
-
-    if (amountError) newErrors.amount = amountError;
-    if (categoryError) newErrors.category = categoryError;
-    if (conceptError) newErrors.concept = conceptError;
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateForm() || !user) return;
+    if (!user) {
+      setErrorMessage('Usuario no identificado. Inicia sesion nuevamente.');
+      toast.error('Usuario no identificado. Inicia sesion nuevamente.');
+      return;
+    }
+
+    const parsedAmount =
+      formData.amount === '' || formData.amount === null
+        ? Number.NaN
+        : Number(formData.amount);
 
     const requestData = {
       userId: user.userId,
       userName: user.userName,
-      amount: Number(formData.amount),
+      amount: parsedAmount,
       category: formData.category,
       concept: formData.concept.trim(),
     };
 
+    const parsed = requestSchema.safeParse(requestData);
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      setErrors({
+        amount: fieldErrors.amount?.[0] || '',
+        category: fieldErrors.category?.[0] || '',
+        concept: fieldErrors.concept?.[0] || '',
+      });
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
@@ -118,9 +97,11 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
 
       if (result?.queued) {
         setSuccessMessage('Solicitud guardada. Se enviara al recuperar conexion.');
+        toast.message('Solicitud guardada. Se enviara al recuperar conexion.');
         await updateQueueCount();
       } else {
         setSuccessMessage('Solicitud enviada correctamente.');
+        toast.success('Solicitud enviada correctamente.');
       }
 
       if (navigator?.vibrate) {
@@ -133,7 +114,9 @@ function RequestForm({ onSuccess, onCancel, onAmountChange }) {
         onSuccess?.();
       }, 1500);
     } catch (error) {
-      setErrorMessage(error?.message || 'No se pudo crear la solicitud.');
+      const message = error?.message || 'No se pudo crear la solicitud.';
+      setErrorMessage(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

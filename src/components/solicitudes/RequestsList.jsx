@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { FileText } from 'lucide-react';
 import { EmptyState, Select } from '../common';
 import RequestCard from './RequestCard';
+import RequestCardSkeleton from './RequestCardSkeleton';
 
 const FILTER_OPTIONS = [
   { value: 'all', label: 'Todas' },
@@ -31,7 +32,7 @@ function RequestsList({ requests, loading, error, title = 'Mis Solicitudes' }) {
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div key={`request-skeleton-${index}`} className="h-32 animate-pulse rounded-md bg-secondary/80" />
+          <RequestCardSkeleton key={`request-skeleton-${index}`} />
         ))}
       </div>
     );

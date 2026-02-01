@@ -13,12 +13,14 @@ Aplicacion web progresiva (PWA) para gestionar las finanzas del hogar. Permite r
 - Variables de entorno
 - Desarrollo local
 - Build y preview
+- Tests
+- Scripts utiles
 - Deploy
 - Roles y acceso admin
 - PWA y funcionamiento offline
 - Notificaciones push
 - Seguridad
-- Solucion de problemas
+- Licencia
 
 ## Descripcion general
 
@@ -45,6 +47,8 @@ La app esta pensada para uso familiar. Existen dos tipos de usuarios:
 - Vite 5
 - Tailwind CSS 3
 - Recharts 2
+- Zod
+- Sonner
 - Firebase Realtime Database
 - Firebase Authentication
 - Firebase Cloud Functions
@@ -55,20 +59,20 @@ La app esta pensada para uso familiar. Existen dos tipos de usuarios:
 
 ```
 .
-├── .github/               Workflows de GitHub Actions
-├── .firebase/             Metadatos locales del CLI de Firebase
-├── dist/                  Build de produccion (salida de Vite)
-├── dev-dist/              Assets de service worker en desarrollo
-├── functions/             Cloud Functions de Firebase
-├── public/                Assets estaticos (manifest, icons, sw de messaging)
-├── scripts/               Scripts auxiliares
-├── src/                   Codigo fuente de la app
-├── .env.example           Plantilla de variables de entorno
-├── .firebaserc            Configuracion del proyecto de Firebase
-├── firebase.json          Configuracion de Firebase Hosting/Functions
-├── index.html             HTML base de Vite
-├── package.json           Scripts y dependencias
-└── vite.config.js         Configuracion de Vite
+|-- .github/                   Workflows de GitHub Actions
+|-- .firebase/                 Metadatos locales del CLI de Firebase
+|-- dist/                      Build de produccion (salida de Vite)
+|-- dev-dist/                  Assets de service worker en desarrollo
+|-- functions/                 Cloud Functions de Firebase
+|-- public/                    Assets estaticos (manifest, icons, sw de messaging)
+|-- scripts/                   Scripts auxiliares
+|-- src/                       Codigo fuente de la app
+|-- .env.example               Plantilla de variables de entorno
+|-- .firebaserc                Configuracion del proyecto de Firebase
+|-- firebase.json              Configuracion de Firebase Hosting/Database
+|-- index.html                 HTML base de Vite
+|-- package.json               Scripts y dependencias
+`-- vite.config.js             Configuracion de Vite
 ```
 
 ## Requisitos
@@ -103,14 +107,15 @@ VITE_FIREBASE_PROJECT_ID=...
 VITE_FIREBASE_STORAGE_BUCKET=...
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
+VITE_FIREBASE_MEASUREMENT_ID=...
 VITE_ADMIN_EMAILS=correo1@dominio.com,correo2@dominio.com
 ```
 
-Nota: `VITE_ADMIN_EMAILS` controla el acceso admin en el frontend.
+Nota:
+- `VITE_ADMIN_EMAILS` controla el acceso admin en el frontend.
+- `VITE_FIREBASE_MEASUREMENT_ID` es opcional y habilita Analytics si esta configurado.
 
 ## Desarrollo local
-
-Instala dependencias y ejecuta el servidor:
 
 ```
 npm install
@@ -125,6 +130,21 @@ npm run preview
 ```
 
 La salida queda en `dist/`.
+
+## Tests
+
+```
+npm run test
+npm run test:coverage
+```
+
+## Scripts utiles
+
+```
+npm run build:analyze
+npm run optimize:images
+npm run audit
+```
 
 ## Deploy
 

@@ -1,6 +1,7 @@
 import { equalTo, get, orderByChild, query, ref, set, update } from 'firebase/database';
 import { db } from './firebase';
 import { trackEvent } from './analytics';
+import { triggerPushNotification } from './pushGateway';
 
 const buildRequestPayload = (requestId, requestData, timestamp) => ({
   id: requestId,
@@ -37,6 +38,7 @@ const createAdminNotification = async (request, timestamp) => {
 
     const notifRef = ref(db, `familia_finanzas/notificaciones/${notifId}`);
     await set(notifRef, notification);
+    void triggerPushNotification(notifId);
   } catch (error) {
     console.error('Error creating notification:', error);
   }
@@ -115,6 +117,7 @@ const createUserNotification = async ({ userId, type, requestId, amount, categor
 
     const notifRef = ref(db, `familia_finanzas/notificaciones/${notifId}`);
     await set(notifRef, notification);
+    void triggerPushNotification(notifId);
   } catch (error) {
     console.error('Error creating user notification:', error);
   }

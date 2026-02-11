@@ -12,27 +12,49 @@ try {
 }
 
 if (!firebaseConfig) {
+  try {
+    importScripts('/__/firebase/init.js');
+    firebaseConfig = firebase.app()?.options || null;
+  } catch (error) {
+    // ignore - not on Firebase Hosting or init.js unavailable
+  }
+}
+
+if (!firebaseConfig && !firebase.apps?.length) {
   console.warn('FCM config no disponible. Notificaciones push deshabilitadas.');
-} else {
+} else if (!firebase.apps?.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
 const resolveNotificationUrl = (data = {}) => {
   if (data.url) return data.url;
-  if (data.type === 'request_status') return '/notificaciones';
-  if (data.type === 'new_request') return '/requests';
+  const type = data.type || data.tipo;
+  if (type === 'request_status') return '/notificaciones';
+  if (type === 'new_request' || type === 'nueva_solicitud') return '/requests';
+  if (type === 'solicitud_aprobada' || type === 'solicitud_rechazada') return '/notificaciones';
+  if (
+    type === 'transferencia_recibida' ||
+    type === 'deposito_recibido' ||
+    type === 'deposito_personal' ||
+    type === 'gasto_personal' ||
+    type === 'saldo_bajo' ||
+    type?.startsWith?.('gasto_recurrente')
+  ) {
+    return '/notificaciones';
+  }
   return '/';
 };
 
 const getNotificationActions = (data = {}) => {
-  if (data.type === 'request_status') {
+  const type = data.type || data.tipo;
+  if (type === 'request_status') {
     return [
       { action: 'view', title: 'Ver estado' },
       { action: 'later', title: 'Mas tarde' },
     ];
   }
 
-  if (data.type === 'new_request') {
+  if (type === 'new_request' || type === 'nueva_solicitud') {
     return [
       { action: 'view', title: 'Ver solicitud' },
       { action: 'later', title: 'Mas tarde' },
@@ -42,15 +64,16 @@ const getNotificationActions = (data = {}) => {
   return [];
 };
 
-const messaging = firebaseConfig ? firebase.messaging() : null;
+const messaging = firebase.apps?.length ? firebase.messaging() : null;
 
 if (messaging) {
   messaging.onBackgroundMessage((payload) => {
     const notification = payload.notification || {};
     const data = payload.data || {};
-    const title = notification.title || 'Familia Finanzas';
-    const body = notification.body || '';
+    const title = notification.title || data.title || 'Familia Finanzas';
+    const body = notification.body || data.body || '';
     const icon = notification.icon || '/icons/icon-192.png';
+    const tag = data.notificationId || data.id;
 
     const actions = getNotificationActions(data);
 
@@ -59,6 +82,7 @@ if (messaging) {
       icon,
       badge: '/icons/icon-192.png',
       actions,
+      tag,
       data: {
         ...data,
         url: resolveNotificationUrl(data),

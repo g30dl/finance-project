@@ -199,6 +199,15 @@ Para habilitar FCM en el service worker:
 2. Completa la configuracion de Firebase.
 3. No subas este archivo al repo (esta en `.gitignore`).
 
+### Push sin Cloud Functions (plan gratis)
+
+Si no usas Blaze, puedes desplegar el microservidor en `push-server/` y configurar:
+
+- `VITE_PUSH_ENDPOINT` en el frontend.
+- Variables `FIREBASE_SERVICE_ACCOUNT` y `FIREBASE_DATABASE_URL` en el servidor.
+
+El endpoint recibe el `notificationId`, valida el token de Firebase del usuario y envia el push.
+
 ## Seguridad
 
 No versionar:

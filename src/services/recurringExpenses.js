@@ -1,5 +1,6 @@
 import { get, ref, update } from 'firebase/database';
 import { db } from './firebase';
+import { triggerPushNotification } from './pushGateway';
 import { calcularProximaEjecucion } from '../utils/recurringHelpers';
 
 const CASA_BALANCE_PATH = 'familia_finanzas/cuentas/dinero_casa/saldo';
@@ -158,6 +159,7 @@ export const executeRecurringExpense = async (expense, adminId) => {
     updates[`${NOTIFICATIONS_PATH}/${notificationId}`] = notification;
 
     await update(ref(db), updates);
+    void triggerPushNotification(notificationId);
 
     return {
       success: true,
@@ -251,6 +253,7 @@ const createFailureSummaryNotification = async (failedResults, adminId) => {
   await update(ref(db), {
     [`${NOTIFICATIONS_PATH}/${notificationId}`]: notification,
   });
+  void triggerPushNotification(notificationId);
 };
 
 /**
@@ -322,4 +325,5 @@ const createUpcomingPaymentNotification = async (expense) => {
   await update(ref(db), {
     [`${NOTIFICATIONS_PATH}/${notificationId}`]: notification,
   });
+  void triggerPushNotification(notificationId);
 };

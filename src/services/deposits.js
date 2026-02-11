@@ -1,5 +1,6 @@
 import { get, ref, update } from 'firebase/database';
 import { db } from './firebase';
+import { triggerPushNotification } from './pushGateway';
 
 const MAX_AMOUNT = 10000;
 const MIN_CONCEPT_LENGTH = 5;
@@ -101,8 +102,10 @@ export const executeDeposit = async ({
     updates[getLastUpdatePath(destino)] = timestamp;
     updates[`familia_finanzas/transacciones/${transactionId}`] = transaction;
 
+    let notificationId = null;
     if (resolvedType === 'personal') {
       const notifId = `notif_${timestamp}`;
+      notificationId = notifId;
       updates[`familia_finanzas/notificaciones/${notifId}`] = {
         id: notifId,
         tipo: 'deposito_personal',
@@ -115,6 +118,9 @@ export const executeDeposit = async ({
     }
 
     await update(ref(db), updates);
+    if (notificationId) {
+      void triggerPushNotification(notificationId);
+    }
 
     return {
       success: true,

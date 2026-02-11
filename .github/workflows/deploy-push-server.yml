@@ -1,0 +1,79 @@
+name: Deploy Push Server
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'push-server/**'
+      - '.github/workflows/deploy-push-server.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'push-server/package-lock.json'
+      
+      - name: Install dependencies
+        working-directory: push-server
+        run: npm ci
+      
+      - name: Create .env file
+        working-directory: push-server
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.PUSH_SERVER_FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_DATABASE_URL: ${{ secrets.VITE_FIREBASE_DATABASE_URL }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+        run: |
+          cat > .env << EOF
+          # Firebase Service Account (stringificado en una línea)
+          FIREBASE_SERVICE_ACCOUNT=$FIREBASE_SERVICE_ACCOUNT
+
+          # Firebase Realtime Database URL
+          FIREBASE_DATABASE_URL=$FIREBASE_DATABASE_URL
+
+          # Web Push VAPID Keys
+          VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY
+          VAPID_PRIVATE_KEY=$VAPID_PRIVATE_KEY
+
+          # Configuración opcional
+          ALLOWED_ORIGINS=https://familia-finanzas-589f3.web.app,https://familia-finanzas-589f3-default-rtdb.firebaseio.com
+          PORT=8080
+          EOF
+
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+        run: |
+          npm install -g @railway/cli
+          cd push-server
+          railway up --service push-server
+        if: env.RAILWAY_TOKEN != ''
+
+      # Alternativa: Deploy a Heroku
+      - name: Deploy to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_PUSH_SERVER_APP }}
+        run: |
+          if [ -z "$HEROKU_API_KEY" ]; then echo "Skipping Heroku deploy - no API key configured"; exit 0; fi
+          npm install -g heroku
+          heroku login -i << EOF
+          $HEROKU_API_KEY
+          EOF
+          heroku git:remote --app $HEROKU_APP_NAME --exit-code
+          git push heroku main:main --force
+        if: env.HEROKU_API_KEY != ''
+
+      - name: Notify deployment status
+        if: always()
+        run: echo "Push server deployment completed"

@@ -1,5 +1,6 @@
 import { get, ref, update } from 'firebase/database';
 import { db } from './firebase';
+import { triggerPushNotification } from './pushGateway';
 
 const MAX_AMOUNT = 10000;
 const MIN_CONCEPT_LENGTH = 5;
@@ -134,12 +135,17 @@ export const executeTransfer = async ({
     updates[getLastUpdatePath(cuentaDestino)] = timestamp;
     updates[`familia_finanzas/transacciones/${transactionId}`] = transaction;
 
+    let notificationId = null;
     const notification = buildNotification({ transaction, timestamp });
     if (notification) {
+      notificationId = notification.payload?.id || null;
       updates[notification.path] = notification.payload;
     }
 
     await update(ref(db), updates);
+    if (notificationId) {
+      void triggerPushNotification(notificationId);
+    }
 
     return {
       success: true,

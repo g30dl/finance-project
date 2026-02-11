@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -16,6 +17,13 @@ import {
   logout as logoutService,
   handleAdminRedirectResult,
 } from '../services/auth';
+import {
+  registerServiceWorker,
+  requestNotificationPermission,
+  subscribeToPushNotifications,
+  unsubscribeFromPushNotifications,
+  isPushNotificationSupported,
+} from '../services/webPush';
 
 const AuthContext = createContext(null);
 
@@ -24,6 +32,50 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authReady, setAuthReady] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
+  const redirectHandledRef = useRef(false);
+  const swRegistrationCheckedRef = useRef(false);
+
+  const initializePushNotifications = useCallback(async () => {
+    if (!isPushNotificationSupported()) {
+      console.log('Push notifications no soportadas en este navegador');
+      return;
+    }
+
+    try {
+      // 1. Registrar Service Worker
+      const swResult = await registerServiceWorker();
+      if (!swResult.success && !swResult.skipped) {
+        console.warn('Error registrando Service Worker:', swResult.reason);
+      }
+
+      // 2. Solicitar permiso de notificaciones
+      const permissionResult = await requestNotificationPermission();
+      if (!permissionResult.success && !permissionResult.skipped) {
+        console.warn('Error solicitando permiso:', permissionResult.reason);
+        return;
+      }
+
+      // 3. Si el usuario permitió, suscribirse a push
+      if (permissionResult.permission === 'granted') {
+        const subscribeResult = await subscribeToPushNotifications();
+        if (!subscribeResult.success && !subscribeResult.skipped) {
+          console.warn('Error subscribiendo a push:', subscribeResult.reason);
+        } else if (subscribeResult.success) {
+          console.log('Push notifications inicializadas correctamente');
+        }
+      }
+    } catch (error) {
+      console.error('Error inicializando push notifications:', error);
+    }
+  }, []);
+
+  const cleanupPushNotifications = useCallback(async () => {
+    try {
+      await unsubscribeFromPushNotifications();
+    } catch (error) {
+      console.warn('Error desuscribiendo de push:', error);
+    }
+  }, []);
 
   const resolveUser = useCallback(async (firebaseUser) => {
     if (!firebaseUser) return null;
@@ -46,7 +98,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let mounted = true;
 
-    handleAdminRedirectResult()
+    const redirectPromise = handleAdminRedirectResult()
       .then((result) => {
         if (!mounted) return;
         if (result?.success && result.user) {
@@ -57,31 +109,54 @@ export const AuthProvider = ({ children }) => {
       })
       .catch((error) => {
         console.warn('Login redirect admin:', error);
+      })
+      .finally(() => {
+        redirectHandledRef.current = true;
       });
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!mounted) return;
 
       setLoading(true);
+
+      if (!firebaseUser && !redirectHandledRef.current) {
+        try {
+          await redirectPromise;
+        } catch (error) {
+          // redirect errors already logged above
+        }
+        firebaseUser = auth.currentUser;
+      }
+
+      if (!firebaseUser) {
+        try {
+          await ensureAuthSession();
+        } catch (error) {
+          console.error('No se pudo iniciar sesion anonima:', error);
+        }
+        firebaseUser = auth.currentUser;
+      }
+
       const resolvedUser = await resolveUser(firebaseUser);
 
       if (mounted) {
         setUser(resolvedUser);
         setLoading(false);
         setAuthReady(true);
-      }
-    });
 
-    // Garantiza que exista una sesion de Firebase para leer datos publicos/autenticados.
-    ensureAuthSession().catch((error) => {
-      console.error('No se pudo iniciar sesion anonima:', error);
+        // Inicializar push notifications si hay un usuario autenticado
+        if (resolvedUser && !swRegistrationCheckedRef.current) {
+          swRegistrationCheckedRef.current = true;
+          initializePushNotifications();
+        }
+      }
     });
 
     return () => {
       mounted = false;
       unsubscribe();
     };
-  }, [resolveUser]);
+  }, [resolveUser, initializePushNotifications]);
 
   const login = useCallback(async (credentials) => {
     setStatusMessage('');
@@ -109,11 +184,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(async () => {
+    await cleanupPushNotifications();
     const result = await logoutService();
     setUser(null);
     setStatusMessage('');
+    swRegistrationCheckedRef.current = false;
     return result;
-  }, []);
+  }, [cleanupPushNotifications]);
 
   const value = useMemo(
     () => ({
